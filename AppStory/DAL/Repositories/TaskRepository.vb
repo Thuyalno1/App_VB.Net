@@ -101,6 +101,7 @@ Public Class TaskRepository
                 
                 ' AssignedToUserId null check
                 cmd.Parameters.AddWithValue("@AssignedToUserId", If(task.AssignedToUserId.HasValue, CObj(task.AssignedToUserId.Value), DBNull.Value))
+                cmd.Parameters.AddWithValue("@CreatedByUserId", task.CreatedByUserId)
                 cmd.ExecuteNonQuery()
             End Using
         End Using
@@ -159,8 +160,9 @@ Public Class TaskRepository
     ''' <summary>Lấy danh sách các task chưa được ấn định thuộc các nhóm của người dùng</summary>
     Public Function GetOpenTasksForUser(userId As Integer) As List(Of Task) Implements ITaskRepository.GetOpenTasksForUser
         Dim tasks As New List(Of Task)()
-        Dim sql As String = "SELECT t.* FROM Tasks t
-                             INNER JOIN UserTeam ut ON t.TeamId = ut.TeamId
+        Dim sql As String = "SELECT DISTINCT t.* FROM Tasks t
+                             LEFT JOIN Project p ON t.ProjectId = p.ProjectId
+                             INNER JOIN UserTeam ut ON (t.TeamId = ut.TeamId OR p.TeamId = ut.TeamId)
                              WHERE ut.UserId = @UserId 
                                AND t.AssignedToUserId IS NULL 
                                AND t.IsDeleted = 0

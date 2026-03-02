@@ -26,6 +26,7 @@ Public Class frmOpenTasks
             .Width = 120,
             .DefaultCellStyle = New DataGridViewCellStyle() With {.Format = "dd/MM/yyyy"}
         })
+        dgvOpenTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectId", .HeaderText = "Dự án", .Width = 60})
 
         ' Thêm nút Nhận việc
         Dim btnCol As New DataGridViewButtonColumn()

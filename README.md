@@ -121,5 +121,3 @@ d:\VSII\Learn_VSII\winfromapp\AppStory\
 - [ ] Thêm / Sửa / Xóa Task thành công.
 - [ ] Phân luồng User xem đúng Task của mình (Data Isolation).
 
-🎉 **CHÚC MỪNG! HỆ THỐNG ĐÃ SẴN SÀNG!**
-Gặp bất kỳ thông báo lỗi Build (Error List) hay Exception (SQL), hãy kiểm tra kỹ BLL Service hoặc chuỗi cấu hình DAL Repository!

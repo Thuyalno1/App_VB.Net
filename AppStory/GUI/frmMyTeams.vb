@@ -30,9 +30,12 @@ Public Class frmMyTeams
             ' hoặc cải tiến hàm GetAllTeams để lọc theo UserId.
             ' Về mặt kỹ thuật, mình có thể lấy GetAllTeams() (đã có đủ list user) và lọc ra các team có mặt UserId này trong đó
             Dim allTeamsDto = _teamService.GetAllTeams()
-            Dim currentUserId = SessionManager.CurrentUser.UserId
-            
-            Dim myTeams = allTeamsDto.Where(Function(t) (t.LeaderIds IsNot Nothing AndAlso t.LeaderIds.Contains(currentUserId)) OrElse (t.MemberIds IsNot Nothing AndAlso t.MemberIds.Contains(currentUserId))).ToList()
+            Dim myTeams As New List(Of TeamDto)()
+
+            If allTeamsDto IsNot Nothing Then
+                Dim currentUserId = SessionManager.CurrentUser.UserId
+                myTeams = allTeamsDto.Where(Function(t) (t.LeaderIds IsNot Nothing AndAlso t.LeaderIds.Contains(currentUserId)) OrElse (t.MemberIds IsNot Nothing AndAlso t.MemberIds.Contains(currentUserId))).ToList()
+            End If
 
             dgvMyTeams.DataSource = Nothing
             dgvMyTeams.DataSource = myTeams
@@ -45,6 +48,27 @@ Public Class frmMyTeams
         Dim mainForm As New frmMain()
         mainForm.Show()
         Me.Close()
+    End Sub
+
+    Private Sub btnCreateTeamTask_Click(sender As Object, e As EventArgs) Handles btnCreateTeamTask.Click
+        If dgvMyTeams.SelectedRows.Count = 0 Then
+            MessageBox.Show("Vui lòng chọn một nhóm trên lưới để tạo công việc.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim selectedTeam = CType(dgvMyTeams.SelectedRows(0).DataBoundItem, TeamDto)
+        If selectedTeam Is Nothing Then Return
+
+        Dim currentUserId = SessionManager.CurrentUser.UserId
+        If selectedTeam.LeaderIds Is Nothing OrElse Not selectedTeam.LeaderIds.Contains(currentUserId) Then
+            MessageBox.Show("Chỉ Trưởng nhóm mới có quyền tạo Task chung cho nhóm này.", "Từ chối truy cập", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim f As New frmCreateTeamTask(selectedTeam.TeamId, selectedTeam.TeamName)
+        If f.ShowDialog() = DialogResult.OK Then
+            ' Nothing specific needed after returning unless we show stats
+        End If
     End Sub
 
 End Class

@@ -20,6 +20,7 @@ Partial Class frmMyTeams
         Me.dgvMyTeams = New System.Windows.Forms.DataGridView()
         Me.btnBack = New System.Windows.Forms.Button()
         Me.lblUserInfo = New System.Windows.Forms.Label()
+        Me.btnCreateTeamTask = New System.Windows.Forms.Button()
         CType(Me.dgvMyTeams, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -54,11 +55,23 @@ Partial Class frmMyTeams
         Me.lblUserInfo.TabIndex = 3
         Me.lblUserInfo.Text = "Nhóm của tôi"
         '
+        'btnCreateTeamTask
+        '
+        Me.btnCreateTeamTask.BackColor = System.Drawing.Color.FromArgb(CType(CType(34, Byte), Integer), CType(CType(197, Byte), Integer), CType(CType(94, Byte), Integer))
+        Me.btnCreateTeamTask.ForeColor = System.Drawing.Color.White
+        Me.btnCreateTeamTask.Location = New System.Drawing.Point(620, 15)
+        Me.btnCreateTeamTask.Name = "btnCreateTeamTask"
+        Me.btnCreateTeamTask.Size = New System.Drawing.Size(150, 30)
+        Me.btnCreateTeamTask.TabIndex = 4
+        Me.btnCreateTeamTask.Text = "Tạo Task cho nhóm"
+        Me.btnCreateTeamTask.UseVisualStyleBackColor = False
+        '
         'frmMyTeams
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.Controls.Add(Me.btnCreateTeamTask)
         Me.Controls.Add(Me.lblUserInfo)
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.dgvMyTeams)
@@ -73,4 +86,5 @@ Partial Class frmMyTeams
     Friend WithEvents dgvMyTeams As Windows.Forms.DataGridView
     Friend WithEvents btnBack As Windows.Forms.Button
     Friend WithEvents lblUserInfo As Windows.Forms.Label
+    Friend WithEvents btnCreateTeamTask As System.Windows.Forms.Button
 End Class
