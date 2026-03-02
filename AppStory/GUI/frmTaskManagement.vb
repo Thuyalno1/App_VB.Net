@@ -8,6 +8,11 @@ Public Class frmTaskManagement
     Private _selectedTaskId As Integer = -1
     Private _allTasks As List(Of Task)   ' Cache toàn bộ task để filter client-side
 
+    ' Lookup dictionaries để tra tên từ ID
+    Private _userNames As New Dictionary(Of Integer, String)()
+    Private _projectNames As New Dictionary(Of Integer, String)()
+    Private _teamNames As New Dictionary(Of Integer, String)()
+
     Public Sub New()
         InitializeComponent()
         _taskService = New TaskService()
@@ -18,6 +23,7 @@ Public Class frmTaskManagement
 
     Private Sub frmTaskManagement_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetupGrid()
+        LoadLookupDictionaries()   ' Load lookup trước để có tên khi bind grid
         LoadUsersToCombo()
         LoadProjectsToCombo()
         LoadTeamsToCombo()
@@ -37,9 +43,9 @@ Public Class frmTaskManagement
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Title", .HeaderText = "Tiêu đề", .Width = 180})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Status", .HeaderText = "Trạng thái", .Width = 100})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Ưu tiên", .Width = 80})
-        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "AssignedToUserId", .HeaderText = "Giao cho", .Width = 90})
-        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectId", .HeaderText = "Project ID", .Width = 80})
-        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TeamId", .HeaderText = "Team ID", .Width = 80})
+        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "AssignedToUserName", .HeaderText = "Giao cho", .Width = 110})
+        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectName", .HeaderText = "Dự án", .Width = 120})
+        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TeamName", .HeaderText = "Team", .Width = 100})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {
             .DataPropertyName = "DueDate",
             .HeaderText = "Deadline",
@@ -50,6 +56,69 @@ Public Class frmTaskManagement
         dgvTasks.ReadOnly = True
         dgvTasks.AllowUserToAddRows = False
     End Sub
+
+    ''' <summary>Load lookup dictionaries: Id → Name cho User, Project, Team</summary>
+    Private Sub LoadLookupDictionaries()
+        Try
+            _userNames.Clear()
+            For Each u In _userRepo.GetAll()
+                _userNames(u.UserId) = u.UserName
+            Next
+        Catch : End Try
+
+        Try
+            _projectNames.Clear()
+            For Each p In _projectService.GetAllProjects()
+                _projectNames(p.ProjectId) = p.ProjectName
+            Next
+        Catch : End Try
+
+        Try
+            _teamNames.Clear()
+            For Each t In _teamService.GetAllTeams()
+                _teamNames(t.TeamId) = t.TeamName
+            Next
+        Catch : End Try
+    End Sub
+
+    ''' <summary>Chuyển List(Of Task) thành List(Of TaskViewItem) có tên thay vì ID</summary>
+    Private Function BuildViewItems(tasks As List(Of Task)) As List(Of TaskViewItem)
+        Dim result As New List(Of TaskViewItem)()
+        For Each t In tasks
+            Dim userName As String = "-- Chưa giao --"
+            If t.AssignedToUserId.HasValue Then
+                If Not _userNames.TryGetValue(t.AssignedToUserId.Value, userName) Then
+                    userName = $"UserId {t.AssignedToUserId.Value}"
+                End If
+            End If
+
+            Dim projectName As String = "-- Không có --"
+            If t.ProjectId.HasValue Then
+                If Not _projectNames.TryGetValue(t.ProjectId.Value, projectName) Then
+                    projectName = $"ProjectId {t.ProjectId.Value}"
+                End If
+            End If
+
+            Dim teamName As String = "-- Không có --"
+            If t.TeamId.HasValue Then
+                If Not _teamNames.TryGetValue(t.TeamId.Value, teamName) Then
+                    teamName = $"TeamId {t.TeamId.Value}"
+                End If
+            End If
+
+            result.Add(New TaskViewItem() With {
+                .TaskId = t.TaskId,
+                .Title = t.Title,
+                .Status = t.Status,
+                .Priority = t.Priority,
+                .AssignedToUserName = userName,
+                .ProjectName = projectName,
+                .TeamName = teamName,
+                .DueDate = t.DueDate
+            })
+        Next
+        Return result
+    End Function
 
     ''' <summary>Load danh sách User từ DB vào ComboBox</summary>
     Private Sub LoadUsersToCombo()
@@ -135,8 +204,9 @@ Public Class frmTaskManagement
             Dim selected As String = cboFilterStatus.SelectedItem.ToString()
             filtered = _allTasks.Where(Function(t) t.Status = selected).ToList()
         End If
+        ' Chuyển sang TaskViewItem để hiển thị tên thay vì ID
         dgvTasks.DataSource = Nothing
-        dgvTasks.DataSource = filtered
+        dgvTasks.DataSource = BuildViewItems(filtered)
         lblTaskCount.Text = $"Hiển thị: {filtered.Count} / {_allTasks.Count} task"
     End Sub
 
@@ -149,7 +219,10 @@ Public Class frmTaskManagement
     ' ──────────────────────────────────────────────
     Private Sub dgvTasks_SelectionChanged(sender As Object, e As EventArgs) Handles dgvTasks.SelectionChanged
         If dgvTasks.SelectedRows.Count = 0 Then Return
-        Dim t = CType(dgvTasks.SelectedRows(0).DataBoundItem, Task)
+        ' Grid bind TaskViewItem nên phải cast đúng kiểu, sau đó tìm Task thật từ _allTasks
+        Dim viewItem = TryCast(dgvTasks.SelectedRows(0).DataBoundItem, TaskViewItem)
+        If viewItem Is Nothing Then Return
+        Dim t = _allTasks?.FirstOrDefault(Function(x) x.TaskId = viewItem.TaskId)
         If t Is Nothing Then Return
 
         _selectedTaskId = t.TaskId
@@ -377,4 +450,19 @@ Public Class frmTaskManagement
         Return value
     End Function
 
+End Class
+
+''' <summary>
+''' ViewModel dùng để hiển thị Task trong DataGridView với tên thay vì ID.
+''' Không lưu DB, chỉ phục vụ tầng hiển thị (GUI).
+''' </summary>
+Public Class TaskViewItem
+    Public Property TaskId As Integer
+    Public Property Title As String
+    Public Property Status As String
+    Public Property Priority As String
+    Public Property AssignedToUserName As String   ' Tên người được giao (thay vì UserId)
+    Public Property ProjectName As String           ' Tên dự án (thay vì ProjectId)
+    Public Property TeamName As String             ' Tên team (thay vì TeamId)
+    Public Property DueDate As DateTime?            ' Deadline
 End Class
