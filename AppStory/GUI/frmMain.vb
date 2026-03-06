@@ -2,11 +2,7 @@ Public Class frmMain
     Inherits System.Windows.Forms.Form
 
     Public Sub New()
-        Try
-            InitializeComponent()
-        Catch ex As Exception
-            MessageBox.Show("InitializeComponent Error: " & ex.ToString(), "NRE Debug")
-        End Try
+        InitializeComponent()
     End Sub
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -57,8 +53,8 @@ Public Class frmMain
                     btnGoProjects.Visible = False
                     btnGoTeams.Visible = False
             End Select
-        Catch ex As Exception
-            MessageBox.Show("frmMain_Load Error: " & ex.ToString(), "NRE Debug")
+        Catch ex As BusinessException
+            MessageBox.Show("Lỗi khởi động ứng dụng: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 

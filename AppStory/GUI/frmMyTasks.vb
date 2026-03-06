@@ -35,7 +35,7 @@ Public Class frmMyTasks
             Dim tasks = _taskService.GetMyTasks(SessionManager.CurrentUser.UserId)
             dgvMyTasks.DataSource = Nothing
             dgvMyTasks.DataSource = tasks
-        Catch ex As Exception
+        Catch ex As BusinessException
             MessageBox.Show("Lỗi tải task: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub

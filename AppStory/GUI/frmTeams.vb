@@ -4,6 +4,7 @@ Public Class frmTeams
     Private ReadOnly _teamService As ITeamService
     Private ReadOnly _userRepo As IUserRepository
     Private _selectedTeamId As Integer = -1
+    Private _allTeams As List(Of TeamDto)   ' Cache để filter tìm kiếm client-side
 
     Public Sub New()
         InitializeComponent()
@@ -53,12 +54,37 @@ Public Class frmTeams
 
     Private Sub LoadTeams()
         Try
-            Dim teams = _teamService.GetAllTeams()
-            dgvTeams.DataSource = Nothing
-            dgvTeams.DataSource = teams
-        Catch ex As Exception
+            _allTeams = _teamService.GetAllTeams()
+            ApplySearch()
+        Catch ex As BusinessException
             MessageBox.Show("Lỗi tải danh sách nhóm: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+    End Sub
+
+    ''' <summary>Lọc danh sách nhóm theo từ khóa tìm kiếm (client-side)</summary>
+    Private Sub ApplySearch()
+        If _allTeams Is Nothing Then Return
+
+        Dim keyword As String = txtSearch.Text.Trim().ToLower()
+
+        Dim filtered As List(Of TeamDto)
+        If String.IsNullOrEmpty(keyword) Then
+            filtered = _allTeams
+        Else
+            filtered = _allTeams.Where(Function(t)
+                Return (t.TeamName IsNot Nothing AndAlso t.TeamName.ToLower().Contains(keyword)) OrElse
+                       (t.Description IsNot Nothing AndAlso t.Description.ToLower().Contains(keyword)) OrElse
+                       (t.LeaderNames IsNot Nothing AndAlso t.LeaderNames.ToLower().Contains(keyword)) OrElse
+                       (t.MemberNames IsNot Nothing AndAlso t.MemberNames.ToLower().Contains(keyword))
+            End Function).ToList()
+        End If
+
+        dgvTeams.DataSource = Nothing
+        dgvTeams.DataSource = filtered
+    End Sub
+
+    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
+        ApplySearch()
     End Sub
 
     Private Sub dgvTeams_SelectionChanged(sender As Object, e As EventArgs) Handles dgvTeams.SelectionChanged

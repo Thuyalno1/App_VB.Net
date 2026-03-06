@@ -1,194 +1,141 @@
--- ============================================================
---  AppStory Database Setup Script
---  Database  : appstore
---  Engine    : MySQL 5.7+ / MariaDB
---  Charset   : utf8mb4
---
---  Cách sử dụng:
---    1. Mở MySQL Workbench hoặc HeidiSQL
---    2. Chạy toàn bộ file này (F5 / Execute)
---    3. Mở App.config, sửa uid / password cho đúng máy bạn
---
---  Tài khoản mặc định sau khi seed:
---    Username : admin   | Password : 123  (Role: Admin)
---    Username : user1   | Password : 123  (Role: Employee)
---    Username : user2   | Password : 123  (Role: Employee)
--- ============================================================
+-- Tạo Database
 
--- --------------------------------------------------------
--- 0. Tạo & chọn database
--- --------------------------------------------------------
 CREATE DATABASE IF NOT EXISTS appstore
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
-
+DEFAULT CHARACTER SET utf8mb4
+COLLATE utf8mb4_0900_ai_ci;
 USE appstore;
 
--- --------------------------------------------------------
--- 1. Bảng Roles – phân quyền (Admin / Employee)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Roles (
-    RoleId   INT          PRIMARY KEY AUTO_INCREMENT,
-    RoleName VARCHAR(50)  NOT NULL UNIQUE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ========================
+-- Tạo bảng USERS
+-- ========================
 
--- --------------------------------------------------------
--- 2. Bảng Users – tài khoản người dùng
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Users (
-    UserId       INT          PRIMARY KEY AUTO_INCREMENT,
-    UserName     VARCHAR(50)  NOT NULL UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL,
-    Email        VARCHAR(100) NOT NULL,
-    RoleId       INT          NOT NULL,
-    CreatedAt    DATETIME     DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (RoleId) REFERENCES Roles(RoleId)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS users;
 
--- --------------------------------------------------------
--- 3. Bảng Team – nhóm làm việc
---    (Tên bảng là "Team" theo đúng code trong Repositories)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Team (
-    TeamId      INT          PRIMARY KEY AUTO_INCREMENT,
-    TeamName    VARCHAR(100) NOT NULL,
-    Description TEXT,
-    CreatedAt   DATETIME     DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE users (
+  UserId INT NOT NULL AUTO_INCREMENT,
+  UserName VARCHAR(100) NOT NULL,
+  PasswordHash VARCHAR(256) NOT NULL,
+  Email VARCHAR(255) NOT NULL,
+  RoleId VARCHAR(50) NOT NULL DEFAULT 'Employee',
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (UserId),
+  UNIQUE (UserName),
+  UNIQUE (Email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- --------------------------------------------------------
--- 4. Bảng UserTeam – quan hệ nhiều-nhiều User <-> Team
---    Role: "Leader" | "Member"
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS UserTeam (
-    UserId    INT         NOT NULL,
-    TeamId    INT         NOT NULL,
-    Role      VARCHAR(20) NOT NULL DEFAULT 'Member',   -- Leader / Member
-    JoinedAt  DATETIME    DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (UserId, TeamId),
-    FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
-    FOREIGN KEY (TeamId) REFERENCES Team(TeamId)  ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO users VALUES
+(1,'thuymai','d3fba36993dfb07a62a209a0e5fdaccdb0041eec9e8e94c9f3a92934dcbdd098','maivanthuy@gmail.com','Admin','2026-02-26 13:58:29'),
+(2,'haidang','3ff1c16ea682274f533cb9c211f619800674a8aeac5035cd502860c06e633ce6','hai@gmail.com','Manager','2026-02-26 13:59:22'),
+(3,'nhanvien','b01ba614e7ae08379c7fd1e568349c88e7657d1df1ad85f7180a995278006fd5','nhan@gmail.com','Employee','2026-02-26 14:25:39'),
+(4,'khanhthu','9338b3c03aacef47daa56feb8838f607524976cafa986df58ee1b9c9b3cda2a6','khanh@gmail.com','Employee','2026-02-27 14:05:52'),
+(5,'khanhthu1','7f74ebba484437837a1862b9c3635aaf93622ec3d113edf8eddb8fd185f4b054','khanhthu@gmail.com','Employee','2026-02-27 14:06:49'),
+(6,'nhatdang','9f24bfb5f99d6caa7c42099701ecac3a210afd91a3305254c86c2692410e54ff','dang@gmail.com','Employee','2026-02-27 16:24:11');
 
--- --------------------------------------------------------
--- 5. Bảng Project – dự án
---    Status: 'Planning' | 'Active' | 'On Hold' | 'Completed'
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Project (
-    ProjectId   INT          PRIMARY KEY AUTO_INCREMENT,
-    ProjectName VARCHAR(200) NOT NULL,
-    Description TEXT,
-    StartDate   DATE,
-    EndDate     DATE,
-    Status      VARCHAR(20)  NOT NULL DEFAULT 'Planning',
-    ManagerId   INT,                           -- Project Manager (UserId)
-    TeamId      INT,                           -- Team thực hiện (Nullable)
-    CreatedAt   DATETIME     DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (ManagerId) REFERENCES Users(UserId)  ON DELETE SET NULL,
-    FOREIGN KEY (TeamId)    REFERENCES Team(TeamId)   ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ========================
+-- -- Tạo bảng TEAM
+-- ========================
 
--- --------------------------------------------------------
--- 6. Bảng Tasks – công việc / task
---    Status   : 'Pending' | 'In Progress' | 'Completed'
---    Priority : 'High'    | 'Medium'      | 'Low'
---    IsDeleted: Soft Delete (1 = đã xóa)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Tasks (
-    TaskId           INT          PRIMARY KEY AUTO_INCREMENT,
-    Title            VARCHAR(200) NOT NULL,
-    Description      TEXT,
-    AssignedToUserId INT,                      -- NULL = chưa giao
-    CreatedByUserId  INT          NOT NULL,
-    Status           VARCHAR(20)  NOT NULL DEFAULT 'Pending',
-    Priority         VARCHAR(10)  NOT NULL DEFAULT 'Medium',
-    CreatedAt        DATETIME     DEFAULT CURRENT_TIMESTAMP,
-    DueDate          DATETIME,
-    IsDeleted        TINYINT(1)   NOT NULL DEFAULT 0,
-    ProjectId        INT,                      -- Nullable
-    TeamId           INT,                      -- Nullable
-    FOREIGN KEY (AssignedToUserId) REFERENCES Users(UserId)   ON DELETE SET NULL,
-    FOREIGN KEY (CreatedByUserId)  REFERENCES Users(UserId),
-    FOREIGN KEY (ProjectId)        REFERENCES Project(ProjectId) ON DELETE SET NULL,
-    FOREIGN KEY (TeamId)           REFERENCES Team(TeamId)    ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS team;
 
--- ============================================================
--- SEED DATA – Dữ liệu mẫu
--- ============================================================
+CREATE TABLE team (
+  TeamId INT NOT NULL AUTO_INCREMENT,
+  TeamName VARCHAR(100) NOT NULL,
+  Description VARCHAR(500),
+  CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (TeamId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- --------------------------------------------------------
--- Roles
--- --------------------------------------------------------
-INSERT INTO Roles (RoleName) VALUES
-    ('Admin'),
-    ('Employee');
+INSERT INTO team VALUES
+(1,'Intern','.','2026-02-27 14:08:43'),
+(2,'Dev1','','2026-02-27 14:28:24'),
+(3,'te','.','2026-02-27 14:30:09'),
+(4,'Team FE','.','2026-02-27 14:34:39'),
+(5,'Team BA','.','2026-02-27 14:48:51');
 
--- --------------------------------------------------------
--- Users  (PasswordHash lưu plaintext "123" để demo)
--- Thực tế nên hash bằng BCrypt trước khi lưu
--- --------------------------------------------------------
-INSERT INTO Users (UserName, PasswordHash, Email, RoleId) VALUES
-    ('admin',  '123', 'admin@appstory.com',  1),
-    ('user1',  '123', 'user1@appstory.com',  2),
-    ('user2',  '123', 'user2@appstory.com',  2),
-    ('user3',  '123', 'user3@appstory.com',  2);
+-- ========================
+--  Tạo bảng PROJECT
+-- ========================
 
--- --------------------------------------------------------
--- Teams
--- --------------------------------------------------------
-INSERT INTO Team (TeamName, Description) VALUES
-    ('Team Alpha',   'Nhóm phát triển tính năng chính'),
-    ('Team Beta',    'Nhóm kiểm thử và QA'),
-    ('Team Gamma',   'Nhóm thiết kế và UI/UX');
+DROP TABLE IF EXISTS project;
 
--- --------------------------------------------------------
--- UserTeam – phân công thành viên
--- --------------------------------------------------------
-INSERT INTO UserTeam (UserId, TeamId, Role) VALUES
-    (1, 1, 'Leader'),   -- admin  → Team Alpha (Leader)
-    (2, 1, 'Member'),   -- user1  → Team Alpha (Member)
-    (3, 1, 'Member'),   -- user2  → Team Alpha (Member)
-    (2, 2, 'Leader'),   -- user1  → Team Beta  (Leader)
-    (4, 2, 'Member'),   -- user3  → Team Beta  (Member)
-    (3, 3, 'Leader'),   -- user2  → Team Gamma (Leader)
-    (4, 3, 'Member');   -- user3  → Team Gamma (Member)
+CREATE TABLE project (
+  ProjectId INT NOT NULL AUTO_INCREMENT,
+  ProjectName VARCHAR(200) NOT NULL,
+  Description TEXT,
+  StartDate DATE,
+  EndDate DATE,
+  Status VARCHAR(50) DEFAULT 'Planning',
+  ManagerId INT,
+  TeamId INT,
+  CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (ProjectId),
+  FOREIGN KEY (ManagerId) REFERENCES users(UserId),
+  FOREIGN KEY (TeamId) REFERENCES team(TeamId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- --------------------------------------------------------
--- Projects
--- --------------------------------------------------------
-INSERT INTO Project (ProjectName, Description, StartDate, EndDate, Status, ManagerId, TeamId) VALUES
-    ('AppStory v1.0',    'Xây dựng ứng dụng quản lý công việc',       '2025-01-01', '2025-06-30', 'Active',    1, 1),
-    ('QA Dashboard',     'Dashboard theo dõi tiến độ kiểm thử',        '2025-02-01', '2025-05-31', 'Planning',  2, 2),
-    ('UI Redesign',      'Thiết kế lại giao diện người dùng',          '2025-03-01', '2025-07-31', 'Planning',  3, 3);
+INSERT INTO project VALUES
+(1,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,NULL,'2026-02-27 14:08:15'),
+(2,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,4,'2026-02-27 14:35:15'),
+(3,'VII_2','.','2026-02-27','2026-03-27','Planning',5,4,'2026-02-27 14:36:56'),
+(4,'VII_3','.','2026-02-27','2026-03-27','Planning',5,4,'2026-02-27 14:48:30'),
+(5,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,NULL,'2026-03-02 09:23:25'),
+(6,'VII_4','Dự án quốc gia','2026-02-27','2026-03-06','Active',5,4,'2026-03-02 09:49:03');
 
--- --------------------------------------------------------
--- Tasks
--- --------------------------------------------------------
-INSERT INTO Tasks (Title, Description, AssignedToUserId, CreatedByUserId, Status, Priority, DueDate, ProjectId, TeamId) VALUES
-    -- Project 1 – Team Alpha
-    ('Thiết kế database',      'Tạo schema MySQL cho toàn bộ hệ thống',     2, 1, 'Completed',   'High',   '2025-01-15', 1, 1),
-    ('Xây dựng DAL Layer',     'Viết Repository cho User, Task, Team',       2, 1, 'In Progress', 'High',   '2025-02-01', 1, 1),
-    ('Xây dựng BLL Layer',     'Viết Service và DTO',                        3, 1, 'Pending',     'Medium', '2025-02-15', 1, 1),
-    ('Thiết kế form Login',    'WinForm đăng nhập và phân quyền',            NULL,1, 'Pending',   'High',   '2025-02-10', 1, 1),
-    -- Project 2 – Team Beta
-    ('Viết test case',         'Viết tất cả các kịch bản kiểm thử',         4, 2, 'Pending',     'Medium', '2025-03-01', 2, 2),
-    ('Kiểm thử tích hợp',      'Test toàn bộ luồng đăng nhập – phân quyền', NULL,2, 'Pending',   'High',   '2025-04-01', 2, 2),
-    -- Project 3 – Team Gamma
-    ('Thiết kế màn hình chính','Mockup giao diện Dashboard',                 3, 3, 'In Progress', 'Medium', '2025-03-20', 3, 3),
-    ('Chọn bảng màu & font',   'Xác định design system',                     NULL,3, 'Pending',   'Low',    '2025-03-10', 3, 3),
-    -- Task không thuộc project nào
-    ('Review code tuần 1',     'Họp review code nội bộ nhóm',               NULL,1, 'Pending',   'Low',    '2025-01-20', NULL, 1),
-    ('Họp kickoff dự án',      'Kickoff meeting toàn team',                  NULL,1, 'Completed', 'Medium', '2025-01-05', NULL, NULL);
+-- ========================
+--  Tạo bảng TASKS
+-- ========================
 
--- ============================================================
--- Kiểm tra nhanh sau khi chạy
--- ============================================================
--- SELECT * FROM Roles;
--- SELECT * FROM Users;
--- SELECT * FROM Team;
--- SELECT t.TeamName, u.UserName, ut.Role FROM UserTeam ut
---    JOIN Team t ON t.TeamId=ut.TeamId
---    JOIN Users u ON u.UserId=ut.UserId;
--- SELECT * FROM Project;
--- SELECT * FROM Tasks;
+DROP TABLE IF EXISTS tasks;
+
+CREATE TABLE tasks (
+  TaskId INT NOT NULL AUTO_INCREMENT,
+  Title VARCHAR(200) NOT NULL,
+  Description TEXT,
+  AssignedToUserId INT,
+  CreatedByUserId INT NOT NULL,
+  Status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+  Priority VARCHAR(50) NOT NULL DEFAULT 'Medium',
+  CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  DueDate DATETIME,
+  IsDeleted TINYINT(1) NOT NULL DEFAULT 0,
+  ProjectId INT,
+  TeamId INT,
+  PRIMARY KEY (TaskId),
+  FOREIGN KEY (AssignedToUserId) REFERENCES users(UserId),
+  FOREIGN KEY (CreatedByUserId) REFERENCES users(UserId),
+  FOREIGN KEY (ProjectId) REFERENCES project(ProjectId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO tasks VALUES
+(1,'Bai tap','.',3,1,'Completed','Medium','2026-02-26 14:30:31','2026-03-05 14:30:07',0,NULL,NULL),
+(2,'De ve nha','',2,1,'Pending','Low','2026-02-26 14:38:23','2026-03-05 14:37:32',0,NULL,NULL),
+(3,'dev','..',5,1,'In Progress','High','2026-03-02 08:49:45','2026-03-06 08:49:00',0,3,4),
+(4,'small','..',5,1,'Pending','Medium','2026-03-02 09:24:52','2026-03-09 09:23:34',0,4,4),
+(5,'test1','1',3,3,'In Progress','Low','2026-03-02 10:15:05','2026-03-04 10:14:37',0,NULL,5);
+
+-- ========================
+--  Tạo bảng USERTEAM
+-- ========================
+
+DROP TABLE IF EXISTS userteam;
+
+CREATE TABLE userteam (
+  UserId INT NOT NULL,
+  TeamId INT NOT NULL,
+  JoinedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  Role VARCHAR(50) NOT NULL DEFAULT 'Member',
+  PRIMARY KEY (UserId, TeamId),
+  FOREIGN KEY (UserId) REFERENCES users(UserId),
+  FOREIGN KEY (TeamId) REFERENCES team(TeamId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO userteam VALUES
+(2,4,'2026-02-27 14:36:16','Member'),
+(2,5,'2026-02-27 14:48:51','Member'),
+(3,1,'2026-02-27 14:33:08','Leader'),
+(3,4,'2026-02-27 14:36:16','Member'),
+(3,5,'2026-02-27 14:48:51','Leader'),
+(4,4,'2026-02-27 14:36:16','Member'),
+(4,5,'2026-02-27 14:48:51','Member'),
+(5,4,'2026-02-27 14:36:16','Leader'),
+(5,5,'2026-02-27 14:48:51','Member');

@@ -8,18 +8,31 @@ Public Class TaskService
     End Sub
 
     Public Function GetAllTasks() As List(Of Task) Implements ITaskService.GetAllTasks
-        Return _repo.GetAll()
+        Try
+            Return _repo.GetAll()
+        Catch ex As DataAccessException
+            Throw New BusinessException("Không thể tải danh sách công việc. " & ex.Message, ex)
+        End Try
     End Function
 
     Public Function GetMyTasks(userId As Integer) As List(Of Task) Implements ITaskService.GetMyTasks
-        Return _repo.GetByUserId(userId)
+        Try
+            Return _repo.GetByUserId(userId)
+        Catch ex As DataAccessException
+            Throw New BusinessException("Không thể tải danh sách công việc của bạn. " & ex.Message, ex)
+        End Try
     End Function
 
     Public Function GetTasksByProjectId(projectId As Integer) As List(Of Task) Implements ITaskService.GetTasksByProjectId
-        Return _repo.GetByProjectId(projectId)
+        Try
+            Return _repo.GetByProjectId(projectId)
+        Catch ex As DataAccessException
+            Throw New BusinessException("Không thể tải danh sách công việc của dự án. " & ex.Message, ex)
+        End Try
     End Function
 
     Public Function CreateTask(dto As TaskDto, createdByUserId As Integer) As (Success As Boolean, Message As String) Implements ITaskService.CreateTask
+        ' Validation nghiệp vụ → BusinessException (trả về Result thay vì ném ra GUI)
         If String.IsNullOrWhiteSpace(dto.Title) Then
             Return (False, "Tiêu đề công việc không được để trống.")
         End If
@@ -27,19 +40,23 @@ Public Class TaskService
             Return (False, "Vui lòng chọn Nhân viên được giao hoặc chọn Nhóm nhận việc.")
         End If
 
-        Dim newTask As New Task() With {
-            .Title = dto.Title.Trim(),
-            .Description = If(dto.Description, ""),
-            .AssignedToUserId = If(dto.AssignedToUserId.HasValue AndAlso dto.AssignedToUserId.Value > 0, dto.AssignedToUserId, CType(Nothing, Integer?)),
-            .CreatedByUserId = createdByUserId,
-            .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Pending", dto.Status),
-            .Priority = If(String.IsNullOrWhiteSpace(dto.Priority), "Medium", dto.Priority),
-            .DueDate = dto.DueDate,
-            .ProjectId = If(dto.ProjectId.HasValue AndAlso dto.ProjectId.Value > 0, dto.ProjectId, CType(Nothing, Integer?)),
-            .TeamId = If(dto.TeamId.HasValue AndAlso dto.TeamId.Value > 0, dto.TeamId, CType(Nothing, Integer?))
-        }
-        _repo.Insert(newTask)
-        Return (True, "Tạo công việc thành công!")
+        Try
+            Dim newTask As New Task() With {
+                .Title = dto.Title.Trim(),
+                .Description = If(dto.Description, ""),
+                .AssignedToUserId = If(dto.AssignedToUserId.HasValue AndAlso dto.AssignedToUserId.Value > 0, dto.AssignedToUserId, CType(Nothing, Integer?)),
+                .CreatedByUserId = createdByUserId,
+                .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Pending", dto.Status),
+                .Priority = If(String.IsNullOrWhiteSpace(dto.Priority), "Medium", dto.Priority),
+                .DueDate = dto.DueDate,
+                .ProjectId = If(dto.ProjectId.HasValue AndAlso dto.ProjectId.Value > 0, dto.ProjectId, CType(Nothing, Integer?)),
+                .TeamId = If(dto.TeamId.HasValue AndAlso dto.TeamId.Value > 0, dto.TeamId, CType(Nothing, Integer?))
+            }
+            _repo.Insert(newTask)
+            Return (True, "Tạo công việc thành công!")
+        Catch ex As DataAccessException
+            Return (False, "Lỗi cơ sở dữ liệu: " & ex.Message)
+        End Try
     End Function
 
     Public Function UpdateTask(dto As TaskDto) As (Success As Boolean, Message As String) Implements ITaskService.UpdateTask
@@ -47,19 +64,23 @@ Public Class TaskService
             Return (False, "Tiêu đề công việc không được để trống.")
         End If
 
-        Dim updTask As New Task() With {
-            .TaskId = dto.TaskId,
-            .Title = dto.Title.Trim(),
-            .Description = If(dto.Description, ""),
-            .AssignedToUserId = If(dto.AssignedToUserId.HasValue AndAlso dto.AssignedToUserId.Value > 0, dto.AssignedToUserId, CType(Nothing, Integer?)),
-            .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Pending", dto.Status),
-            .Priority = If(String.IsNullOrWhiteSpace(dto.Priority), "Medium", dto.Priority),
-            .DueDate = dto.DueDate,
-            .ProjectId = If(dto.ProjectId.HasValue AndAlso dto.ProjectId.Value > 0, dto.ProjectId, CType(Nothing, Integer?)),
-            .TeamId = If(dto.TeamId.HasValue AndAlso dto.TeamId.Value > 0, dto.TeamId, CType(Nothing, Integer?))
-        }
-        _repo.Update(updTask)
-        Return (True, "Cập nhật công việc thành công!")
+        Try
+            Dim updTask As New Task() With {
+                .TaskId = dto.TaskId,
+                .Title = dto.Title.Trim(),
+                .Description = If(dto.Description, ""),
+                .AssignedToUserId = If(dto.AssignedToUserId.HasValue AndAlso dto.AssignedToUserId.Value > 0, dto.AssignedToUserId, CType(Nothing, Integer?)),
+                .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Pending", dto.Status),
+                .Priority = If(String.IsNullOrWhiteSpace(dto.Priority), "Medium", dto.Priority),
+                .DueDate = dto.DueDate,
+                .ProjectId = If(dto.ProjectId.HasValue AndAlso dto.ProjectId.Value > 0, dto.ProjectId, CType(Nothing, Integer?)),
+                .TeamId = If(dto.TeamId.HasValue AndAlso dto.TeamId.Value > 0, dto.TeamId, CType(Nothing, Integer?))
+            }
+            _repo.Update(updTask)
+            Return (True, "Cập nhật công việc thành công!")
+        Catch ex As DataAccessException
+            Return (False, "Lỗi cơ sở dữ liệu: " & ex.Message)
+        End Try
     End Function
 
     Public Function UpdateStatus(taskId As Integer, status As String) As (Success As Boolean, Message As String) Implements ITaskService.UpdateStatus
@@ -67,25 +88,38 @@ Public Class TaskService
         If Not validStatuses.Contains(status) Then
             Return (False, "Trạng thái không hợp lệ.")
         End If
-        _repo.UpdateStatus(taskId, status)
-        Return (True, "Cập nhật trạng thái thành công!")
+
+        Try
+            _repo.UpdateStatus(taskId, status)
+            Return (True, "Cập nhật trạng thái thành công!")
+        Catch ex As DataAccessException
+            Return (False, "Lỗi cơ sở dữ liệu: " & ex.Message)
+        End Try
     End Function
 
     Public Function DeleteTask(taskId As Integer) As (Success As Boolean, Message As String) Implements ITaskService.DeleteTask
-        _repo.Delete(taskId)
-        Return (True, "Đã xóa công việc (Soft Delete).")
+        Try
+            _repo.Delete(taskId)
+            Return (True, "Đã xóa công việc (Soft Delete).")
+        Catch ex As DataAccessException
+            Return (False, "Lỗi cơ sở dữ liệu: " & ex.Message)
+        End Try
     End Function
 
     Public Function GetOpenTasksForUser(userId As Integer) As List(Of Task) Implements ITaskService.GetOpenTasksForUser
-        Return _repo.GetOpenTasksForUser(userId)
+        Try
+            Return _repo.GetOpenTasksForUser(userId)
+        Catch ex As DataAccessException
+            Throw New BusinessException("Không thể tải danh sách việc mở. " & ex.Message, ex)
+        End Try
     End Function
 
     Public Function ClaimTask(taskId As Integer, userId As Integer) As (Success As Boolean, Message As String) Implements ITaskService.ClaimTask
         Try
             _repo.ClaimTask(taskId, userId)
             Return (True, "Nhận việc thành công!")
-        Catch ex As Exception
-            Return (False, "Lỗi khi nhận việc: " & ex.Message)
+        Catch ex As DataAccessException
+            Return (False, "Lỗi cơ sở dữ liệu khi nhận việc: " & ex.Message)
         End Try
     End Function
 

@@ -39,7 +39,7 @@ Public Class frmMyTeams
 
             dgvMyTeams.DataSource = Nothing
             dgvMyTeams.DataSource = myTeams
-        Catch ex As Exception
+        Catch ex As BusinessException
             MessageBox.Show("Lỗi tải thông tin nhóm: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub

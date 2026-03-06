@@ -64,21 +64,27 @@ Public Class frmTaskManagement
             For Each u In _userRepo.GetAll()
                 _userNames(u.UserId) = u.UserName
             Next
-        Catch : End Try
+        Catch ex As BusinessException
+            ' Bỏ qua lỗi lookup — grid vẫn hiển thị ID nếu không tải được tên
+        End Try
 
         Try
             _projectNames.Clear()
             For Each p In _projectService.GetAllProjects()
                 _projectNames(p.ProjectId) = p.ProjectName
             Next
-        Catch : End Try
+        Catch ex As BusinessException
+            ' Bỏ qua lỗi lookup — grid vẫn hiển thị ID nếu không tải được tên
+        End Try
 
         Try
             _teamNames.Clear()
             For Each t In _teamService.GetAllTeams()
                 _teamNames(t.TeamId) = t.TeamName
             Next
-        Catch : End Try
+        Catch ex As BusinessException
+            ' Bỏ qua lỗi lookup — grid vẫn hiển thị ID nếu không tải được tên
+        End Try
     End Sub
 
     ''' <summary>Chuyển List(Of Task) thành List(Of TaskViewItem) có tên thay vì ID</summary>
@@ -128,7 +134,7 @@ Public Class frmTaskManagement
             cboAssignedUser.DataSource = users
             cboAssignedUser.DisplayMember = "UserName"   ' Hiển thị tên
             cboAssignedUser.ValueMember = "UserId"       ' Lưu ID
-        Catch ex As Exception
+        Catch ex As BusinessException
             MessageBox.Show("Không thể tải danh sách nhân viên: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         End Try
     End Sub
@@ -144,7 +150,7 @@ Public Class frmTaskManagement
             cboProject.DataSource = listForCombo
             cboProject.DisplayMember = "ProjectName"
             cboProject.ValueMember = "ProjectId"
-        Catch ex As Exception
+        Catch ex As BusinessException
             MessageBox.Show("Không thể tải danh sách dự án: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         End Try
     End Sub
@@ -160,7 +166,7 @@ Public Class frmTaskManagement
             cboTeam.DataSource = listForCombo
             cboTeam.DisplayMember = "TeamName"
             cboTeam.ValueMember = "TeamId"
-        Catch ex As Exception
+        Catch ex As BusinessException
             MessageBox.Show("Không thể tải danh sách Nhóm: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         End Try
     End Sub
@@ -179,7 +185,7 @@ Public Class frmTaskManagement
         Try
             _allTasks = _taskService.GetAllTasks()
             ApplyFilter()   ' Áp dụng filter hiện tại lên danh sách
-        Catch ex As Exception
+        Catch ex As BusinessException
             MessageBox.Show("Lỗi tải danh sách task: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
@@ -437,6 +443,7 @@ Public Class frmTaskManagement
             End Using
 
         Catch ex As Exception
+            ' Bắt Exception chung vì lỗi có thể từ IO (ghi file) hoặc DB
             MessageBox.Show("Lỗi khi xuất file: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub

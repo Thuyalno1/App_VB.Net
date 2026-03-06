@@ -45,7 +45,7 @@ Public Class frmOpenTasks
         Try
             Dim tasks As List(Of Task) = _taskService.GetOpenTasksForUser(SessionManager.CurrentUser.UserId)
             dgvOpenTasks.DataSource = tasks
-        Catch ex As Exception
+        Catch ex As BusinessException
             MessageBox.Show("Lỗi khi tải danh sách việc: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub

@@ -37,9 +37,27 @@ Partial Class frmTeams
         Me.txtDescription = New System.Windows.Forms.TextBox()
         Me.txtTeamName = New System.Windows.Forms.TextBox()
         Me.btnBack = New System.Windows.Forms.Button()
+        Me.lblSearch = New System.Windows.Forms.Label()
+        Me.txtSearch = New System.Windows.Forms.TextBox()
         CType(Me.dgvTeams, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
+        '
+        'lblSearch
+        '
+        Me.lblSearch.AutoSize = True
+        Me.lblSearch.Location = New System.Drawing.Point(100, 17)
+        Me.lblSearch.Name = "lblSearch"
+        Me.lblSearch.Size = New System.Drawing.Size(65, 13)
+        Me.lblSearch.TabIndex = 10
+        Me.lblSearch.Text = "🔍 Tìm kiếm:"
+        '
+        'txtSearch
+        '
+        Me.txtSearch.Location = New System.Drawing.Point(175, 14)
+        Me.txtSearch.Name = "txtSearch"
+        Me.txtSearch.Size = New System.Drawing.Size(274, 20)
+        Me.txtSearch.TabIndex = 11
         '
         'dgvTeams
         '
@@ -191,6 +209,8 @@ Partial Class frmTeams
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.Controls.Add(Me.txtSearch)
+        Me.Controls.Add(Me.lblSearch)
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.dgvTeams)
@@ -218,4 +238,6 @@ Partial Class frmTeams
     Friend WithEvents txtDescription As Windows.Forms.TextBox
     Friend WithEvents txtTeamName As Windows.Forms.TextBox
     Friend WithEvents btnBack As Windows.Forms.Button
+    Friend WithEvents lblSearch As Windows.Forms.Label
+    Friend WithEvents txtSearch As Windows.Forms.TextBox
 End Class

@@ -5,6 +5,7 @@ Public Class frmProjects
     Private ReadOnly _teamService As ITeamService
     Private ReadOnly _userRepo As IUserRepository
     Private _selectedProjectId As Integer = -1
+    Private _allProjects As List(Of Project)   ' Cache để filter tìm kiếm client-side
 
     Public Sub New()
         InitializeComponent()
@@ -57,12 +58,36 @@ Public Class frmProjects
 
     Private Sub LoadProjects()
         Try
-            Dim projects = _projectService.GetAllProjects()
-            dgvProjects.DataSource = Nothing
-            dgvProjects.DataSource = projects
-        Catch ex As Exception
+            _allProjects = _projectService.GetAllProjects()
+            ApplySearch()
+        Catch ex As BusinessException
             MessageBox.Show("Lỗi tải danh sách dự án: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+    End Sub
+
+    ''' <summary>Lọc danh sách dự án theo từ khóa (client-side)</summary>
+    Private Sub ApplySearch()
+        If _allProjects Is Nothing Then Return
+
+        Dim keyword As String = txtSearch.Text.Trim().ToLower()
+
+        Dim filtered As List(Of Project)
+        If String.IsNullOrEmpty(keyword) Then
+            filtered = _allProjects
+        Else
+            filtered = _allProjects.Where(Function(p)
+                Return (p.ProjectName IsNot Nothing AndAlso p.ProjectName.ToLower().Contains(keyword)) OrElse
+                       (p.Description IsNot Nothing AndAlso p.Description.ToLower().Contains(keyword)) OrElse
+                       (p.Status IsNot Nothing AndAlso p.Status.ToLower().Contains(keyword))
+            End Function).ToList()
+        End If
+
+        dgvProjects.DataSource = Nothing
+        dgvProjects.DataSource = filtered
+    End Sub
+
+    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
+        ApplySearch()
     End Sub
 
     Private Sub dgvProjects_SelectionChanged(sender As Object, e As EventArgs) Handles dgvProjects.SelectionChanged

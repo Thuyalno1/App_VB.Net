@@ -115,6 +115,11 @@
   <ItemGroup>
     <Compile Include="BLL\Class1.vb" />
     <Compile Include="DAL\CodeFile1.vb" />
+    <!-- Exceptions -->
+    <Compile Include="Exceptions\AppException.vb" />
+    <Compile Include="Exceptions\DataAccessException.vb" />
+    <Compile Include="Exceptions\BusinessException.vb" />
+    <Compile Include="Exceptions\NotFoundException.vb" />
     <!-- DAL -->
     <Compile Include="DAL\Model\User.vb" />
     <Compile Include="DAL\Model\Task.vb" />
