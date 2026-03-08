@@ -45,7 +45,6 @@ Public Class ProjectService
         If String.IsNullOrWhiteSpace(dto.ProjectName) Then
             Return (False, "Tên dự án không được để trống.")
         End If
-
         Try
             Dim newProject As New Project() With {
                 .ProjectName = dto.ProjectName.Trim(),
@@ -67,7 +66,6 @@ Public Class ProjectService
         If String.IsNullOrWhiteSpace(dto.ProjectName) Then
             Return (False, "Tên dự án không được để trống.")
         End If
-
         Try
             Dim updProject As New Project() With {
                 .ProjectId = dto.ProjectId,
