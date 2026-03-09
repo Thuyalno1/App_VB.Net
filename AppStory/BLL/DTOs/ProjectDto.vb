@@ -6,5 +6,5 @@ Public Class ProjectDto
     Public Property EndDate As DateTime?
     Public Property Status As String
     Public Property ManagerId As Integer?
-    Public Property TeamId As Integer?
+    Public Property TeamIds As New List(Of Integer)()
 End Class

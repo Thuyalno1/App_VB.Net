@@ -6,4 +6,5 @@ Public Interface IProjectService
     Function CreateProject(dto As ProjectDto) As (Success As Boolean, Message As String)
     Function UpdateProject(dto As ProjectDto) As (Success As Boolean, Message As String)
     Function DeleteProject(projectId As Integer) As (Success As Boolean, Message As String)
+    Function GetTeamIdsByProjectId(projectId As Integer) As List(Of Integer)
 End Interface

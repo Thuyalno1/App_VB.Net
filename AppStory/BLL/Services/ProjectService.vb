@@ -53,10 +53,10 @@ Public Class ProjectService
                 .StartDate = dto.StartDate,
                 .EndDate = dto.EndDate,
                 .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Planning", dto.Status),
-                .ManagerId = dto.ManagerId,
-                .TeamId = dto.TeamId
+                .ManagerId = dto.ManagerId
             }
-            _repo.Insert(newProject)
+            _repo.Insert(newProject) ' project.ProjectId will be populated
+            _repo.AssignTeamsToProject(newProject.ProjectId, dto.TeamIds)
             Return (True, "Tạo dự án thành công!")
         Catch ex As DataAccessException
             Return (False, "Lỗi cơ sở dữ liệu: " & ex.Message)
@@ -76,10 +76,10 @@ Public Class ProjectService
                 .StartDate = dto.StartDate,
                 .EndDate = dto.EndDate,
                 .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Planning", dto.Status),
-                .ManagerId = dto.ManagerId,
-                .TeamId = dto.TeamId
+                .ManagerId = dto.ManagerId
             }
             _repo.Update(updProject)
+            _repo.AssignTeamsToProject(dto.ProjectId, dto.TeamIds)
             Return (True, "Cập nhật dự án thành công!")
         Catch ex As DataAccessException
             Return (False, "Lỗi cơ sở dữ liệu: " & ex.Message)
@@ -92,6 +92,14 @@ Public Class ProjectService
             Return (True, "Đã xóa dự án.")
         Catch ex As DataAccessException
             Return (False, "Lỗi cơ sở dữ liệu: " & ex.Message)
+        End Try
+    End Function
+
+    Public Function GetTeamIdsByProjectId(projectId As Integer) As List(Of Integer) Implements IProjectService.GetTeamIdsByProjectId
+        Try
+            Return _repo.GetTeamIdsByProjectId(projectId)
+        Catch ex As DataAccessException
+            Throw New BusinessException("Không thể tải danh sách Nhóm. " & ex.Message, ex)
         End Try
     End Function
 

@@ -20,7 +20,7 @@ Partial Class frmProjects
         Me.dgvProjects = New System.Windows.Forms.DataGridView()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.Label6 = New System.Windows.Forms.Label()
-        Me.cboTeam = New System.Windows.Forms.ComboBox()
+        Me.clbTeams = New System.Windows.Forms.CheckedListBox()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.cboManager = New System.Windows.Forms.ComboBox()
         Me.Label4 = New System.Windows.Forms.Label()
@@ -68,13 +68,13 @@ Partial Class frmProjects
         Me.dgvProjects.Name = "dgvProjects"
         Me.dgvProjects.ReadOnly = True
         Me.dgvProjects.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvProjects.Size = New System.Drawing.Size(536, 429)
+        Me.dgvProjects.Size = New System.Drawing.Size(536, 450)
         Me.dgvProjects.TabIndex = 0
         '
         'GroupBox1
         '
         Me.GroupBox1.Controls.Add(Me.Label6)
-        Me.GroupBox1.Controls.Add(Me.cboTeam)
+        Me.GroupBox1.Controls.Add(Me.clbTeams)
         Me.GroupBox1.Controls.Add(Me.Label5)
         Me.GroupBox1.Controls.Add(Me.cboManager)
         Me.GroupBox1.Controls.Add(Me.Label4)
@@ -93,7 +93,7 @@ Partial Class frmProjects
         Me.GroupBox1.Controls.Add(Me.btnAdd)
         Me.GroupBox1.Location = New System.Drawing.Point(554, 41)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(326, 429)
+        Me.GroupBox1.Size = New System.Drawing.Size(326, 450)
         Me.GroupBox1.TabIndex = 1
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Thông tin Dự án"
@@ -107,14 +107,14 @@ Partial Class frmProjects
         Me.Label6.TabIndex = 17
         Me.Label6.Text = "Team xử lý (nếu có):"
         '
-        'cboTeam
+        'clbTeams
         '
-        Me.cboTeam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboTeam.FormattingEnabled = True
-        Me.cboTeam.Location = New System.Drawing.Point(15, 306)
-        Me.cboTeam.Name = "cboTeam"
-        Me.cboTeam.Size = New System.Drawing.Size(294, 21)
-        Me.cboTeam.TabIndex = 16
+        Me.clbTeams.CheckOnClick = True
+        Me.clbTeams.FormattingEnabled = True
+        Me.clbTeams.Location = New System.Drawing.Point(15, 306)
+        Me.clbTeams.Name = "clbTeams"
+        Me.clbTeams.Size = New System.Drawing.Size(294, 79)
+        Me.clbTeams.TabIndex = 16
         '
         'Label5
         '
@@ -224,7 +224,7 @@ Partial Class frmProjects
         '
         'btnClear
         '
-        Me.btnClear.Location = New System.Drawing.Point(234, 350)
+        Me.btnClear.Location = New System.Drawing.Point(234, 400)
         Me.btnClear.Name = "btnClear"
         Me.btnClear.Size = New System.Drawing.Size(75, 23)
         Me.btnClear.TabIndex = 3
@@ -233,7 +233,7 @@ Partial Class frmProjects
         '
         'btnDelete
         '
-        Me.btnDelete.Location = New System.Drawing.Point(159, 350)
+        Me.btnDelete.Location = New System.Drawing.Point(159, 400)
         Me.btnDelete.Name = "btnDelete"
         Me.btnDelete.Size = New System.Drawing.Size(69, 23)
         Me.btnDelete.TabIndex = 2
@@ -242,7 +242,7 @@ Partial Class frmProjects
         '
         'btnUpdate
         '
-        Me.btnUpdate.Location = New System.Drawing.Point(82, 350)
+        Me.btnUpdate.Location = New System.Drawing.Point(82, 400)
         Me.btnUpdate.Name = "btnUpdate"
         Me.btnUpdate.Size = New System.Drawing.Size(71, 23)
         Me.btnUpdate.TabIndex = 1
@@ -251,7 +251,7 @@ Partial Class frmProjects
         '
         'btnAdd
         '
-        Me.btnAdd.Location = New System.Drawing.Point(6, 350)
+        Me.btnAdd.Location = New System.Drawing.Point(6, 400)
         Me.btnAdd.Name = "btnAdd"
         Me.btnAdd.Size = New System.Drawing.Size(70, 23)
         Me.btnAdd.TabIndex = 0
@@ -271,7 +271,7 @@ Partial Class frmProjects
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(892, 482)
+        Me.ClientSize = New System.Drawing.Size(892, 510)
         Me.Controls.Add(Me.txtSearch)
         Me.Controls.Add(Me.lblSearch)
         Me.Controls.Add(Me.btnBack)
@@ -286,27 +286,27 @@ Partial Class frmProjects
 
     End Sub
 
-    Friend WithEvents dgvProjects As Windows.Forms.DataGridView
-    Friend WithEvents GroupBox1 As Windows.Forms.GroupBox
-    Friend WithEvents btnClear As Windows.Forms.Button
-    Friend WithEvents btnDelete As Windows.Forms.Button
-    Friend WithEvents btnUpdate As Windows.Forms.Button
-    Friend WithEvents btnAdd As Windows.Forms.Button
-    Friend WithEvents Label6 As Windows.Forms.Label
-    Friend WithEvents cboTeam As Windows.Forms.ComboBox
-    Friend WithEvents Label5 As Windows.Forms.Label
-    Friend WithEvents cboManager As Windows.Forms.ComboBox
-    Friend WithEvents Label4 As Windows.Forms.Label
-    Friend WithEvents cboStatus As Windows.Forms.ComboBox
-    Friend WithEvents dtpEndDate As Windows.Forms.DateTimePicker
-    Friend WithEvents Label3 As Windows.Forms.Label
-    Friend WithEvents Label2 As Windows.Forms.Label
-    Friend WithEvents dtpStartDate As Windows.Forms.DateTimePicker
-    Friend WithEvents txtDescription As Windows.Forms.TextBox
-    Friend WithEvents Label1 As Windows.Forms.Label
-    Friend WithEvents txtProjectName As Windows.Forms.TextBox
-    Friend WithEvents lbl1 As Windows.Forms.Label
-    Friend WithEvents btnBack As Windows.Forms.Button
-    Friend WithEvents lblSearch As Windows.Forms.Label
-    Friend WithEvents txtSearch As Windows.Forms.TextBox
+    Friend WithEvents dgvProjects As System.Windows.Forms.DataGridView
+    Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
+    Friend WithEvents btnClear As System.Windows.Forms.Button
+    Friend WithEvents btnDelete As System.Windows.Forms.Button
+    Friend WithEvents btnUpdate As System.Windows.Forms.Button
+    Friend WithEvents btnAdd As System.Windows.Forms.Button
+    Friend WithEvents Label6 As System.Windows.Forms.Label
+    Friend WithEvents clbTeams As System.Windows.Forms.CheckedListBox
+    Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents cboManager As System.Windows.Forms.ComboBox
+    Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents cboStatus As System.Windows.Forms.ComboBox
+    Friend WithEvents dtpEndDate As System.Windows.Forms.DateTimePicker
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents dtpStartDate As System.Windows.Forms.DateTimePicker
+    Friend WithEvents txtDescription As System.Windows.Forms.TextBox
+    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents txtProjectName As System.Windows.Forms.TextBox
+    Friend WithEvents lbl1 As System.Windows.Forms.Label
+    Friend WithEvents btnBack As System.Windows.Forms.Button
+    Friend WithEvents lblSearch As System.Windows.Forms.Label
+    Friend WithEvents txtSearch As System.Windows.Forms.TextBox
 End Class

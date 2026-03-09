@@ -6,4 +6,6 @@ Public Interface IProjectRepository
     Sub Insert(project As Project)
     Sub Update(project As Project)
     Sub Delete(projectId As Integer)
+    Function GetTeamIdsByProjectId(projectId As Integer) As List(Of Integer)
+    Sub AssignTeamsToProject(projectId As Integer, teamIds As List(Of Integer))
 End Interface

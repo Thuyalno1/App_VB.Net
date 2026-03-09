@@ -1,5 +1,6 @@
- Imports MySql.Data.MySqlClient
+Imports System.Data.Odbc
 Imports System.Configuration
+Imports System.Data
 
 Public Class ProjectRepository
     Implements IProjectRepository
@@ -10,17 +11,20 @@ Public Class ProjectRepository
         End Get
     End Property
 
-    Private Function MapProject(reader As MySqlDataReader) As Project
+    Private Function MapProject(reader As OdbcDataReader) As Project
         Dim p As New Project()
-        p.ProjectId = reader.GetInt32("ProjectId")
-        p.ProjectName = reader.GetString("ProjectName")
-        p.Description = If(reader.IsDBNull(reader.GetOrdinal("Description")), "", reader.GetString("Description"))
-        p.StartDate = If(reader.IsDBNull(reader.GetOrdinal("StartDate")), Nothing, CType(reader.GetDateTime("StartDate"), DateTime?))
-        p.EndDate = If(reader.IsDBNull(reader.GetOrdinal("EndDate")), Nothing, CType(reader.GetDateTime("EndDate"), DateTime?))
-        p.Status = reader.GetString("Status")
-        p.ManagerId = If(reader.IsDBNull(reader.GetOrdinal("ManagerId")), Nothing, CType(reader.GetInt32("ManagerId"), Integer?))
-        p.TeamId = If(reader.IsDBNull(reader.GetOrdinal("TeamId")), Nothing, CType(reader.GetInt32("TeamId"), Integer?))
-        p.CreatedAt = reader.GetDateTime("CreatedAt")
+        p.ProjectId = reader.GetInt32(reader.GetOrdinal("ProjectId"))
+        p.ProjectName = reader.GetString(reader.GetOrdinal("ProjectName"))
+        Dim descOrd As Integer = reader.GetOrdinal("Description")
+        p.Description = If(reader.IsDBNull(descOrd), "", reader.GetString(descOrd))
+        Dim startOrd As Integer = reader.GetOrdinal("StartDate")
+        p.StartDate = If(reader.IsDBNull(startOrd), Nothing, CType(reader.GetDateTime(startOrd), DateTime?))
+        Dim endOrd As Integer = reader.GetOrdinal("EndDate")
+        p.EndDate = If(reader.IsDBNull(endOrd), Nothing, CType(reader.GetDateTime(endOrd), DateTime?))
+        p.Status = reader.GetString(reader.GetOrdinal("Status"))
+        Dim manOrd As Integer = reader.GetOrdinal("ManagerId")
+        p.ManagerId = If(reader.IsDBNull(manOrd), Nothing, CType(reader.GetInt32(manOrd), Integer?))
+        p.CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
         Return p
     End Function
 
@@ -28,10 +32,10 @@ Public Class ProjectRepository
         Try
             Dim list As New List(Of Project)()
             Dim sql As String = "SELECT * FROM Project ORDER BY CreatedAt DESC"
-            Using conn As New MySqlConnection(ConnectionString)
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    Using reader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         While reader.Read()
                             list.Add(MapProject(reader))
                         End While
@@ -46,12 +50,12 @@ Public Class ProjectRepository
 
     Public Function GetById(projectId As Integer) As Project Implements IProjectRepository.GetById
         Try
-            Dim sql As String = "SELECT * FROM Project WHERE ProjectId = @ProjectId"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "SELECT * FROM Project WHERE ProjectId = ?"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@ProjectId", projectId)
-                    Using reader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", projectId)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         If reader.Read() Then
                             Return MapProject(reader)
                         End If
@@ -69,12 +73,12 @@ Public Class ProjectRepository
     Public Function GetByManagerId(managerId As Integer) As List(Of Project) Implements IProjectRepository.GetByManagerId
         Try
             Dim list As New List(Of Project)()
-            Dim sql As String = "SELECT * FROM Project WHERE ManagerId = @ManagerId ORDER BY CreatedAt DESC"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "SELECT * FROM Project WHERE ManagerId = ? ORDER BY CreatedAt DESC"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@ManagerId", managerId)
-                    Using reader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", managerId)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         While reader.Read()
                             list.Add(MapProject(reader))
                         End While
@@ -90,12 +94,12 @@ Public Class ProjectRepository
     Public Function GetByTeamId(teamId As Integer) As List(Of Project) Implements IProjectRepository.GetByTeamId
         Try
             Dim list As New List(Of Project)()
-            Dim sql As String = "SELECT * FROM Project WHERE TeamId = @TeamId ORDER BY CreatedAt DESC"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "SELECT p.* FROM Project p INNER JOIN ProjectTeam pt ON p.ProjectId = pt.ProjectId WHERE pt.TeamId = ? ORDER BY p.CreatedAt DESC"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@TeamId", teamId)
-                    Using reader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", teamId)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         While reader.Read()
                             list.Add(MapProject(reader))
                         End While
@@ -110,19 +114,22 @@ Public Class ProjectRepository
 
     Public Sub Insert(project As Project) Implements IProjectRepository.Insert
         Try
-            Dim sql As String = "INSERT INTO Project (ProjectName, Description, StartDate, EndDate, Status, ManagerId, TeamId) 
-                                 VALUES (@ProjectName, @Description, @StartDate, @EndDate, @Status, @ManagerId, @TeamId)"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "INSERT INTO Project (ProjectName, Description, StartDate, EndDate, Status, ManagerId)
+                                 VALUES (?, ?, ?, ?, ?, ?)"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@ProjectName", project.ProjectName)
-                    cmd.Parameters.AddWithValue("@Description", If(project.Description, ""))
-                    cmd.Parameters.AddWithValue("@StartDate", If(project.StartDate.HasValue, CObj(project.StartDate.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@EndDate", If(project.EndDate.HasValue, CObj(project.EndDate.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@Status", project.Status)
-                    cmd.Parameters.AddWithValue("@ManagerId", If(project.ManagerId.HasValue, CObj(project.ManagerId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@TeamId", If(project.TeamId.HasValue, CObj(project.TeamId.Value), DBNull.Value))
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", project.ProjectName)
+                    cmd.Parameters.AddWithValue("?", If(project.Description, ""))
+                    cmd.Parameters.AddWithValue("?", If(project.StartDate.HasValue, CObj(project.StartDate.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", If(project.EndDate.HasValue, CObj(project.EndDate.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", project.Status)
+                    cmd.Parameters.AddWithValue("?", If(project.ManagerId.HasValue, CObj(project.ManagerId.Value), DBNull.Value))
                     cmd.ExecuteNonQuery()
+                End Using
+                
+                Using cmdId As New OdbcCommand("SELECT LAST_INSERT_ID()", conn)
+                    project.ProjectId = Convert.ToInt32(cmdId.ExecuteScalar())
                 End Using
             End Using
         Catch ex As Exception
@@ -132,20 +139,19 @@ Public Class ProjectRepository
 
     Public Sub Update(project As Project) Implements IProjectRepository.Update
         Try
-            Dim sql As String = "UPDATE Project SET ProjectName=@ProjectName, Description=@Description, 
-                                 StartDate=@StartDate, EndDate=@EndDate, Status=@Status, 
-                                 ManagerId=@ManagerId, TeamId=@TeamId WHERE ProjectId=@ProjectId"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "UPDATE Project SET ProjectName=?, Description=?,
+                                 StartDate=?, EndDate=?, Status=?,
+                                 ManagerId=? WHERE ProjectId=?"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@ProjectName", project.ProjectName)
-                    cmd.Parameters.AddWithValue("@Description", If(project.Description, ""))
-                    cmd.Parameters.AddWithValue("@StartDate", If(project.StartDate.HasValue, CObj(project.StartDate.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@EndDate", If(project.EndDate.HasValue, CObj(project.EndDate.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@Status", project.Status)
-                    cmd.Parameters.AddWithValue("@ManagerId", If(project.ManagerId.HasValue, CObj(project.ManagerId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@TeamId", If(project.TeamId.HasValue, CObj(project.TeamId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@ProjectId", project.ProjectId)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", project.ProjectName)
+                    cmd.Parameters.AddWithValue("?", If(project.Description, ""))
+                    cmd.Parameters.AddWithValue("?", If(project.StartDate.HasValue, CObj(project.StartDate.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", If(project.EndDate.HasValue, CObj(project.EndDate.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", project.Status)
+                    cmd.Parameters.AddWithValue("?", If(project.ManagerId.HasValue, CObj(project.ManagerId.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", project.ProjectId)
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
@@ -156,16 +162,78 @@ Public Class ProjectRepository
 
     Public Sub Delete(projectId As Integer) Implements IProjectRepository.Delete
         Try
-            Dim sql As String = "DELETE FROM Project WHERE ProjectId=@ProjectId"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "DELETE FROM Project WHERE ProjectId=?"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@ProjectId", projectId)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", projectId)
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
         Catch ex As Exception
             Throw New DataAccessException($"Không thể xóa Dự án ID={projectId}.", ex)
+        End Try
+    End Sub
+
+    Public Function GetTeamIdsByProjectId(projectId As Integer) As List(Of Integer) Implements IProjectRepository.GetTeamIdsByProjectId
+        Try
+            Dim list As New List(Of Integer)()
+            Dim sql As String = "SELECT TeamId FROM ProjectTeam WHERE ProjectId = ?"
+            Using conn As New OdbcConnection(ConnectionString)
+                conn.Open()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", projectId)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
+                        While reader.Read()
+                            list.Add(reader.GetInt32(0))
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return list
+        Catch ex As Exception
+            Throw New DataAccessException($"Không thể tải danh sách Nhóm của Dự án ID={projectId}.", ex)
+        End Try
+    End Function
+
+    Public Sub AssignTeamsToProject(projectId As Integer, teamIds As List(Of Integer)) Implements IProjectRepository.AssignTeamsToProject
+        Dim conn As OdbcConnection = Nothing
+        Dim trans As OdbcTransaction = Nothing
+        Try
+            conn = New OdbcConnection(ConnectionString)
+            conn.Open()
+            trans = conn.BeginTransaction()
+
+            ' 1. Delete old teams
+            Dim sqlDelete As String = "DELETE FROM ProjectTeam WHERE ProjectId = ?"
+            Using cmdDel As New OdbcCommand(sqlDelete, conn, trans)
+                cmdDel.Parameters.AddWithValue("?", projectId)
+                cmdDel.ExecuteNonQuery()
+            End Using
+
+            ' 2. Insert new teams
+            If teamIds IsNot Nothing AndAlso teamIds.Count > 0 Then
+                Dim sqlInsert As String = "INSERT INTO ProjectTeam (ProjectId, TeamId) VALUES (?, ?)"
+                Using cmdIns As New OdbcCommand(sqlInsert, conn, trans)
+                    For Each tId In teamIds
+                        cmdIns.Parameters.Clear()
+                        cmdIns.Parameters.AddWithValue("?", projectId)
+                        cmdIns.Parameters.AddWithValue("?", tId)
+                        cmdIns.ExecuteNonQuery()
+                    Next
+                End Using
+            End If
+
+            trans.Commit()
+        Catch ex As Exception
+            If trans IsNot Nothing Then trans.Rollback()
+            Throw New DataAccessException($"Lỗi khi gán nhóm cho Dự án ID={projectId}.", ex)
+        Finally
+            If trans IsNot Nothing Then trans.Dispose()
+            If conn IsNot Nothing Then
+                If conn.State = ConnectionState.Open Then conn.Close()
+                conn.Dispose()
+            End If
         End Try
     End Sub
 

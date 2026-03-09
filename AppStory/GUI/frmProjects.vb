@@ -17,7 +17,7 @@ Public Class frmProjects
     Private Sub frmProjects_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetupGrid()
         LoadUsersToCombo()
-        LoadTeamsToCombo()
+        LoadTeamsToListBox()
         cboStatus.SelectedIndex = 0
         LoadProjects()
     End Sub
@@ -44,16 +44,14 @@ Public Class frmProjects
         cboManager.ValueMember = "UserId"
     End Sub
 
-    Private Sub LoadTeamsToCombo()
+    Private Sub LoadTeamsToListBox()
+        clbTeams.DataSource = Nothing
+        clbTeams.Items.Clear()
+        
         Dim teams = _teamService.GetAllTeams()
-        Dim listForCombo As New List(Of Object)
-        listForCombo.Add(New With {.TeamId = 0, .TeamName = "-- Có thể cho tất cả --"})
-        For Each t In teams
-            listForCombo.Add(New With {.TeamId = t.TeamId, .TeamName = t.TeamName})
-        Next
-        cboTeam.DataSource = listForCombo
-        cboTeam.DisplayMember = "TeamName"
-        cboTeam.ValueMember = "TeamId"
+        clbTeams.DataSource = teams
+        clbTeams.DisplayMember = "TeamName"
+        clbTeams.ValueMember = "TeamId"
     End Sub
 
     Private Sub LoadProjects()
@@ -105,7 +103,24 @@ Public Class frmProjects
         cboStatus.SelectedItem = p.Status
         
         cboManager.SelectedValue = If(p.ManagerId.HasValue, p.ManagerId.Value, 0)
-        cboTeam.SelectedValue = If(p.TeamId.HasValue, p.TeamId.Value, 0)
+        
+        ' Uncheck toàn bộ list trước
+        For i As Integer = 0 To clbTeams.Items.Count - 1
+            clbTeams.SetItemChecked(i, False)
+        Next
+        
+        ' Lấy danh sách team IDs của dự án
+        Try
+            Dim teamIds = _projectService.GetTeamIdsByProjectId(p.ProjectId)
+            For i As Integer = 0 To clbTeams.Items.Count - 1
+                Dim item = CType(clbTeams.Items(i), TeamDto)
+                If teamIds.Contains(item.TeamId) Then
+                    clbTeams.SetItemChecked(i, True)
+                End If
+            Next
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Function GetSelectedComboboxId(cbo As ComboBox) As Integer?
@@ -113,6 +128,15 @@ Public Class frmProjects
         Dim val As Integer = Convert.ToInt32(cbo.SelectedValue)
         If val = 0 Then Return Nothing
         Return val
+    End Function
+
+    Private Function GetSelectedTeamIds() As List(Of Integer)
+        Dim ids As New List(Of Integer)()
+        For Each item In clbTeams.CheckedItems
+            Dim teamItem = CType(item, TeamDto)
+            ids.Add(teamItem.TeamId)
+        Next
+        Return ids
     End Function
 
     Private Sub btnAdd_Click(sender As Object, e As EventArgs) Handles btnAdd.Click
@@ -123,7 +147,7 @@ Public Class frmProjects
             .EndDate = dtpEndDate.Value,
             .Status = cboStatus.SelectedItem?.ToString(),
             .ManagerId = GetSelectedComboboxId(cboManager),
-            .TeamId = GetSelectedComboboxId(cboTeam)
+            .TeamIds = GetSelectedTeamIds()
         }
         
         Dim result = _projectService.CreateProject(dto)
@@ -150,7 +174,7 @@ Public Class frmProjects
             .EndDate = dtpEndDate.Value,
             .Status = cboStatus.SelectedItem?.ToString(),
             .ManagerId = GetSelectedComboboxId(cboManager),
-            .TeamId = GetSelectedComboboxId(cboTeam)
+            .TeamIds = GetSelectedTeamIds()
         }
         
         Dim result = _projectService.UpdateProject(dto)
@@ -196,7 +220,9 @@ Public Class frmProjects
         dtpEndDate.Value = DateTime.Now.AddMonths(1)
         cboStatus.SelectedIndex = 0
         cboManager.SelectedValue = 0
-        cboTeam.SelectedValue = 0
+        For i As Integer = 0 To clbTeams.Items.Count - 1
+            clbTeams.SetItemChecked(i, False)
+        Next
         dgvProjects.ClearSelection()
     End Sub
 

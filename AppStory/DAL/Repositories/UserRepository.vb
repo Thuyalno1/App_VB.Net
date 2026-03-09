@@ -1,4 +1,4 @@
-Imports MySql.Data.MySqlClient
+Imports System.Data.Odbc
 Imports System.Configuration
 
 Public Class UserRepository
@@ -14,18 +14,19 @@ Public Class UserRepository
     ''' <summary>Lưu User mới vào bảng Users</summary>
     Public Sub Register(user As User) Implements IUserRepository.Register
         Try
-            Dim sql As String = "INSERT INTO Users (UserName, PasswordHash, Email, RoleId) VALUES (@UserName, @PasswordHash, @Email, @RoleId)"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "INSERT INTO Users (UserName, PasswordHash, Email, RoleId) VALUES (?, ?, ?, ?)"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@UserName", user.UserName)
-                    cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash)
-                    cmd.Parameters.AddWithValue("@Email", user.Email)
-                    cmd.Parameters.AddWithValue("@RoleId", user.RoleId)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", user.UserName)
+                    cmd.Parameters.AddWithValue("?", user.PasswordHash)
+                    cmd.Parameters.AddWithValue("?", user.Email)
+                    cmd.Parameters.AddWithValue("?", user.RoleId)
                     cmd.ExecuteNonQuery()
-                    ' Lấy UserId vừa được tạo
-                    cmd.CommandText = "SELECT LAST_INSERT_ID()"
-                    user.UserId = Convert.ToInt32(cmd.ExecuteScalar())
+                End Using
+                ' Lấy UserId vừa được tạo
+                Using cmdId As New OdbcCommand("SELECT LAST_INSERT_ID()", conn)
+                    user.UserId = Convert.ToInt32(cmdId.ExecuteScalar())
                 End Using
             End Using
         Catch ex As Exception
@@ -36,20 +37,20 @@ Public Class UserRepository
     ''' <summary>Tìm User theo username (không phân biệt chữ hoa/thường)</summary>
     Public Function FindByUsername(username As String) As User Implements IUserRepository.FindByUsername
         Try
-            Dim sql As String = "SELECT UserId, UserName, PasswordHash, Email, RoleId, CreatedAt FROM Users WHERE LOWER(UserName) = LOWER(@UserName) LIMIT 1"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "SELECT UserId, UserName, PasswordHash, Email, RoleId, CreatedAt FROM Users WHERE LOWER(UserName) = LOWER(?) LIMIT 1"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@UserName", username)
-                    Using reader As MySqlDataReader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", username)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         If reader.Read() Then
                             Return New User() With {
-                                .UserId = reader.GetInt32("UserId"),
-                                .UserName = reader.GetString("UserName"),
-                                .PasswordHash = reader.GetString("PasswordHash"),
-                                .Email = reader.GetString("Email"),
-                                .RoleId = reader.GetString("RoleId"),
-                                .CreatedAt = reader.GetDateTime("CreatedAt")
+                                .UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                                .UserName = reader.GetString(reader.GetOrdinal("UserName")),
+                                .PasswordHash = reader.GetString(reader.GetOrdinal("PasswordHash")),
+                                .Email = reader.GetString(reader.GetOrdinal("Email")),
+                                .RoleId = reader.GetString(reader.GetOrdinal("RoleId")),
+                                .CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
                             }
                         End If
                     End Using
@@ -64,11 +65,11 @@ Public Class UserRepository
     ''' <summary>Kiểm tra username đã tồn tại chưa</summary>
     Public Function IsUsernameExist(username As String) As Boolean Implements IUserRepository.IsUsernameExist
         Try
-            Dim sql As String = "SELECT COUNT(*) FROM Users WHERE LOWER(UserName) = LOWER(@UserName)"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "SELECT COUNT(*) FROM Users WHERE LOWER(UserName) = LOWER(?)"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@UserName", username)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", username)
                     Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
                     Return count > 0
                 End Using
@@ -81,11 +82,11 @@ Public Class UserRepository
     ''' <summary>Kiểm tra email đã tồn tại chưa</summary>
     Public Function IsEmailExist(email As String) As Boolean Implements IUserRepository.IsEmailExist
         Try
-            Dim sql As String = "SELECT COUNT(*) FROM Users WHERE LOWER(Email) = LOWER(@Email)"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "SELECT COUNT(*) FROM Users WHERE LOWER(Email) = LOWER(?)"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@Email", email)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", email)
                     Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
                     Return count > 0
                 End Using
@@ -100,16 +101,16 @@ Public Class UserRepository
         Try
             Dim users As New List(Of User)()
             Dim sql As String = "SELECT UserId, UserName, Email, RoleId FROM Users ORDER BY UserName"
-            Using conn As New MySqlConnection(ConnectionString)
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    Using reader As MySqlDataReader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         While reader.Read()
                             users.Add(New User() With {
-                                .UserId = reader.GetInt32("UserId"),
-                                .UserName = reader.GetString("UserName"),
-                                .Email = reader.GetString("Email"),
-                                .RoleId = reader.GetString("RoleId")
+                                .UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                                .UserName = reader.GetString(reader.GetOrdinal("UserName")),
+                                .Email = reader.GetString(reader.GetOrdinal("Email")),
+                                .RoleId = reader.GetString(reader.GetOrdinal("RoleId"))
                             })
                         End While
                     End Using

@@ -83,8 +83,8 @@ Partial Class frmMyTeams
 
     End Sub
 
-    Friend WithEvents dgvMyTeams As Windows.Forms.DataGridView
-    Friend WithEvents btnBack As Windows.Forms.Button
-    Friend WithEvents lblUserInfo As Windows.Forms.Label
+    Friend WithEvents dgvMyTeams As System.Windows.Forms.DataGridView
+    Friend WithEvents btnBack As System.Windows.Forms.Button
+    Friend WithEvents lblUserInfo As System.Windows.Forms.Label
     Friend WithEvents btnCreateTeamTask As System.Windows.Forms.Button
 End Class

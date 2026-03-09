@@ -1,4 +1,4 @@
-Imports MySql.Data.MySqlClient
+Imports System.Data.Odbc
 Imports System.Configuration
 
 Public Class TaskRepository
@@ -11,20 +11,26 @@ Public Class TaskRepository
     End Property
 
     ''' <summary>Map một DataReader row thành đối tượng Task</summary>
-    Private Function MapTask(reader As MySqlDataReader) As Task
+    Private Function MapTask(reader As OdbcDataReader) As Task
         Dim t As New Task()
-        t.TaskId = reader.GetInt32("TaskId")
-        t.Title = reader.GetString("Title")
-        t.Description = If(reader.IsDBNull(reader.GetOrdinal("Description")), "", reader.GetString("Description"))
-        t.AssignedToUserId = If(reader.IsDBNull(reader.GetOrdinal("AssignedToUserId")), CType(Nothing, Integer?), reader.GetInt32("AssignedToUserId"))
-        t.CreatedByUserId = reader.GetInt32("CreatedByUserId")
-        t.Status = reader.GetString("Status")
-        t.Priority = reader.GetString("Priority")
-        t.CreatedAt = reader.GetDateTime("CreatedAt")
-        t.DueDate = If(reader.IsDBNull(reader.GetOrdinal("DueDate")), Nothing, CType(reader.GetDateTime("DueDate"), DateTime?))
-        t.IsDeleted = reader.GetBoolean("IsDeleted")
-        t.ProjectId = If(reader.IsDBNull(reader.GetOrdinal("ProjectId")), Nothing, CType(reader.GetInt32("ProjectId"), Integer?))
-        t.TeamId = If(reader.IsDBNull(reader.GetOrdinal("TeamId")), Nothing, CType(reader.GetInt32("TeamId"), Integer?))
+        t.TaskId = reader.GetInt32(reader.GetOrdinal("TaskId"))
+        t.Title = reader.GetString(reader.GetOrdinal("Title"))
+        Dim descOrd As Integer = reader.GetOrdinal("Description")
+        t.Description = If(reader.IsDBNull(descOrd), "", reader.GetString(descOrd))
+        Dim assignedOrd As Integer = reader.GetOrdinal("AssignedToUserId")
+        t.AssignedToUserId = If(reader.IsDBNull(assignedOrd), CType(Nothing, Integer?), reader.GetInt32(assignedOrd))
+        t.CreatedByUserId = reader.GetInt32(reader.GetOrdinal("CreatedByUserId"))
+        t.Status = reader.GetString(reader.GetOrdinal("Status"))
+        t.Priority = reader.GetString(reader.GetOrdinal("Priority"))
+        t.CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
+        Dim dueOrd As Integer = reader.GetOrdinal("DueDate")
+        t.DueDate = If(reader.IsDBNull(dueOrd), Nothing, CType(reader.GetDateTime(dueOrd), DateTime?))
+        Dim isDeletedOrd As Integer = reader.GetOrdinal("IsDeleted")
+        t.IsDeleted = Convert.ToBoolean(reader.GetValue(isDeletedOrd))
+        Dim projOrd As Integer = reader.GetOrdinal("ProjectId")
+        t.ProjectId = If(reader.IsDBNull(projOrd), Nothing, CType(reader.GetInt32(projOrd), Integer?))
+        Dim teamOrd As Integer = reader.GetOrdinal("TeamId")
+        t.TeamId = If(reader.IsDBNull(teamOrd), Nothing, CType(reader.GetInt32(teamOrd), Integer?))
         Return t
     End Function
 
@@ -36,10 +42,10 @@ Public Class TaskRepository
                                  LEFT JOIN Users u ON t.AssignedToUserId = u.UserId
                                  WHERE t.IsDeleted = 0
                                  ORDER BY t.CreatedAt DESC"
-            Using conn As New MySqlConnection(ConnectionString)
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    Using reader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         While reader.Read()
                             tasks.Add(MapTask(reader))
                         End While
@@ -56,12 +62,12 @@ Public Class TaskRepository
     Public Function GetByUserId(userId As Integer) As List(Of Task) Implements ITaskRepository.GetByUserId
         Try
             Dim tasks As New List(Of Task)()
-            Dim sql As String = "SELECT * FROM Tasks WHERE AssignedToUserId = @UserId AND IsDeleted = 0 ORDER BY CreatedAt DESC"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "SELECT * FROM Tasks WHERE AssignedToUserId = ? AND IsDeleted = 0 ORDER BY CreatedAt DESC"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@UserId", userId)
-                    Using reader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", userId)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         While reader.Read()
                             tasks.Add(MapTask(reader))
                         End While
@@ -78,12 +84,12 @@ Public Class TaskRepository
     Public Function GetByProjectId(projectId As Integer) As List(Of Task) Implements ITaskRepository.GetByProjectId
         Try
             Dim tasks As New List(Of Task)()
-            Dim sql As String = "SELECT * FROM Tasks WHERE ProjectId = @ProjectId AND IsDeleted = 0 ORDER BY CreatedAt DESC"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "SELECT * FROM Tasks WHERE ProjectId = ? AND IsDeleted = 0 ORDER BY CreatedAt DESC"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@ProjectId", projectId)
-                    Using reader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", projectId)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         While reader.Read()
                             tasks.Add(MapTask(reader))
                         End While
@@ -100,19 +106,19 @@ Public Class TaskRepository
     Public Sub Insert(task As Task) Implements ITaskRepository.Insert
         Try
             Dim sql As String = "INSERT INTO Tasks (Title, Description, AssignedToUserId, CreatedByUserId, Status, Priority, DueDate, ProjectId, TeamId)
-                                 VALUES (@Title, @Description, @AssignedToUserId, @CreatedByUserId, @Status, @Priority, @DueDate, @ProjectId, @TeamId)"
-            Using conn As New MySqlConnection(ConnectionString)
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@Title", task.Title)
-                    cmd.Parameters.AddWithValue("@Description", If(task.Description, ""))
-                    cmd.Parameters.AddWithValue("@Status", task.Status)
-                    cmd.Parameters.AddWithValue("@Priority", task.Priority)
-                    cmd.Parameters.AddWithValue("@DueDate", If(task.DueDate.HasValue, CObj(task.DueDate.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@ProjectId", If(task.ProjectId.HasValue, CObj(task.ProjectId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@TeamId", If(task.TeamId.HasValue, CObj(task.TeamId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@AssignedToUserId", If(task.AssignedToUserId.HasValue, CObj(task.AssignedToUserId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@CreatedByUserId", task.CreatedByUserId)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", task.Title)
+                    cmd.Parameters.AddWithValue("?", If(task.Description, ""))
+                    cmd.Parameters.AddWithValue("?", If(task.AssignedToUserId.HasValue, CObj(task.AssignedToUserId.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", task.CreatedByUserId)
+                    cmd.Parameters.AddWithValue("?", task.Status)
+                    cmd.Parameters.AddWithValue("?", task.Priority)
+                    cmd.Parameters.AddWithValue("?", If(task.DueDate.HasValue, CObj(task.DueDate.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", If(task.ProjectId.HasValue, CObj(task.ProjectId.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", If(task.TeamId.HasValue, CObj(task.TeamId.Value), DBNull.Value))
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
@@ -124,22 +130,22 @@ Public Class TaskRepository
     ''' <summary>Admin: cập nhật toàn bộ thông tin task</summary>
     Public Sub Update(task As Task) Implements ITaskRepository.Update
         Try
-            Dim sql As String = "UPDATE Tasks SET Title=@Title, Description=@Description,
-                                 AssignedToUserId=@AssignedToUserId, Status=@Status,
-                                 Priority=@Priority, DueDate=@DueDate, ProjectId=@ProjectId, TeamId=@TeamId
-                                 WHERE TaskId=@TaskId AND IsDeleted=0"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "UPDATE Tasks SET Title=?, Description=?,
+                                 AssignedToUserId=?, Status=?,
+                                 Priority=?, DueDate=?, ProjectId=?, TeamId=?
+                                 WHERE TaskId=? AND IsDeleted=0"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@Title", task.Title)
-                    cmd.Parameters.AddWithValue("@Description", If(task.Description, ""))
-                    cmd.Parameters.AddWithValue("@Status", task.Status)
-                    cmd.Parameters.AddWithValue("@Priority", task.Priority)
-                    cmd.Parameters.AddWithValue("@DueDate", If(task.DueDate.HasValue, CObj(task.DueDate.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@ProjectId", If(task.ProjectId.HasValue, CObj(task.ProjectId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@TeamId", If(task.TeamId.HasValue, CObj(task.TeamId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@AssignedToUserId", If(task.AssignedToUserId.HasValue, CObj(task.AssignedToUserId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("@TaskId", task.TaskId)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", task.Title)
+                    cmd.Parameters.AddWithValue("?", If(task.Description, ""))
+                    cmd.Parameters.AddWithValue("?", If(task.AssignedToUserId.HasValue, CObj(task.AssignedToUserId.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", task.Status)
+                    cmd.Parameters.AddWithValue("?", task.Priority)
+                    cmd.Parameters.AddWithValue("?", If(task.DueDate.HasValue, CObj(task.DueDate.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", If(task.ProjectId.HasValue, CObj(task.ProjectId.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", If(task.TeamId.HasValue, CObj(task.TeamId.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", task.TaskId)
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
@@ -151,12 +157,12 @@ Public Class TaskRepository
     ''' <summary>Employee: chỉ được sửa Status của task mình được giao</summary>
     Public Sub UpdateStatus(taskId As Integer, status As String) Implements ITaskRepository.UpdateStatus
         Try
-            Dim sql As String = "UPDATE Tasks SET Status=@Status WHERE TaskId=@TaskId AND IsDeleted=0"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "UPDATE Tasks SET Status=? WHERE TaskId=? AND IsDeleted=0"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@Status", status)
-                    cmd.Parameters.AddWithValue("@TaskId", taskId)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", status)
+                    cmd.Parameters.AddWithValue("?", taskId)
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
@@ -168,11 +174,11 @@ Public Class TaskRepository
     ''' <summary>Soft Delete: đánh dấu IsDeleted=1, không xóa khỏi DB</summary>
     Public Sub Delete(taskId As Integer) Implements ITaskRepository.Delete
         Try
-            Dim sql As String = "UPDATE Tasks SET IsDeleted=1 WHERE TaskId=@TaskId"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "UPDATE Tasks SET IsDeleted=1 WHERE TaskId=?"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@TaskId", taskId)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", taskId)
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
@@ -188,15 +194,15 @@ Public Class TaskRepository
             Dim sql As String = "SELECT DISTINCT t.* FROM Tasks t
                                  LEFT JOIN Project p ON t.ProjectId = p.ProjectId
                                  INNER JOIN UserTeam ut ON (t.TeamId = ut.TeamId OR p.TeamId = ut.TeamId)
-                                 WHERE ut.UserId = @UserId 
-                                   AND t.AssignedToUserId IS NULL 
+                                 WHERE ut.UserId = ?
+                                   AND t.AssignedToUserId IS NULL
                                    AND t.IsDeleted = 0
                                  ORDER BY t.CreatedAt DESC"
-            Using conn As New MySqlConnection(ConnectionString)
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@UserId", userId)
-                    Using reader = cmd.ExecuteReader()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", userId)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
                         While reader.Read()
                             tasks.Add(MapTask(reader))
                         End While
@@ -212,12 +218,12 @@ Public Class TaskRepository
     ''' <summary>Gán một task chưa có người làm cho một người dùng</summary>
     Public Sub ClaimTask(taskId As Integer, userId As Integer) Implements ITaskRepository.ClaimTask
         Try
-            Dim sql As String = "UPDATE Tasks SET AssignedToUserId=@UserId, Status='In Progress' WHERE TaskId=@TaskId AND AssignedToUserId IS NULL AND IsDeleted=0"
-            Using conn As New MySqlConnection(ConnectionString)
+            Dim sql As String = "UPDATE Tasks SET AssignedToUserId=?, Status='In Progress' WHERE TaskId=? AND AssignedToUserId IS NULL AND IsDeleted=0"
+            Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
-                Using cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@UserId", userId)
-                    cmd.Parameters.AddWithValue("@TaskId", taskId)
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", userId)
+                    cmd.Parameters.AddWithValue("?", taskId)
                     cmd.ExecuteNonQuery()
                 End Using
             End Using

@@ -223,21 +223,21 @@ Partial Class frmTeams
 
     End Sub
 
-    Friend WithEvents dgvTeams As Windows.Forms.DataGridView
-    Friend WithEvents GroupBox1 As Windows.Forms.GroupBox
-    Friend WithEvents Label3 As Windows.Forms.Label
-    Friend WithEvents Label2 As Windows.Forms.Label
-    Friend WithEvents Label1 As Windows.Forms.Label
-    Friend WithEvents btnClear As Windows.Forms.Button
-    Friend WithEvents btnDelete As Windows.Forms.Button
-    Friend WithEvents btnUpdate As Windows.Forms.Button
-    Friend WithEvents btnAdd As Windows.Forms.Button
-    Friend WithEvents clbLeaders As Windows.Forms.CheckedListBox
-    Friend WithEvents clbMembers As Windows.Forms.CheckedListBox
-    Friend WithEvents lblMembers As Windows.Forms.Label
-    Friend WithEvents txtDescription As Windows.Forms.TextBox
-    Friend WithEvents txtTeamName As Windows.Forms.TextBox
-    Friend WithEvents btnBack As Windows.Forms.Button
-    Friend WithEvents lblSearch As Windows.Forms.Label
-    Friend WithEvents txtSearch As Windows.Forms.TextBox
+    Friend WithEvents dgvTeams As System.Windows.Forms.DataGridView
+    Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents btnClear As System.Windows.Forms.Button
+    Friend WithEvents btnDelete As System.Windows.Forms.Button
+    Friend WithEvents btnUpdate As System.Windows.Forms.Button
+    Friend WithEvents btnAdd As System.Windows.Forms.Button
+    Friend WithEvents clbLeaders As System.Windows.Forms.CheckedListBox
+    Friend WithEvents clbMembers As System.Windows.Forms.CheckedListBox
+    Friend WithEvents lblMembers As System.Windows.Forms.Label
+    Friend WithEvents txtDescription As System.Windows.Forms.TextBox
+    Friend WithEvents txtTeamName As System.Windows.Forms.TextBox
+    Friend WithEvents btnBack As System.Windows.Forms.Button
+    Friend WithEvents lblSearch As System.Windows.Forms.Label
+    Friend WithEvents txtSearch As System.Windows.Forms.TextBox
 End Class
