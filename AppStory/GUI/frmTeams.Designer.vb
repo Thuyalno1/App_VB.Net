@@ -24,6 +24,7 @@ Partial Class frmTeams
     Private Sub InitializeComponent()
         Me.dgvTeams = New System.Windows.Forms.DataGridView()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.btnDetail = New System.Windows.Forms.Button()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -79,6 +80,7 @@ Partial Class frmTeams
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.btnDetail)
         Me.GroupBox1.Controls.Add(Me.Label3)
         Me.GroupBox1.Controls.Add(Me.Label2)
         Me.GroupBox1.Controls.Add(Me.Label1)
@@ -144,6 +146,19 @@ Partial Class frmTeams
         Me.btnClear.TabIndex = 6
         Me.btnClear.Text = "Làm mới"
         Me.btnClear.UseVisualStyleBackColor = True
+        '
+        'btnDetail
+        '
+        Me.btnDetail.BackColor = System.Drawing.Color.FromArgb(59, 130, 246)
+        Me.btnDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnDetail.FlatAppearance.BorderSize = 0
+        Me.btnDetail.Font = New System.Drawing.Font("Segoe UI", 8.5!, System.Drawing.FontStyle.Bold)
+        Me.btnDetail.ForeColor = System.Drawing.Color.White
+        Me.btnDetail.Location = New System.Drawing.Point(2, 320)
+        Me.btnDetail.Name = "btnDetail"
+        Me.btnDetail.Size = New System.Drawing.Size(318, 30)
+        Me.btnDetail.Text = "👁 Xem chi tiết nhóm"
+        Me.btnDetail.Cursor = System.Windows.Forms.Cursors.Hand
         '
         'btnDelete
         '
@@ -252,4 +267,5 @@ Partial Class frmTeams
     Friend WithEvents btnBack As System.Windows.Forms.Button
     Friend WithEvents lblSearch As System.Windows.Forms.Label
     Friend WithEvents txtSearch As System.Windows.Forms.TextBox
+    Friend WithEvents btnDetail As System.Windows.Forms.Button
 End Class

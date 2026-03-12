@@ -30,4 +30,7 @@ Public Interface ITaskRepository
     ''' <summary>Soft Delete: đánh dấu IsDeleted = 1</summary>
     Sub Delete(taskId As Integer)
 
+    ''' <summary>Lấy task thuộc một nhóm</summary>
+    Function GetByTeamId(teamId As Integer) As List(Of Task)
+
 End Interface

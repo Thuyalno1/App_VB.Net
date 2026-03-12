@@ -10,5 +10,6 @@ Public Interface ITaskService
     Function UpdateStatus(taskId As Integer, status As String) As (Success As Boolean, Message As String)
     Function DeleteTask(taskId As Integer) As (Success As Boolean, Message As String)
     Function GetPendingApprovalTasks() As List(Of Task)
+    Function GetTasksByTeamId(teamId As Integer) As List(Of Task)
 
 End Interface

@@ -263,4 +263,29 @@ Public Class TaskRepository
         End Try
     End Sub
 
+    ''' <summary>Lấy các task thuộc một nhóm cụ thể</summary>
+    Public Function GetByTeamId(teamId As Integer) As List(Of Task) Implements ITaskRepository.GetByTeamId
+        Try
+            Dim tasks As New List(Of Task)()
+            Dim sql As String = "SELECT t.*, u.UserName AS AssignedUserName FROM Tasks t
+                                 LEFT JOIN Users u ON t.AssignedToUserId = u.UserId
+                                 WHERE t.TeamId = ? AND t.IsDeleted = 0
+                                 ORDER BY t.CreatedAt DESC"
+            Using conn As New OdbcConnection(ConnectionString)
+                conn.Open()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", teamId)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
+                        While reader.Read()
+                            tasks.Add(MapTask(reader))
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return tasks
+        Catch ex As Exception
+            Throw New DataAccessException($"Không thể tải danh sách Task của TeamId={teamId}.", ex)
+        End Try
+    End Function
+
 End Class

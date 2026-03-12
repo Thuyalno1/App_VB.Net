@@ -147,4 +147,12 @@ Public Class TaskService
         End Try
     End Function
 
+    Public Function GetTasksByTeamId(teamId As Integer) As List(Of Task) Implements ITaskService.GetTasksByTeamId
+        Try
+            Return _repo.GetByTeamId(teamId)
+        Catch ex As DataAccessException
+            Throw New BusinessException("Không thể tải danh sách công việc của nhóm. " & ex.Message, ex)
+        End Try
+    End Function
+
 End Class

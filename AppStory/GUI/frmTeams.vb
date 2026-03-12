@@ -201,6 +201,16 @@ Public Class frmTeams
         ClearForm()
     End Sub
     
+    Private Sub btnDetail_Click(sender As Object, e As EventArgs) Handles btnDetail.Click
+        If _selectedTeamId < 0 Then
+            MessageBox.Show("Vui lòng chọn nhóm để xem chi tiết.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim detailForm As New frmTeamDetail(_selectedTeamId)
+        detailForm.ShowDialog()
+    End Sub
+
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         Dim mainForm As New frmMain()
         mainForm.Show()
