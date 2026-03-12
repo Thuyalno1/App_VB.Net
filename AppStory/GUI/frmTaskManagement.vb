@@ -13,6 +13,12 @@ Public Class frmTaskManagement
     Private _projectNames As New Dictionary(Of Integer, String)()
     Private _teamNames As New Dictionary(Of Integer, String)()
 
+    ' Pagination
+    Private Const PageSize As Integer = 7
+    Private _currentPage As Integer = 1
+    Private _totalPages As Integer = 1
+    Private _filteredTasks As List(Of Task) = New List(Of Task)()
+
     Public Sub New()
         InitializeComponent()
         _taskService = New TaskService()
@@ -31,6 +37,27 @@ Public Class frmTaskManagement
         LoadFilterCombo()
         LoadTasks()
         ClearForm()
+
+        ' Phân quyền: Chỉ Admin và Manager mới có quyền tạo/sửa/xóa và chọn dự án/người phụ trách
+        Dim currentUser = SessionManager.CurrentUser
+        If currentUser IsNot Nothing Then
+            Dim role As String = If(currentUser.RoleId, "").ToLower()
+            Dim isLeader As Boolean = _teamService.IsUserTeamLeader(currentUser.UserId)
+            Dim hasFullAccess As Boolean = (role = "admin" OrElse role = "manager" OrElse isLeader)
+
+            btnAdd.Enabled = hasFullAccess
+            btnUpdate.Enabled = hasFullAccess
+            btnDelete.Enabled = hasFullAccess
+
+            ' Hạn chế chọn dự án và người phụ trách nếu không có quyền
+            cboProject.Enabled = hasFullAccess
+            cboAssignedUser.Enabled = hasFullAccess
+            cboTeam.Enabled = hasFullAccess
+
+            If Not hasFullAccess Then
+                lblTaskCount.Text &= " (Chế độ chỉ xem)"
+            End If
+        End If
     End Sub
 
     ' ──────────────────────────────────────────────
@@ -173,11 +200,11 @@ Public Class frmTaskManagement
 
     Private Sub LoadPriorityAndStatus()
         cboPriority.Items.Clear()
-        cboPriority.Items.AddRange({"High", "Medium", "Low"})
+        cboPriority.Items.AddRange({"Cao", "Trung bình", "Thấp"})
         cboPriority.SelectedIndex = 1
 
         cboStatus.Items.Clear()
-        cboStatus.Items.AddRange({"Pending", "In Progress", "Completed"})
+        cboStatus.Items.AddRange({"Chờ xử lý", "Đang thực hiện", "Chờ duyệt", "Đã hoàn thành"})
         cboStatus.SelectedIndex = 0
     End Sub
 
@@ -194,29 +221,61 @@ Public Class frmTaskManagement
     Private Sub LoadFilterCombo()
         cboFilterStatus.Items.Clear()
         cboFilterStatus.Items.Add("Tất cả")
-        cboFilterStatus.Items.Add("Pending")
-        cboFilterStatus.Items.Add("In Progress")
-        cboFilterStatus.Items.Add("Completed")
+        cboFilterStatus.Items.Add("Chờ xử lý")
+        cboFilterStatus.Items.Add("Đang thực hiện")
+        cboFilterStatus.Items.Add("Chờ duyệt")
+        cboFilterStatus.Items.Add("Đã hoàn thành")
         cboFilterStatus.SelectedIndex = 0
     End Sub
 
-    ''' <summary>Lọc danh sách task theo giá trị ComboBox, bind lại DataGridView</summary>
+    ''' <summary>Lọc danh sách task theo giá trị ComboBox, bind lại DataGridView với phân trang</summary>
     Private Sub ApplyFilter()
         If _allTasks Is Nothing Then Return
-        Dim filtered As List(Of Task)
+
+        ' 1. Filter
         If cboFilterStatus.SelectedIndex <= 0 OrElse cboFilterStatus.SelectedItem?.ToString() = "Tất cả" Then
-            filtered = _allTasks
+            _filteredTasks = _allTasks
         Else
             Dim selected As String = cboFilterStatus.SelectedItem.ToString()
-            filtered = _allTasks.Where(Function(t) t.Status = selected).ToList()
+            _filteredTasks = _allTasks.Where(Function(t) t.Status = selected).ToList()
         End If
-        ' Chuyển sang TaskViewItem để hiển thị tên thay vì ID
+
+        ' 2. Calculate pagination
+        _totalPages = Math.Max(1, CInt(Math.Ceiling(_filteredTasks.Count / PageSize)))
+        If _currentPage > _totalPages Then _currentPage = _totalPages
+        If _currentPage < 1 Then _currentPage = 1
+
+        ' 3. Slice data
+        Dim pagedData = _filteredTasks.Skip((_currentPage - 1) * PageSize).Take(PageSize).ToList()
+
+        ' 4. Bind
         dgvTasks.DataSource = Nothing
-        dgvTasks.DataSource = BuildViewItems(filtered)
-        lblTaskCount.Text = $"Hiển thị: {filtered.Count} / {_allTasks.Count} task"
+        dgvTasks.DataSource = BuildViewItems(pagedData)
+
+        ' 5. UI Updates
+        lblPageInfo.Text = $"Trang {_currentPage} / {_totalPages}"
+        btnPrev.Enabled = (_currentPage > 1)
+        btnNext.Enabled = (_currentPage < _totalPages)
+
+        lblTaskCount.Text = $"Hiển thị: {pagedData.Count} / {_filteredTasks.Count} (Tổng {_allTasks.Count})"
+    End Sub
+
+    Private Sub btnPrev_Click(sender As Object, e As EventArgs) Handles btnPrev.Click
+        If _currentPage > 1 Then
+            _currentPage -= 1
+            ApplyFilter()
+        End If
+    End Sub
+
+    Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
+        If _currentPage < _totalPages Then
+            _currentPage += 1
+            ApplyFilter()
+        End If
     End Sub
 
     Private Sub cboFilterStatus_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboFilterStatus.SelectedIndexChanged
+        _currentPage = 1 ' Reset về trang 1 khi lọc
         ApplyFilter()
     End Sub
 
@@ -228,7 +287,7 @@ Public Class frmTaskManagement
         ' Grid bind TaskViewItem nên phải cast đúng kiểu, sau đó tìm Task thật từ _allTasks
         Dim viewItem = TryCast(dgvTasks.SelectedRows(0).DataBoundItem, TaskViewItem)
         If viewItem Is Nothing Then Return
-        Dim t = _allTasks?.FirstOrDefault(Function(x) x.TaskId = viewItem.TaskId)
+        Dim t = _filteredTasks?.FirstOrDefault(Function(x) x.TaskId = viewItem.TaskId)
         If t Is Nothing Then Return
 
         _selectedTaskId = t.TaskId
@@ -242,7 +301,7 @@ Public Class frmTaskManagement
         Else
             cboAssignedUser.SelectedIndex = 0
         End If
-        
+
         If t.ProjectId.HasValue Then
             cboProject.SelectedValue = t.ProjectId.Value
         Else
@@ -402,10 +461,10 @@ Public Class frmTaskManagement
                     writer.WriteLine()
                     writer.WriteLine("Trạng thái,Số lượng,Tỷ lệ (%)")
 
-                    Dim statusList = {"Pending", "In Progress", "Completed"}
+                    Dim statusList = {"Chờ xử lý", "Đang thực hiện", "Chờ duyệt", "Đã hoàn thành"}
                     For Each st In statusList
                         Dim cnt As Integer = tasks.Where(Function(t) t.Status = st).Count()
-                        Dim pct As Double = Math.Round(cnt / tasks.Count * 100, 1)
+                        Dim pct As Double = If(tasks.Count > 0, Math.Round(cnt / tasks.Count * 100, 1), 0)
                         writer.WriteLine($"{st},{cnt},{pct}%")
                     Next
                     Dim otherSt As Integer = tasks.Where(Function(t) Not statusList.Contains(t.Status)).Count()
@@ -416,9 +475,9 @@ Public Class frmTaskManagement
                     ' ── PHẦN 2: THỐNG KÊ THEO MỨC ƯU TIÊN ──
                     writer.WriteLine("=== THỐNG KÊ THEO MỨC ƯU TIÊN ===")
                     writer.WriteLine("Mức ưu tiên,Số lượng,Tỷ lệ (%)")
-                    For Each pri In {"High", "Medium", "Low"}
+                    For Each pri In {"Cao", "Trung bình", "Thấp"}
                         Dim cnt As Integer = tasks.Where(Function(t) t.Priority = pri).Count()
-                        Dim pct As Double = Math.Round(cnt / tasks.Count * 100, 1)
+                        Dim pct As Double = If(tasks.Count > 0, Math.Round(cnt / tasks.Count * 100, 1), 0)
                         writer.WriteLine($"{pri},{cnt},{pct}%")
                     Next
 

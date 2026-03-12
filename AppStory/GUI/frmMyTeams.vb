@@ -59,9 +59,12 @@ Public Class frmMyTeams
         Dim selectedTeam = CType(dgvMyTeams.SelectedRows(0).DataBoundItem, TeamDto)
         If selectedTeam Is Nothing Then Return
 
-        Dim currentUserId = SessionManager.CurrentUser.UserId
-        If selectedTeam.LeaderIds Is Nothing OrElse Not selectedTeam.LeaderIds.Contains(currentUserId) Then
-            MessageBox.Show("Chỉ Trưởng nhóm mới có quyền tạo Task chung cho nhóm này.", "Từ chối truy cập", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        Dim currentUser = SessionManager.CurrentUser
+        Dim role = If(currentUser.RoleId, "").ToLower()
+        Dim isAdmin = (role = "admin")
+
+        If Not isAdmin AndAlso (selectedTeam.LeaderIds Is Nothing OrElse Not selectedTeam.LeaderIds.Contains(currentUser.UserId)) Then
+            MessageBox.Show("Chỉ Trưởng nhóm hoặc Quản trị viên mới có quyền tạo Task chung cho nhóm này.", "Từ chối truy cập", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 

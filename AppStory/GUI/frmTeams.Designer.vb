@@ -63,9 +63,15 @@ Partial Class frmTeams
         '
         Me.dgvTeams.AllowUserToAddRows = False
         Me.dgvTeams.AllowUserToDeleteRows = False
+        Me.dgvTeams.BackgroundColor = System.Drawing.Color.White
+        Me.dgvTeams.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvTeams.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvTeams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgvTeams.Location = New System.Drawing.Point(12, 41)
         Me.dgvTeams.Name = "dgvTeams"
+        Me.dgvTeams.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgvTeams.ReadOnly = True
         Me.dgvTeams.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
         Me.dgvTeams.Size = New System.Drawing.Size(437, 397)
@@ -87,6 +93,8 @@ Partial Class frmTeams
         Me.GroupBox1.Controls.Add(Me.txtTeamName)
         Me.GroupBox1.Location = New System.Drawing.Point(455, 41)
         Me.GroupBox1.Name = "GroupBox1"
+        Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.GroupBox1.Size = New System.Drawing.Size(333, 397)
         Me.GroupBox1.TabIndex = 1
         Me.GroupBox1.TabStop = False
@@ -209,12 +217,16 @@ Partial Class frmTeams
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.MinimumSize = New System.Drawing.Size(816, 489)
         Me.Controls.Add(Me.txtSearch)
         Me.Controls.Add(Me.lblSearch)
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.dgvTeams)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable
+        Me.MaximizeBox = True
         Me.Name = "frmTeams"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Quản lý Đội/Nhóm"
         CType(Me.dgvTeams, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox1.ResumeLayout(False)

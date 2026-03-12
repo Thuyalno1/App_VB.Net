@@ -3,6 +3,9 @@ Public Interface ITaskRepository
     ''' <summary>Lấy tất cả task chưa bị xóa (dành cho Admin)</summary>
     Function GetAll() As List(Of Task)
 
+    ''' <summary>Lấy tất cả task đang chờ duyệt</summary>
+    Function GetPendingApprovalTasks() As List(Of Task)
+
     ''' <summary>Lấy task của một nhân viên cụ thể (dành cho Employee)</summary>
     Function GetByUserId(userId As Integer) As List(Of Task)
 

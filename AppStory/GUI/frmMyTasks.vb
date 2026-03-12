@@ -3,6 +3,12 @@ Public Class frmMyTasks
 
     Private ReadOnly _taskService As ITaskService
     Private _selectedTaskId As Integer = -1
+    
+    ' Pagination
+    Private Const PageSize As Integer = 7
+    Private _currentPage As Integer = 1
+    Private _totalPages As Integer = 1
+    Private _myTasks As List(Of Task) = New List(Of Task)()
 
     Public Sub New()
         InitializeComponent()
@@ -11,7 +17,7 @@ Public Class frmMyTasks
 
     Private Sub frmMyTasks_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetupGrid()
-        cboNewStatus.Items.AddRange({"Pending", "In Progress", "Completed"})
+        cboNewStatus.Items.AddRange({"Chờ xử lý", "Đang thực hiện", "Chờ duyệt"})
         cboNewStatus.SelectedIndex = 0
         LoadMyTasks()
         lblUserInfo.Text = $"Công việc của: {SessionManager.CurrentUser.UserName}"
@@ -32,12 +38,47 @@ Public Class frmMyTasks
 
     Private Sub LoadMyTasks()
         Try
-            Dim tasks = _taskService.GetMyTasks(SessionManager.CurrentUser.UserId)
-            dgvMyTasks.DataSource = Nothing
-            dgvMyTasks.DataSource = tasks
+            _myTasks = _taskService.GetMyTasks(SessionManager.CurrentUser.UserId)
+            _currentPage = 1
+            DisplayPage()
         Catch ex As BusinessException
             MessageBox.Show("Lỗi tải task: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+    End Sub
+
+    Private Sub DisplayPage()
+        If _myTasks Is Nothing Then Return
+
+        ' 1. Calculate pagination
+        _totalPages = Math.Max(1, CInt(Math.Ceiling(_myTasks.Count / PageSize)))
+        If _currentPage > _totalPages Then _currentPage = _totalPages
+        If _currentPage < 1 Then _currentPage = 1
+
+        ' 2. Slice data
+        Dim pagedData = _myTasks.Skip((_currentPage - 1) * PageSize).Take(PageSize).ToList()
+
+        ' 3. Bind
+        dgvMyTasks.DataSource = Nothing
+        dgvMyTasks.DataSource = pagedData
+
+        ' 4. UI Updates
+        lblPageInfo.Text = $"Trang {_currentPage} / {_totalPages}"
+        btnPrev.Enabled = (_currentPage > 1)
+        btnNext.Enabled = (_currentPage < _totalPages)
+    End Sub
+
+    Private Sub btnPrev_Click(sender As Object, e As EventArgs) Handles btnPrev.Click
+        If _currentPage > 1 Then
+            _currentPage -= 1
+            DisplayPage()
+        End If
+    End Sub
+
+    Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
+        If _currentPage < _totalPages Then
+            _currentPage += 1
+            DisplayPage()
+        End If
     End Sub
 
     Private Sub dgvMyTasks_SelectionChanged(sender As Object, e As EventArgs) Handles dgvMyTasks.SelectionChanged
@@ -49,7 +90,7 @@ Public Class frmMyTasks
         lblSelectedTask.Text = $"Đang chọn: [{t.TaskId}] {t.Title}"
     End Sub
 
-    Private Sub btnUpdateStatus_Click(sender As Object, e As EventArgs) Handles btnUpdateStatus.Click
+    Private Sub btnConfirmStatus_Click(sender As Object, e As EventArgs) Handles btnConfirmStatus.Click
         If _selectedTaskId < 0 Then
             MessageBox.Show("Vui lòng chọn một công việc.", "Chưa chọn", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return

@@ -1,5 +1,5 @@
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class frmOpenTasks
+Partial Class frmTaskApproval
     Inherits System.Windows.Forms.Form
 
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -20,79 +20,68 @@ Partial Class frmOpenTasks
         Me.pnlHeader = New System.Windows.Forms.Panel()
         Me.lblTitle = New System.Windows.Forms.Label()
         Me.btnBack = New System.Windows.Forms.Button()
-        Me.dgvOpenTasks = New System.Windows.Forms.DataGridView()
-        Me.lblInfo = New System.Windows.Forms.Label()
+        Me.dgvPendingTasks = New System.Windows.Forms.DataGridView()
+        Me.lblCount = New System.Windows.Forms.Label()
         Me.pnlPagination = New System.Windows.Forms.Panel()
         Me.btnPrev = New System.Windows.Forms.Button()
         Me.btnNext = New System.Windows.Forms.Button()
         Me.lblPageInfo = New System.Windows.Forms.Label()
         Me.pnlHeader.SuspendLayout()
-        CType(Me.dgvOpenTasks, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgvPendingTasks, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'pnlHeader
-        '
-        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(CType(CType(234, Byte), Integer), CType(CType(179, Byte), Integer), CType(CType(8, Byte), Integer))
+        
+        '--- pnlHeader ---
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
         Me.pnlHeader.Controls.Add(Me.lblTitle)
         Me.pnlHeader.Controls.Add(Me.btnBack)
         Me.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top
-        Me.pnlHeader.Location = New System.Drawing.Point(0, 0)
-        Me.pnlHeader.Name = "pnlHeader"
         Me.pnlHeader.Size = New System.Drawing.Size(800, 60)
-        Me.pnlHeader.TabIndex = 0
-        '
-        'lblTitle
-        '
+        
+        '--- lblTitle ---
         Me.lblTitle.AutoSize = True
         Me.lblTitle.Font = New System.Drawing.Font("Segoe UI", 16.0!, System.Drawing.FontStyle.Bold)
         Me.lblTitle.ForeColor = System.Drawing.Color.White
         Me.lblTitle.Location = New System.Drawing.Point(20, 15)
-        Me.lblTitle.Name = "lblTitle"
-        Me.lblTitle.Size = New System.Drawing.Size(201, 30)
-        Me.lblTitle.TabIndex = 0
-        Me.lblTitle.Text = "📥 Việc Cần Nhận"
-        '
-        'btnBack
-        '
-        Me.btnBack.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnBack.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(50, Byte), Integer))
-        Me.btnBack.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnBack.FlatAppearance.BorderSize = 0
+        Me.lblTitle.Text = "Duyệt Công Việc"
+        
+        '--- btnBack ---
+        Me.btnBack.BackColor = System.Drawing.Color.FromArgb(99, 102, 241)
         Me.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnBack.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.btnBack.FlatAppearance.BorderSize = 0
+        Me.btnBack.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         Me.btnBack.ForeColor = System.Drawing.Color.White
+        Me.btnBack.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnBack.Location = New System.Drawing.Point(680, 12)
-        Me.btnBack.Name = "btnBack"
-        Me.btnBack.Size = New System.Drawing.Size(100, 35)
-        Me.btnBack.TabIndex = 1
+        Me.btnBack.Size = New System.Drawing.Size(100, 36)
         Me.btnBack.Text = "← Quay lại"
-        Me.btnBack.UseVisualStyleBackColor = False
-        '
-        'dgvOpenTasks
-        '
-        Me.dgvOpenTasks.AllowUserToAddRows = False
-        Me.dgvOpenTasks.AllowUserToDeleteRows = False
-        Me.dgvOpenTasks.BackgroundColor = System.Drawing.Color.White
-        Me.dgvOpenTasks.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.dgvOpenTasks.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
-        Me.dgvOpenTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgvOpenTasks.Location = New System.Drawing.Point(20, 120)
-        Me.dgvOpenTasks.Name = "dgvOpenTasks"
-        Me.dgvOpenTasks.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.btnBack.Cursor = System.Windows.Forms.Cursors.Hand
+
+        '--- lblCount ---
+        Me.lblCount.AutoSize = True
+        Me.lblCount.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.lblCount.Location = New System.Drawing.Point(20, 80)
+        Me.lblCount.Text = "Đang tải dữ liệu..."
+
+        '--- dgvPendingTasks ---
+        Me.dgvPendingTasks.AllowUserToAddRows = False
+        Me.dgvPendingTasks.AllowUserToDeleteRows = False
+        Me.dgvPendingTasks.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+        Me.dgvPendingTasks.BackgroundColor = System.Drawing.Color.White
+        Me.dgvPendingTasks.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvPendingTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvPendingTasks.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.dgvOpenTasks.ReadOnly = True
-        Me.dgvOpenTasks.RowHeadersVisible = False
-        Me.dgvOpenTasks.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvOpenTasks.Size = New System.Drawing.Size(760, 260)
-        Me.dgvOpenTasks.TabIndex = 1
+        Me.dgvPendingTasks.Location = New System.Drawing.Point(20, 110)
+        Me.dgvPendingTasks.Size = New System.Drawing.Size(760, 275)
+        Me.dgvPendingTasks.ReadOnly = True
 
         '--- pnlPagination ---
         Me.pnlPagination.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.pnlPagination.Controls.Add(Me.btnPrev)
         Me.pnlPagination.Controls.Add(Me.lblPageInfo)
         Me.pnlPagination.Controls.Add(Me.btnNext)
-        Me.pnlPagination.Location = New System.Drawing.Point(20, 390)
+        Me.pnlPagination.Location = New System.Drawing.Point(20, 395)
         Me.pnlPagination.Name = "pnlPagination"
         Me.pnlPagination.Size = New System.Drawing.Size(300, 40)
 
@@ -124,48 +113,32 @@ Partial Class frmOpenTasks
         Me.btnNext.Size = New System.Drawing.Size(80, 28)
         Me.btnNext.Text = "Sau →"
         Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
-        '
-        'lblInfo
-        '
-        Me.lblInfo.AutoSize = True
-        Me.lblInfo.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.lblInfo.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.lblInfo.Location = New System.Drawing.Point(20, 85)
-        Me.lblInfo.Name = "lblInfo"
-        Me.lblInfo.Size = New System.Drawing.Size(425, 19)
-        Me.lblInfo.TabIndex = 2
-        Me.lblInfo.Text = "Đây là danh sách công việc giao cho nhóm của bạn nhưng chưa có ai làm."
-        '
-        'frmOpenTasks
-        '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
+
+        '--- frmTaskApproval ---
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(243, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.BackColor = System.Drawing.Color.FromArgb(249, 250, 251)
         Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Controls.Add(Me.lblInfo)
-        Me.Controls.Add(Me.dgvOpenTasks)
-        Me.Controls.Add(Me.pnlPagination)
+        Me.MinimumSize = New System.Drawing.Size(800, 450)
         Me.Controls.Add(Me.pnlHeader)
-        Me.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable
-        Me.MinimumSize = New System.Drawing.Size(816, 489)
-        Me.MaximizeBox = True
-        Me.Name = "frmOpenTasks"
+        Me.Controls.Add(Me.lblCount)
+        Me.Controls.Add(Me.dgvPendingTasks)
+        Me.Controls.Add(Me.pnlPagination)
+        Me.Name = "frmTaskApproval"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "AppStory - Việc Cần Nhận"
+        Me.Text = "Duyệt Công Việc"
         Me.pnlHeader.ResumeLayout(False)
         Me.pnlHeader.PerformLayout()
-        CType(Me.dgvOpenTasks, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgvPendingTasks, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
-
     End Sub
 
     Friend WithEvents pnlHeader As System.Windows.Forms.Panel
     Friend WithEvents lblTitle As System.Windows.Forms.Label
     Friend WithEvents btnBack As System.Windows.Forms.Button
-    Friend WithEvents dgvOpenTasks As System.Windows.Forms.DataGridView
-    Friend WithEvents lblInfo As System.Windows.Forms.Label
+    Friend WithEvents lblCount As System.Windows.Forms.Label
+    Friend WithEvents dgvPendingTasks As System.Windows.Forms.DataGridView
     Friend WithEvents pnlPagination As System.Windows.Forms.Panel
     Friend WithEvents btnPrev As System.Windows.Forms.Button
     Friend WithEvents btnNext As System.Windows.Forms.Button

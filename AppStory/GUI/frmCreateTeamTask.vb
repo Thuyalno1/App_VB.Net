@@ -19,6 +19,9 @@ Public Class frmCreateTeamTask
         cboPriority.SelectedIndex = 1
 
         dtpDueDate.Value = DateTime.Now.AddDays(7)
+
+        ' Note: Quyền tạo task được kiểm tra từ màn hình gọi (frmMyTeams) 
+        ' để đảm bảo cả Admin và Trưởng nhóm (kể cả role Employee) đều có quyền.
     End Sub
 
     Private Sub btnCreate_Click(sender As Object, e As EventArgs) Handles btnCreate.Click
@@ -36,7 +39,7 @@ Public Class frmCreateTeamTask
             Dim dto As New TaskDto() With {
                 .Title = titleStr,
                 .Description = txtDescription.Text.Trim(),
-                .Status = "Pending",
+                .Status = "Chờ xử lý",
                 .Priority = cboPriority.SelectedItem?.ToString(),
                 .DueDate = dtpDueDate.Value,
                 .TeamId = _teamId,

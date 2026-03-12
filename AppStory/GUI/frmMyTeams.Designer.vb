@@ -28,9 +28,15 @@ Partial Class frmMyTeams
         '
         Me.dgvMyTeams.AllowUserToAddRows = False
         Me.dgvMyTeams.AllowUserToDeleteRows = False
+        Me.dgvMyTeams.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+        Me.dgvMyTeams.BackgroundColor = System.Drawing.Color.White
+        Me.dgvMyTeams.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvMyTeams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgvMyTeams.Location = New System.Drawing.Point(12, 59)
         Me.dgvMyTeams.Name = "dgvMyTeams"
+        Me.dgvMyTeams.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgvMyTeams.ReadOnly = True
         Me.dgvMyTeams.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
         Me.dgvMyTeams.Size = New System.Drawing.Size(776, 379)
@@ -61,6 +67,7 @@ Partial Class frmMyTeams
         Me.btnCreateTeamTask.ForeColor = System.Drawing.Color.White
         Me.btnCreateTeamTask.Location = New System.Drawing.Point(620, 15)
         Me.btnCreateTeamTask.Name = "btnCreateTeamTask"
+        Me.btnCreateTeamTask.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnCreateTeamTask.Size = New System.Drawing.Size(150, 30)
         Me.btnCreateTeamTask.TabIndex = 4
         Me.btnCreateTeamTask.Text = "Tạo Task cho nhóm"
@@ -71,11 +78,13 @@ Partial Class frmMyTeams
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.MinimumSize = New System.Drawing.Size(816, 489)
         Me.Controls.Add(Me.btnCreateTeamTask)
         Me.Controls.Add(Me.lblUserInfo)
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.dgvMyTeams)
         Me.Name = "frmMyTeams"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Nhóm Của Tôi"
         CType(Me.dgvMyTeams, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)

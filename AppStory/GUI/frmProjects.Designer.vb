@@ -63,9 +63,15 @@ Partial Class frmProjects
         '
         Me.dgvProjects.AllowUserToAddRows = False
         Me.dgvProjects.AllowUserToDeleteRows = False
+        Me.dgvProjects.BackgroundColor = System.Drawing.Color.White
+        Me.dgvProjects.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvProjects.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvProjects.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgvProjects.Location = New System.Drawing.Point(12, 41)
         Me.dgvProjects.Name = "dgvProjects"
+        Me.dgvProjects.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgvProjects.ReadOnly = True
         Me.dgvProjects.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
         Me.dgvProjects.Size = New System.Drawing.Size(536, 450)
@@ -93,6 +99,8 @@ Partial Class frmProjects
         Me.GroupBox1.Controls.Add(Me.btnAdd)
         Me.GroupBox1.Location = New System.Drawing.Point(554, 41)
         Me.GroupBox1.Name = "GroupBox1"
+        Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.GroupBox1.Size = New System.Drawing.Size(326, 450)
         Me.GroupBox1.TabIndex = 1
         Me.GroupBox1.TabStop = False
@@ -277,7 +285,11 @@ Partial Class frmProjects
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.dgvProjects)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable
+        Me.MinimumSize = New System.Drawing.Size(908, 549)
+        Me.MaximizeBox = True
         Me.Name = "frmProjects"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Quản lý Dự án"
         CType(Me.dgvProjects, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox1.ResumeLayout(False)

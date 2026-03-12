@@ -5,6 +5,8 @@ DEFAULT CHARACTER SET utf8mb4
 COLLATE utf8mb4_0900_ai_ci;
 USE appstore;
 
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- ========================
 -- Tạo bảng USERS
 -- ========================
@@ -56,6 +58,7 @@ INSERT INTO team VALUES
 --  Tạo bảng PROJECT
 -- ========================
 
+DROP TABLE IF EXISTS projectteam;
 DROP TABLE IF EXISTS project;
 
 CREATE TABLE project (
@@ -66,20 +69,36 @@ CREATE TABLE project (
   EndDate DATE,
   Status VARCHAR(50) DEFAULT 'Planning',
   ManagerId INT,
-  TeamId INT,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (ProjectId),
-  FOREIGN KEY (ManagerId) REFERENCES users(UserId),
-  FOREIGN KEY (TeamId) REFERENCES team(TeamId)
+  FOREIGN KEY (ManagerId) REFERENCES users(UserId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO project VALUES
-(1,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,NULL,'2026-02-27 14:08:15'),
-(2,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,4,'2026-02-27 14:35:15'),
-(3,'VII_2','.','2026-02-27','2026-03-27','Planning',5,4,'2026-02-27 14:36:56'),
-(4,'VII_3','.','2026-02-27','2026-03-27','Planning',5,4,'2026-02-27 14:48:30'),
-(5,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,NULL,'2026-03-02 09:23:25'),
-(6,'VII_4','Dự án quốc gia','2026-02-27','2026-03-06','Active',5,4,'2026-03-02 09:49:03');
+(1,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,'2026-02-27 14:08:15'),
+(2,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,'2026-02-27 14:35:15'),
+(3,'VII_2','.','2026-02-27','2026-03-27','Planning',5,'2026-02-27 14:36:56'),
+(4,'VII_3','.','2026-02-27','2026-03-27','Planning',5,'2026-02-27 14:48:30'),
+(5,'VII_1','Dự án quốc gia','2026-02-27','2026-03-05','Planning',2,'2026-03-02 09:23:25'),
+(6,'VII_4','Dự án quốc gia','2026-02-27','2026-03-06','Active',5,'2026-03-02 09:49:03');
+
+-- ========================
+--  Tạo bảng PROJECTTEAM
+-- ========================
+
+CREATE TABLE projectteam (
+  ProjectId INT NOT NULL,
+  TeamId INT NOT NULL,
+  PRIMARY KEY (ProjectId, TeamId),
+  FOREIGN KEY (ProjectId) REFERENCES project(ProjectId) ON DELETE CASCADE,
+  FOREIGN KEY (TeamId) REFERENCES team(TeamId) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO projectteam VALUES
+(2, 4),
+(3, 4),
+(4, 4),
+(6, 4);
 
 -- ========================
 --  Tạo bảng TASKS
@@ -139,3 +158,5 @@ INSERT INTO userteam VALUES
 (4,5,'2026-02-27 14:48:51','Member'),
 (5,4,'2026-02-27 14:36:16','Leader'),
 (5,5,'2026-02-27 14:48:51','Member');
+
+SET FOREIGN_KEY_CHECKS = 1;

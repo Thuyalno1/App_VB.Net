@@ -12,5 +12,6 @@ Public Class Task
     Public Property IsDeleted As Boolean    ' Soft Delete: True = đã xóa
     Public Property ProjectId As Integer?   ' Thuộc Dự án nào (Nullable: Có thể không thuộc dự án)
     Public Property TeamId As Integer?      ' Thuộc Nhóm/Team nào (Nullable)
+    Public Property AssignedUserName As String ' Tên người được giao (dùng để hiển thị, không lưu DB)
 
 End Class

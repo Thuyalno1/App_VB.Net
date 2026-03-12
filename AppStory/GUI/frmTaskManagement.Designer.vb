@@ -35,7 +35,6 @@ Partial Class frmTaskManagement
         Me.lblPriority = New System.Windows.Forms.Label()
         Me.cboPriority = New System.Windows.Forms.ComboBox()
         Me.lblStatus = New System.Windows.Forms.Label()
-        Me.lblStatus = New System.Windows.Forms.Label()
         Me.cboStatus = New System.Windows.Forms.ComboBox()
         Me.lblProject = New System.Windows.Forms.Label()
         Me.cboProject = New System.Windows.Forms.ComboBox()
@@ -48,6 +47,10 @@ Partial Class frmTaskManagement
         Me.btnDelete = New System.Windows.Forms.Button()
         Me.btnClear = New System.Windows.Forms.Button()
         Me.btnExport = New System.Windows.Forms.Button()
+        Me.pnlPagination = New System.Windows.Forms.Panel()
+        Me.btnPrev = New System.Windows.Forms.Button()
+        Me.btnNext = New System.Windows.Forms.Button()
+        Me.lblPageInfo = New System.Windows.Forms.Label()
         Me.pnlHeader.SuspendLayout()
         CType(Me.dgvTasks, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlForm.SuspendLayout()
@@ -76,6 +79,7 @@ Partial Class frmTaskManagement
         Me.btnBack.ForeColor = System.Drawing.Color.White
         Me.btnBack.Location = New System.Drawing.Point(1010, 12)
         Me.btnBack.Name = "btnBack"
+        Me.btnBack.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnBack.Size = New System.Drawing.Size(80, 32)
         Me.btnBack.Text = "← Quay lại"
         Me.btnBack.Cursor = System.Windows.Forms.Cursors.Hand
@@ -103,6 +107,7 @@ Partial Class frmTaskManagement
         '--- dgvTasks ---
         Me.dgvTasks.BackgroundColor = System.Drawing.Color.White
         Me.dgvTasks.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvTasks.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvTasks.ColumnHeadersDefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
             .BackColor = System.Drawing.Color.FromArgb(37, 99, 235),
             .ForeColor = System.Drawing.Color.White,
@@ -116,9 +121,50 @@ Partial Class frmTaskManagement
         }
         Me.dgvTasks.Location = New System.Drawing.Point(10, 92)
         Me.dgvTasks.Name = "dgvTasks"
+        Me.dgvTasks.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgvTasks.RowHeadersVisible = False
         Me.dgvTasks.RowTemplate.Height = 30
-        Me.dgvTasks.Size = New System.Drawing.Size(700, 463)
+        Me.dgvTasks.Size = New System.Drawing.Size(700, 420)
+
+        '--- pnlPagination ---
+        Me.pnlPagination.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.pnlPagination.Controls.Add(Me.btnPrev)
+        Me.pnlPagination.Controls.Add(Me.lblPageInfo)
+        Me.pnlPagination.Controls.Add(Me.btnNext)
+        Me.pnlPagination.Location = New System.Drawing.Point(10, 520)
+        Me.pnlPagination.Name = "pnlPagination"
+        Me.pnlPagination.Size = New System.Drawing.Size(300, 40)
+
+        Me.btnPrev.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnPrev.FlatAppearance.BorderSize = 0
+        Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.btnPrev.ForeColor = System.Drawing.Color.White
+        Me.btnPrev.Location = New System.Drawing.Point(0, 5)
+        Me.btnPrev.Name = "btnPrev"
+        Me.btnPrev.Size = New System.Drawing.Size(80, 28)
+        Me.btnPrev.Text = "← Trước"
+        Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
+
+        Me.lblPageInfo.AutoSize = False
+        Me.lblPageInfo.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblPageInfo.Location = New System.Drawing.Point(85, 5)
+        Me.lblPageInfo.Size = New System.Drawing.Size(100, 28)
+        Me.lblPageInfo.Text = "Trang 1 / 1"
+        Me.lblPageInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+
+        Me.btnNext.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnNext.FlatAppearance.BorderSize = 0
+        Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.btnNext.ForeColor = System.Drawing.Color.White
+        Me.btnNext.Location = New System.Drawing.Point(190, 5)
+        Me.btnNext.Name = "btnNext"
+        Me.btnNext.Size = New System.Drawing.Size(80, 28)
+        Me.btnNext.Text = "Sau →"
+        Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
 
         '--- pnlForm ---
         Me.pnlForm.BackColor = System.Drawing.Color.White
@@ -147,6 +193,8 @@ Partial Class frmTaskManagement
         Me.pnlForm.Controls.Add(Me.btnExport)
         Me.pnlForm.Location = New System.Drawing.Point(725, 65)
         Me.pnlForm.Name = "pnlForm"
+        Me.pnlForm.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.pnlForm.Size = New System.Drawing.Size(365, 590)
 
         Dim yOff As Integer = 15
@@ -228,9 +276,11 @@ Partial Class frmTaskManagement
         Me.Controls.Add(Me.cboFilterStatus)
         Me.Controls.Add(Me.lblTaskCount)
         Me.Controls.Add(Me.dgvTasks)
+        Me.Controls.Add(Me.pnlPagination)
         Me.Controls.Add(Me.pnlForm)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
-        Me.MaximizeBox = False
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable
+        Me.MinimumSize = New System.Drawing.Size(1116, 709)
+        Me.MaximizeBox = True
         Me.Name = "frmTaskManagement"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AppStory – Quản Lý Công Việc"
@@ -271,5 +321,9 @@ Partial Class frmTaskManagement
     Friend WithEvents btnDelete As System.Windows.Forms.Button
     Friend WithEvents btnClear As System.Windows.Forms.Button
     Friend WithEvents btnExport As System.Windows.Forms.Button
+    Friend WithEvents pnlPagination As System.Windows.Forms.Panel
+    Friend WithEvents btnPrev As System.Windows.Forms.Button
+    Friend WithEvents btnNext As System.Windows.Forms.Button
+    Friend WithEvents lblPageInfo As System.Windows.Forms.Label
 
 End Class

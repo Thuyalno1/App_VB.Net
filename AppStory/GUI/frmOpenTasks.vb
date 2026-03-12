@@ -2,6 +2,10 @@ Public Class frmOpenTasks
     Inherits Form
 
     Private ReadOnly _taskService As ITaskService
+    Private _allOpenTasks As List(Of Task)
+    Private Const PageSize As Integer = 7
+    Private _currentPage As Integer = 1
+    Private _totalPages As Integer = 1
 
     Public Sub New()
         InitializeComponent()
@@ -43,11 +47,47 @@ Public Class frmOpenTasks
 
     Private Sub LoadOpenTasks()
         Try
-            Dim tasks As List(Of Task) = _taskService.GetOpenTasksForUser(SessionManager.CurrentUser.UserId)
-            dgvOpenTasks.DataSource = tasks
+            _allOpenTasks = _taskService.GetOpenTasksForUser(SessionManager.CurrentUser.UserId)
+            _currentPage = 1
+            DisplayPage()
         Catch ex As BusinessException
             MessageBox.Show("Lỗi khi tải danh sách việc: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+    End Sub
+
+    Private Sub DisplayPage()
+        If _allOpenTasks Is Nothing Then Return
+
+        ' 1. Calculate pagination
+        _totalPages = Math.Max(1, CInt(Math.Ceiling(_allOpenTasks.Count / PageSize)))
+        If _currentPage > _totalPages Then _currentPage = _totalPages
+        If _currentPage < 1 Then _currentPage = 1
+
+        ' 2. Slice data
+        Dim pagedData = _allOpenTasks.Skip((_currentPage - 1) * PageSize).Take(PageSize).ToList()
+
+        ' 3. Bind
+        dgvOpenTasks.DataSource = Nothing
+        dgvOpenTasks.DataSource = pagedData
+
+        ' 4. UI Updates
+        lblPageInfo.Text = $"Trang {_currentPage} / {_totalPages}"
+        btnPrev.Enabled = (_currentPage > 1)
+        btnNext.Enabled = (_currentPage < _totalPages)
+    End Sub
+
+    Private Sub btnPrev_Click(sender As Object, e As EventArgs) Handles btnPrev.Click
+        If _currentPage > 1 Then
+            _currentPage -= 1
+            DisplayPage()
+        End If
+    End Sub
+
+    Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
+        If _currentPage < _totalPages Then
+            _currentPage += 1
+            DisplayPage()
+        End If
     End Sub
 
     Private Sub dgvOpenTasks_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvOpenTasks.CellClick

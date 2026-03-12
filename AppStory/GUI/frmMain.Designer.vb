@@ -33,9 +33,12 @@ Partial Class frmMain
         Me.btnGoMyTeams = New System.Windows.Forms.Button()
         Me.btnGoProjects = New System.Windows.Forms.Button()
         Me.btnGoTeams = New System.Windows.Forms.Button()
+        Me.btnGoApproval = New System.Windows.Forms.Button()
+        Me.flpMenu = New System.Windows.Forms.FlowLayoutPanel()
         Me.pnlHeader.SuspendLayout()
         Me.pnlContent.SuspendLayout()
         Me.pnlRoleBadge.SuspendLayout()
+        Me.flpMenu.SuspendLayout()
         Me.SuspendLayout()
 
         '--- pnlHeader ---
@@ -68,12 +71,23 @@ Partial Class frmMain
         Me.pnlContent.Controls.Add(Me.pnlRoleBadge)
         Me.pnlContent.Controls.Add(Me.lblSeparator)
         Me.pnlContent.Controls.Add(Me.lblRoleDesc)
-        Me.pnlContent.Controls.Add(Me.btnGoTasks)
-        Me.pnlContent.Controls.Add(Me.btnGoOpenTasks)
-        Me.pnlContent.Controls.Add(Me.btnGoMyTasks)
-        Me.pnlContent.Controls.Add(Me.btnGoMyTeams)
-        Me.pnlContent.Controls.Add(Me.btnGoProjects)
-        Me.pnlContent.Controls.Add(Me.btnGoTeams)
+        Me.pnlContent.Controls.Add(Me.flpMenu)
+        Me.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill
+
+        '--- flpMenu ---
+        Me.flpMenu.BackColor = System.Drawing.Color.Transparent
+        Me.flpMenu.Controls.Add(Me.btnGoTasks)
+        Me.flpMenu.Controls.Add(Me.btnGoApproval)
+        Me.flpMenu.Controls.Add(Me.btnGoOpenTasks)
+        Me.flpMenu.Controls.Add(Me.btnGoMyTasks)
+        Me.flpMenu.Controls.Add(Me.btnGoMyTeams)
+        Me.flpMenu.Controls.Add(Me.btnGoProjects)
+        Me.flpMenu.Controls.Add(Me.btnGoTeams)
+        Me.flpMenu.FlowDirection = System.Windows.Forms.FlowDirection.TopDown
+        Me.flpMenu.Location = New System.Drawing.Point(80, 278)
+        Me.flpMenu.Name = "flpMenu"
+        Me.flpMenu.Size = New System.Drawing.Size(460, 320)
+        Me.flpMenu.WrapContents = False
         Me.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill
 
         '--- pnlRoleBadge ---
@@ -124,7 +138,8 @@ Partial Class frmMain
         Me.btnGoTasks.FlatAppearance.BorderSize = 0
         Me.btnGoTasks.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
         Me.btnGoTasks.ForeColor = System.Drawing.Color.White
-        Me.btnGoTasks.Location = New System.Drawing.Point(80, 278)
+        Me.btnGoTasks.Location = New System.Drawing.Point(0, 0)
+        Me.btnGoTasks.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
         Me.btnGoTasks.Name = "btnGoTasks"
         Me.btnGoTasks.Size = New System.Drawing.Size(440, 42)
         Me.btnGoTasks.Text = "📋 Quản Lý Công Việc"
@@ -137,7 +152,8 @@ Partial Class frmMain
         Me.btnGoOpenTasks.FlatAppearance.BorderSize = 0
         Me.btnGoOpenTasks.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
         Me.btnGoOpenTasks.ForeColor = System.Drawing.Color.White
-        Me.btnGoOpenTasks.Location = New System.Drawing.Point(80, 330)
+        Me.btnGoOpenTasks.Location = New System.Drawing.Point(0, 52)
+        Me.btnGoOpenTasks.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
         Me.btnGoOpenTasks.Name = "btnGoOpenTasks"
         Me.btnGoOpenTasks.Size = New System.Drawing.Size(440, 42)
         Me.btnGoOpenTasks.Text = "📥 Việc Cần Nhận"
@@ -150,7 +166,8 @@ Partial Class frmMain
         Me.btnGoMyTasks.FlatAppearance.BorderSize = 0
         Me.btnGoMyTasks.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
         Me.btnGoMyTasks.ForeColor = System.Drawing.Color.White
-        Me.btnGoMyTasks.Location = New System.Drawing.Point(80, 382)
+        Me.btnGoMyTasks.Location = New System.Drawing.Point(0, 104)
+        Me.btnGoMyTasks.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
         Me.btnGoMyTasks.Name = "btnGoMyTasks"
         Me.btnGoMyTasks.Size = New System.Drawing.Size(440, 42)
         Me.btnGoMyTasks.Text = "✅ Công Việc Của Tôi"
@@ -163,7 +180,8 @@ Partial Class frmMain
         Me.btnGoMyTeams.FlatAppearance.BorderSize = 0
         Me.btnGoMyTeams.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
         Me.btnGoMyTeams.ForeColor = System.Drawing.Color.White
-        Me.btnGoMyTeams.Location = New System.Drawing.Point(80, 434)
+        Me.btnGoMyTeams.Location = New System.Drawing.Point(0, 156)
+        Me.btnGoMyTeams.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
         Me.btnGoMyTeams.Name = "btnGoMyTeams"
         Me.btnGoMyTeams.Size = New System.Drawing.Size(440, 42)
         Me.btnGoMyTeams.Text = "👥 Nhóm Của Tôi"
@@ -176,7 +194,8 @@ Partial Class frmMain
         Me.btnGoProjects.FlatAppearance.BorderSize = 0
         Me.btnGoProjects.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
         Me.btnGoProjects.ForeColor = System.Drawing.Color.White
-        Me.btnGoProjects.Location = New System.Drawing.Point(80, 486)
+        Me.btnGoProjects.Location = New System.Drawing.Point(0, 208)
+        Me.btnGoProjects.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
         Me.btnGoProjects.Name = "btnGoProjects"
         Me.btnGoProjects.Size = New System.Drawing.Size(440, 42)
         Me.btnGoProjects.Text = "🚀 Quản Lý Dự Án"
@@ -189,12 +208,27 @@ Partial Class frmMain
         Me.btnGoTeams.FlatAppearance.BorderSize = 0
         Me.btnGoTeams.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
         Me.btnGoTeams.ForeColor = System.Drawing.Color.White
-        Me.btnGoTeams.Location = New System.Drawing.Point(80, 538)
+        Me.btnGoTeams.Location = New System.Drawing.Point(0, 260)
+        Me.btnGoTeams.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
         Me.btnGoTeams.Name = "btnGoTeams"
         Me.btnGoTeams.Size = New System.Drawing.Size(440, 42)
         Me.btnGoTeams.Text = "👥 Quản Lý Nhóm"
         Me.btnGoTeams.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnGoTeams.Visible = False
+
+        '--- btnGoApproval (Admin/Manager) ---
+        Me.btnGoApproval.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.btnGoApproval.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnGoApproval.FlatAppearance.BorderSize = 0
+        Me.btnGoApproval.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
+        Me.btnGoApproval.ForeColor = System.Drawing.Color.White
+        Me.btnGoApproval.Location = New System.Drawing.Point(0, 0)
+        Me.btnGoApproval.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
+        Me.btnGoApproval.Name = "btnGoApproval"
+        Me.btnGoApproval.Size = New System.Drawing.Size(440, 42)
+        Me.btnGoApproval.Text = "✔️ Duyệt Công Việc"
+        Me.btnGoApproval.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnGoApproval.Visible = False
 
         '--- frmMain ---
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -211,6 +245,7 @@ Partial Class frmMain
         Me.pnlHeader.ResumeLayout(False)
         Me.pnlContent.ResumeLayout(False)
         Me.pnlRoleBadge.ResumeLayout(False)
+        Me.flpMenu.ResumeLayout(False)
         Me.ResumeLayout(False)
     End Sub
 
@@ -230,5 +265,7 @@ Partial Class frmMain
     Friend WithEvents btnGoMyTeams As System.Windows.Forms.Button
     Friend WithEvents btnGoProjects As System.Windows.Forms.Button
     Friend WithEvents btnGoTeams As System.Windows.Forms.Button
+    Friend WithEvents btnGoApproval As System.Windows.Forms.Button
+    Friend WithEvents flpMenu As System.Windows.Forms.FlowLayoutPanel
 
 End Class

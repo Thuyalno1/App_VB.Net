@@ -31,6 +31,13 @@ Public Class TaskRepository
         t.ProjectId = If(reader.IsDBNull(projOrd), Nothing, CType(reader.GetInt32(projOrd), Integer?))
         Dim teamOrd As Integer = reader.GetOrdinal("TeamId")
         t.TeamId = If(reader.IsDBNull(teamOrd), Nothing, CType(reader.GetInt32(teamOrd), Integer?))
+        ' Đọc AssignedUserName nếu có trong kết quả truy vấn (từ JOIN Users)
+        Try
+            Dim userNameOrd As Integer = reader.GetOrdinal("AssignedUserName")
+            t.AssignedUserName = If(reader.IsDBNull(userNameOrd), "", reader.GetString(userNameOrd))
+        Catch ex As IndexOutOfRangeException
+            ' Cột không tồn tại trong truy vấn này, bỏ qua
+        End Try
         Return t
     End Function
 
@@ -55,6 +62,30 @@ Public Class TaskRepository
             Return tasks
         Catch ex As Exception
             Throw New DataAccessException("Không thể tải danh sách Task từ cơ sở dữ liệu.", ex)
+        End Try
+    End Function
+
+    ''' <summary>Lấy tất cả task đang chờ duyệt</summary>
+    Public Function GetPendingApprovalTasks() As List(Of Task) Implements ITaskRepository.GetPendingApprovalTasks
+        Try
+            Dim tasks As New List(Of Task)()
+            Dim sql As String = "SELECT t.*, u.UserName AS AssignedUserName FROM Tasks t
+                                 LEFT JOIN Users u ON t.AssignedToUserId = u.UserId
+                                 WHERE t.IsDeleted = 0 AND t.Status = 'Chờ duyệt'
+                                 ORDER BY t.CreatedAt DESC"
+            Using conn As New OdbcConnection(ConnectionString)
+                conn.Open()
+                Using cmd As New OdbcCommand(sql, conn)
+                    Using reader As OdbcDataReader = cmd.ExecuteReader()
+                        While reader.Read()
+                            tasks.Add(MapTask(reader))
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return tasks
+        Catch ex As Exception
+            Throw New DataAccessException("Không thể tải danh sách Task chờ duyệt từ cơ sở dữ liệu.", ex)
         End Try
     End Function
 
@@ -218,7 +249,7 @@ Public Class TaskRepository
     ''' <summary>Gán một task chưa có người làm cho một người dùng</summary>
     Public Sub ClaimTask(taskId As Integer, userId As Integer) Implements ITaskRepository.ClaimTask
         Try
-            Dim sql As String = "UPDATE Tasks SET AssignedToUserId=?, Status='In Progress' WHERE TaskId=? AND AssignedToUserId IS NULL AND IsDeleted=0"
+            Dim sql As String = "UPDATE Tasks SET AssignedToUserId=?, Status='Đang thực hiện' WHERE TaskId=? AND AssignedToUserId IS NULL AND IsDeleted=0"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)

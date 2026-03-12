@@ -15,6 +15,14 @@ Public Class TaskService
         End Try
     End Function
 
+    Public Function GetPendingApprovalTasks() As List(Of Task) Implements ITaskService.GetPendingApprovalTasks
+        Try
+            Return _repo.GetPendingApprovalTasks()
+        Catch ex As DataAccessException
+            Throw New BusinessException("Không thể tải danh sách công việc chờ duyệt. " & ex.Message, ex)
+        End Try
+    End Function
+
     Public Function GetMyTasks(userId As Integer) As List(Of Task) Implements ITaskService.GetMyTasks
         Try
             Return _repo.GetByUserId(userId)
@@ -46,7 +54,7 @@ Public Class TaskService
                 .Description = If(dto.Description, ""),
                 .AssignedToUserId = If(dto.AssignedToUserId.HasValue AndAlso dto.AssignedToUserId.Value > 0, dto.AssignedToUserId, CType(Nothing, Integer?)),
                 .CreatedByUserId = createdByUserId,
-                .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Pending", dto.Status),
+                .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Chờ xử lý", dto.Status),
                 .Priority = If(String.IsNullOrWhiteSpace(dto.Priority), "Medium", dto.Priority),
                 .DueDate = dto.DueDate,
                 .ProjectId = If(dto.ProjectId.HasValue AndAlso dto.ProjectId.Value > 0, dto.ProjectId, CType(Nothing, Integer?)),
@@ -64,13 +72,21 @@ Public Class TaskService
             Return (False, "Tiêu đề công việc không được để trống.")
         End If
 
+        ' Validate role: Employee cannot set task to "Đã hoàn thành"
+        If dto.Status = "Đã hoàn thành" AndAlso SessionManager.CurrentUser IsNot Nothing Then
+            Dim role = SessionManager.CurrentUser.RoleId
+            If role = "Employee" Then
+                Return (False, "Nhân viên không được quyền duyệt task thành 'Đã hoàn thành'. Vui lòng chọn 'Chờ duyệt'.")
+            End If
+        End If
+
         Try
             Dim updTask As New Task() With {
                 .TaskId = dto.TaskId,
                 .Title = dto.Title.Trim(),
                 .Description = If(dto.Description, ""),
                 .AssignedToUserId = If(dto.AssignedToUserId.HasValue AndAlso dto.AssignedToUserId.Value > 0, dto.AssignedToUserId, CType(Nothing, Integer?)),
-                .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Pending", dto.Status),
+                .Status = If(String.IsNullOrWhiteSpace(dto.Status), "Chờ xử lý", dto.Status),
                 .Priority = If(String.IsNullOrWhiteSpace(dto.Priority), "Medium", dto.Priority),
                 .DueDate = dto.DueDate,
                 .ProjectId = If(dto.ProjectId.HasValue AndAlso dto.ProjectId.Value > 0, dto.ProjectId, CType(Nothing, Integer?)),
@@ -84,9 +100,17 @@ Public Class TaskService
     End Function
 
     Public Function UpdateStatus(taskId As Integer, status As String) As (Success As Boolean, Message As String) Implements ITaskService.UpdateStatus
-        Dim validStatuses = {"Pending", "In Progress", "Completed"}
+        Dim validStatuses = {"Chờ xử lý", "Đang thực hiện", "Chờ duyệt", "Đã hoàn thành"}
         If Not validStatuses.Contains(status) Then
             Return (False, "Trạng thái không hợp lệ.")
+        End If
+
+        ' Validate role: Employee cannot set task to "Đã hoàn thành"
+        If status = "Đã hoàn thành" AndAlso SessionManager.CurrentUser IsNot Nothing Then
+            Dim role = SessionManager.CurrentUser.RoleId
+            If role = "Employee" Then
+                Return (False, "Nhân viên không được quyền duyệt task thành 'Đã hoàn thành'. Vui lòng chọn 'Chờ duyệt'.")
+            End If
         End If
 
         Try

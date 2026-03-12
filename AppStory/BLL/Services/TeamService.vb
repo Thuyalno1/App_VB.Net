@@ -149,4 +149,13 @@ Public Class TeamService
         End Try
     End Function
 
+    Public Function IsUserTeamLeader(userId As Integer) As Boolean Implements ITeamService.IsUserTeamLeader
+        Try
+            Return _repo.IsLeader(userId)
+        Catch ex As DataAccessException
+            ' Log hoặc xử lý tùy ý, ở đây throw tiếp
+            Throw
+        End Try
+    End Function
+
 End Class

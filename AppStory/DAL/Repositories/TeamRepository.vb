@@ -210,4 +210,20 @@ Public Class TeamRepository
         End Try
     End Function
 
+    Public Function IsLeader(userId As Integer) As Boolean Implements ITeamRepository.IsLeader
+        Try
+            Dim sql As String = "SELECT COUNT(*) FROM UserTeam WHERE UserId = ? AND Role = 'Leader'"
+            Using conn As New OdbcConnection(ConnectionString)
+                conn.Open()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", userId)
+                    Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                    Return count > 0
+                End Using
+            End Using
+        Catch ex As Exception
+            Throw New DataAccessException($"Không thể kiểm tra vai trò Trưởng nhóm của UserId={userId}.", ex)
+        End Try
+    End Function
+
 End Class

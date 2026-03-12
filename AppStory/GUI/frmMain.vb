@@ -1,8 +1,11 @@
 Public Class frmMain
     Inherits System.Windows.Forms.Form
 
+    Private ReadOnly _teamService As ITeamService
+
     Public Sub New()
         InitializeComponent()
+        _teamService = New TeamService()
     End Sub
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -28,6 +31,7 @@ Public Class frmMain
                     pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
                     btnGoTasks.Visible = True
                     btnGoTasks.Text = "Quản Lý Công Việc (Admin)"
+                    btnGoApproval.Visible = True
                     btnGoOpenTasks.Visible = False
                     btnGoMyTasks.Visible = False
                     btnGoMyTeams.Visible = False
@@ -38,15 +42,24 @@ Public Class frmMain
                     pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(245, 158, 11)
                     btnGoTasks.Visible = True
                     btnGoTasks.Text = "Quản Lý Công Việc (Manager)"
+                    btnGoApproval.Visible = True
                     btnGoOpenTasks.Visible = True
                     btnGoMyTasks.Visible = True
                     btnGoMyTeams.Visible = True
                     btnGoProjects.Visible = True
                     btnGoTeams.Visible = False
                 Case Else ' Employee
-                    lblRoleDesc.Text = "Bạn có thể xem và thực hiện các nhiệm vụ của mình."
-                    pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
-                    btnGoTasks.Visible = False
+                    Dim isLeader As Boolean = _teamService.IsUserTeamLeader(user.UserId)
+                    If isLeader Then
+                        lblRoleDesc.Text = "Bạn là Trưởng nhóm. Bạn có quyền quản lý công việc của nhóm mình."
+                        pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(59, 130, 246) ' Màu xanh dương cho Leader
+                        btnGoTasks.Visible = True
+                        btnGoTasks.Text = "Quản Lý Công Việc (Leader)"
+                    Else
+                        lblRoleDesc.Text = "Bạn có thể xem và thực hiện các nhiệm vụ của mình."
+                        pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+                        btnGoTasks.Visible = False
+                    End If
                     btnGoOpenTasks.Visible = True
                     btnGoMyTasks.Visible = True
                     btnGoMyTeams.Visible = True
@@ -62,6 +75,13 @@ Public Class frmMain
     Private Sub btnGoTasks_Click(sender As Object, e As EventArgs) Handles btnGoTasks.Click
         Dim taskForm As New frmTaskManagement()
         taskForm.Show()
+        Me.Hide()
+    End Sub
+
+    '--- Admin / Manager → Task Approval ---
+    Private Sub btnGoApproval_Click(sender As Object, e As EventArgs) Handles btnGoApproval.Click
+        Dim approvalForm As New frmTaskApproval()
+        approvalForm.Show()
         Me.Hide()
     End Sub
 
@@ -116,6 +136,10 @@ Public Class frmMain
         Dim loginForm As New frmLogin()
         loginForm.Show()
         Me.Close()
+    End Sub
+
+    Private Sub frmMain_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        Application.Exit()
     End Sub
 
 End Class

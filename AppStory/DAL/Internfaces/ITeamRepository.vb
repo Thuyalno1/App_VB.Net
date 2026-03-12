@@ -9,4 +9,5 @@ Public Interface ITeamRepository
     Sub RemoveUserFromTeam(userId As Integer, teamId As Integer)
     Sub ClearUsersFromTeam(teamId As Integer)
     Function GetUsersByTeamAndRole(teamId As Integer, role As String) As List(Of User)
+    Function IsLeader(userId As Integer) As Boolean
 End Interface
