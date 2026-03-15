@@ -20,7 +20,7 @@ Public Class TaskRepository
         Dim assignedOrd As Integer = reader.GetOrdinal("AssignedToUserId")
         t.AssignedToUserId = If(reader.IsDBNull(assignedOrd), CType(Nothing, Integer?), reader.GetInt32(assignedOrd))
         t.CreatedByUserId = reader.GetInt32(reader.GetOrdinal("CreatedByUserId"))
-        t.Status = reader.GetString(reader.GetOrdinal("Status"))
+        t.Progress = reader.GetInt32(reader.GetOrdinal("Progress"))
         t.Priority = reader.GetString(reader.GetOrdinal("Priority"))
         t.CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
         Dim dueOrd As Integer = reader.GetOrdinal("DueDate")
@@ -31,6 +31,13 @@ Public Class TaskRepository
         t.ProjectId = If(reader.IsDBNull(projOrd), Nothing, CType(reader.GetInt32(projOrd), Integer?))
         Dim teamOrd As Integer = reader.GetOrdinal("TeamId")
         t.TeamId = If(reader.IsDBNull(teamOrd), Nothing, CType(reader.GetInt32(teamOrd), Integer?))
+        ' Đọc IsApproved nếu có (đề phòng chưa migrate DB)
+        Try
+            Dim approvedOrd As Integer = reader.GetOrdinal("IsApproved")
+            t.IsApproved = If(reader.IsDBNull(approvedOrd), False, Convert.ToBoolean(reader.GetValue(approvedOrd)))
+        Catch ex As IndexOutOfRangeException
+            t.IsApproved = False
+        End Try
         ' Đọc AssignedUserName nếu có trong kết quả truy vấn (từ JOIN Users)
         Try
             Dim userNameOrd As Integer = reader.GetOrdinal("AssignedUserName")
@@ -65,13 +72,13 @@ Public Class TaskRepository
         End Try
     End Function
 
-    ''' <summary>Lấy tất cả task đang chờ duyệt</summary>
+    ''' <summary>Lấy tất cả task đang chờ duyệt (Progress = 90%)</summary>
     Public Function GetPendingApprovalTasks() As List(Of Task) Implements ITaskRepository.GetPendingApprovalTasks
         Try
             Dim tasks As New List(Of Task)()
             Dim sql As String = "SELECT t.*, u.UserName AS AssignedUserName FROM Tasks t
                                  LEFT JOIN Users u ON t.AssignedToUserId = u.UserId
-                                 WHERE t.IsDeleted = 0 AND t.Status = 'Chờ duyệt'
+                                 WHERE t.IsDeleted = 0 AND (t.Progress = 90 OR (t.Progress = 100 AND t.IsApproved = 0))
                                  ORDER BY t.CreatedAt DESC"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
@@ -115,7 +122,10 @@ Public Class TaskRepository
     Public Function GetByProjectId(projectId As Integer) As List(Of Task) Implements ITaskRepository.GetByProjectId
         Try
             Dim tasks As New List(Of Task)()
-            Dim sql As String = "SELECT * FROM Tasks WHERE ProjectId = ? AND IsDeleted = 0 ORDER BY CreatedAt DESC"
+            Dim sql As String = "SELECT t.*, u.UserName AS AssignedUserName FROM Tasks t
+                                 LEFT JOIN Users u ON t.AssignedToUserId = u.UserId
+                                 WHERE t.ProjectId = ? AND t.IsDeleted = 0
+                                 ORDER BY t.CreatedAt DESC"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)
@@ -136,8 +146,8 @@ Public Class TaskRepository
     ''' <summary>Thêm task mới vào DB</summary>
     Public Sub Insert(task As Task) Implements ITaskRepository.Insert
         Try
-            Dim sql As String = "INSERT INTO Tasks (Title, Description, AssignedToUserId, CreatedByUserId, Status, Priority, DueDate, ProjectId, TeamId)
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            Dim sql As String = "INSERT INTO Tasks (Title, Description, AssignedToUserId, CreatedByUserId, Progress, Priority, DueDate, ProjectId, TeamId, IsApproved)
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)
@@ -145,11 +155,12 @@ Public Class TaskRepository
                     cmd.Parameters.AddWithValue("?", If(task.Description, ""))
                     cmd.Parameters.AddWithValue("?", If(task.AssignedToUserId.HasValue, CObj(task.AssignedToUserId.Value), DBNull.Value))
                     cmd.Parameters.AddWithValue("?", task.CreatedByUserId)
-                    cmd.Parameters.AddWithValue("?", task.Status)
+                    cmd.Parameters.AddWithValue("?", task.Progress)
                     cmd.Parameters.AddWithValue("?", task.Priority)
                     cmd.Parameters.AddWithValue("?", If(task.DueDate.HasValue, CObj(task.DueDate.Value), DBNull.Value))
                     cmd.Parameters.AddWithValue("?", If(task.ProjectId.HasValue, CObj(task.ProjectId.Value), DBNull.Value))
                     cmd.Parameters.AddWithValue("?", If(task.TeamId.HasValue, CObj(task.TeamId.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", If(task.IsApproved, 1, 0))
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
@@ -162,8 +173,8 @@ Public Class TaskRepository
     Public Sub Update(task As Task) Implements ITaskRepository.Update
         Try
             Dim sql As String = "UPDATE Tasks SET Title=?, Description=?,
-                                 AssignedToUserId=?, Status=?,
-                                 Priority=?, DueDate=?, ProjectId=?, TeamId=?
+                                 AssignedToUserId=?, Progress=?,
+                                 Priority=?, DueDate=?, ProjectId=?, TeamId=?, IsApproved=?
                                  WHERE TaskId=? AND IsDeleted=0"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
@@ -171,11 +182,12 @@ Public Class TaskRepository
                     cmd.Parameters.AddWithValue("?", task.Title)
                     cmd.Parameters.AddWithValue("?", If(task.Description, ""))
                     cmd.Parameters.AddWithValue("?", If(task.AssignedToUserId.HasValue, CObj(task.AssignedToUserId.Value), DBNull.Value))
-                    cmd.Parameters.AddWithValue("?", task.Status)
+                    cmd.Parameters.AddWithValue("?", task.Progress)
                     cmd.Parameters.AddWithValue("?", task.Priority)
                     cmd.Parameters.AddWithValue("?", If(task.DueDate.HasValue, CObj(task.DueDate.Value), DBNull.Value))
                     cmd.Parameters.AddWithValue("?", If(task.ProjectId.HasValue, CObj(task.ProjectId.Value), DBNull.Value))
                     cmd.Parameters.AddWithValue("?", If(task.TeamId.HasValue, CObj(task.TeamId.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("?", If(task.IsApproved, 1, 0))
                     cmd.Parameters.AddWithValue("?", task.TaskId)
                     cmd.ExecuteNonQuery()
                 End Using
@@ -185,20 +197,20 @@ Public Class TaskRepository
         End Try
     End Sub
 
-    ''' <summary>Employee: chỉ được sửa Status của task mình được giao</summary>
-    Public Sub UpdateStatus(taskId As Integer, status As String) Implements ITaskRepository.UpdateStatus
+    ''' <summary>Cập nhật tiến độ task (0-100%)</summary>
+    Public Sub UpdateProgress(taskId As Integer, progress As Integer) Implements ITaskRepository.UpdateProgress
         Try
-            Dim sql As String = "UPDATE Tasks SET Status=? WHERE TaskId=? AND IsDeleted=0"
+            Dim sql As String = "UPDATE Tasks SET Progress=? WHERE TaskId=? AND IsDeleted=0"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("?", status)
+                    cmd.Parameters.AddWithValue("?", progress)
                     cmd.Parameters.AddWithValue("?", taskId)
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
         Catch ex As Exception
-            Throw New DataAccessException($"Không thể cập nhật trạng thái Task ID={taskId}.", ex)
+            Throw New DataAccessException($"Không thể cập nhật tiến độ Task ID={taskId}.", ex)
         End Try
     End Sub
 
@@ -249,7 +261,7 @@ Public Class TaskRepository
     ''' <summary>Gán một task chưa có người làm cho một người dùng</summary>
     Public Sub ClaimTask(taskId As Integer, userId As Integer) Implements ITaskRepository.ClaimTask
         Try
-            Dim sql As String = "UPDATE Tasks SET AssignedToUserId=?, Status='Đang thực hiện' WHERE TaskId=? AND AssignedToUserId IS NULL AND IsDeleted=0"
+            Dim sql As String = "UPDATE Tasks SET AssignedToUserId=?, Progress=10 WHERE TaskId=? AND AssignedToUserId IS NULL AND IsDeleted=0"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)
@@ -287,5 +299,21 @@ Public Class TaskRepository
             Throw New DataAccessException($"Không thể tải danh sách Task của TeamId={teamId}.", ex)
         End Try
     End Function
+
+    ''' <summary>Phê duyệt công việc (Admin/Manager)</summary>
+    Public Sub ApproveTask(taskId As Integer) Implements ITaskRepository.ApproveTask
+        Try
+            Dim sql As String = "UPDATE Tasks SET IsApproved=1 WHERE TaskId=? AND IsDeleted=0"
+            Using conn As New OdbcConnection(ConnectionString)
+                conn.Open()
+                Using cmd As New OdbcCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", taskId)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        Catch ex As Exception
+            Throw New DataAccessException($"Không thể phê duyệt Task ID={taskId}.", ex)
+        End Try
+    End Sub
 
 End Class

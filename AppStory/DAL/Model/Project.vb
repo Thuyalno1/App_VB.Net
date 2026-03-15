@@ -7,4 +7,6 @@ Public Class Project
     Public Property Status As String ' Planning, Active, On Hold, Completed
     Public Property ManagerId As Integer? ' Project Manager
     Public Property CreatedAt As DateTime
+    Public Property TaskCount As Integer ' Added for dashboard
+    Public Property ApprovedTaskCount As Integer ' Added for dynamic completion logic
 End Class

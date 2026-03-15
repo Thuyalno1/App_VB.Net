@@ -2,7 +2,6 @@ Imports System.Drawing
 
 Public Class frmTaskApproval
     Inherits Form
-
     Private ReadOnly _taskService As ITaskService
     Private _allTasks As List(Of Task)
     Private Const PageSize As Integer = 7
@@ -23,9 +22,9 @@ Public Class frmTaskApproval
         dgvPendingTasks.AutoGenerateColumns = False
         dgvPendingTasks.Columns.Clear()
 
-        dgvPendingTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "AssignedUserName", .HeaderText = "Người phụ trách", .Width = 150})
-        dgvPendingTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Title", .HeaderText = "Tiêu đề", .Width = 250})
-        dgvPendingTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Mức ưu tiên", .Width = 100})
+        dgvPendingTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "AssignedUserName", .HeaderText = "Người thực hiện", .Width = 150})
+        dgvPendingTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Title", .HeaderText = "Tên công việc", .Width = 250})
+        dgvPendingTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Ưu tiên", .Width = 100})
         dgvPendingTasks.Columns.Add(New DataGridViewTextBoxColumn() With {
             .DataPropertyName = "DueDate",
             .HeaderText = "Deadline",
@@ -87,7 +86,7 @@ Public Class frmTaskApproval
         lblPageInfo.Text = $"Trang {_currentPage} / {_totalPages}"
         btnPrev.Enabled = (_currentPage > 1)
         btnNext.Enabled = (_currentPage < _totalPages)
-        lblCount.Text = $"Số lượng: {pagedData.Count} / {_allTasks.Count} công việc đang chờ duyệt."
+        lblCount.Text = $"Số lượng: {pagedData.Count} / {_allTasks.Count} công việc đang chờ phê duyệt."
     End Sub
 
     Private Sub btnPrev_Click(sender As Object, e As EventArgs) Handles btnPrev.Click
@@ -112,9 +111,9 @@ Public Class frmTaskApproval
 
         ' Xử lý bấm nút Duyệt
         If e.ColumnIndex = dgvPendingTasks.Columns("ApproveColumn").Index Then
-            Dim confirm = MessageBox.Show($"Duyệt công việc '{taskObj.Title}' thành Đã hoàn thành?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            Dim confirm = MessageBox.Show($"Xác nhận phê duyệt công việc '{taskObj.Title}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
             If confirm = DialogResult.Yes Then
-                Dim result = _taskService.UpdateStatus(taskObj.TaskId, "Đã hoàn thành")
+                Dim result = _taskService.ApproveTask(taskObj.TaskId)
                 If result.Success Then
                     MessageBox.Show(result.Message, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     LoadPendingTasks()
@@ -126,11 +125,11 @@ Public Class frmTaskApproval
 
         ' Xử lý bấm nút Từ chối
         If e.ColumnIndex = dgvPendingTasks.Columns("RejectColumn").Index Then
-            Dim confirm = MessageBox.Show($"Từ chối công việc '{taskObj.Title}' và trả về Đang thực hiện?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            Dim confirm = MessageBox.Show($"Từ chối công việc '{taskObj.Title}' và trả về 50%?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
             If confirm = DialogResult.Yes Then
-                Dim result = _taskService.UpdateStatus(taskObj.TaskId, "Đang thực hiện")
+                Dim result = _taskService.UpdateProgress(taskObj.TaskId, 50)
                 If result.Success Then
-                    MessageBox.Show("Đã từ chối công việc. Trạng thái đã chuyển về Đang thực hiện.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MessageBox.Show("Đã từ chối công việc. Tiến độ đã chuyển về 50%.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     LoadPendingTasks()
                 Else
                     MessageBox.Show(result.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning)

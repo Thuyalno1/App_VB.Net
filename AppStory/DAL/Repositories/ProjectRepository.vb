@@ -25,13 +25,28 @@ Public Class ProjectRepository
         Dim manOrd As Integer = reader.GetOrdinal("ManagerId")
         p.ManagerId = If(reader.IsDBNull(manOrd), Nothing, CType(reader.GetInt32(manOrd), Integer?))
         p.CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
+        
+        Try
+            Dim countOrd As Integer = reader.GetOrdinal("TaskCount")
+            p.TaskCount = If(reader.IsDBNull(countOrd), 0, Convert.ToInt32(reader.GetValue(countOrd)))
+            
+            Dim appCountOrd As Integer = reader.GetOrdinal("ApprovedTaskCount")
+            p.ApprovedTaskCount = If(reader.IsDBNull(appCountOrd), 0, Convert.ToInt32(reader.GetValue(appCountOrd)))
+        Catch
+            ' Mặc định 0 nếu không truy vấn được (ví dụ trong SQL không có cột này)
+        End Try
+        
         Return p
     End Function
 
     Public Function GetAll() As List(Of Project) Implements IProjectRepository.GetAll
         Try
             Dim list As New List(Of Project)()
-            Dim sql As String = "SELECT * FROM Project ORDER BY CreatedAt DESC"
+            Dim sql As String = "SELECT p.*, 
+                                 (SELECT COUNT(*) FROM Tasks t WHERE t.ProjectId = p.ProjectId AND t.IsDeleted = 0) AS TaskCount,
+                                 (SELECT COUNT(*) FROM Tasks t WHERE t.ProjectId = p.ProjectId AND t.IsDeleted = 0 AND t.Progress = 100 AND t.IsApproved = 1) AS ApprovedTaskCount
+                                 FROM Project p 
+                                 ORDER BY p.CreatedAt DESC"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)
@@ -50,7 +65,11 @@ Public Class ProjectRepository
 
     Public Function GetById(projectId As Integer) As Project Implements IProjectRepository.GetById
         Try
-            Dim sql As String = "SELECT * FROM Project WHERE ProjectId = ?"
+            Dim sql As String = "SELECT p.*, 
+                                 (SELECT COUNT(*) FROM Tasks t WHERE t.ProjectId = p.ProjectId AND t.IsDeleted = 0) AS TaskCount,
+                                 (SELECT COUNT(*) FROM Tasks t WHERE t.ProjectId = p.ProjectId AND t.IsDeleted = 0 AND t.Progress = 100 AND t.IsApproved = 1) AS ApprovedTaskCount
+                                 FROM Project p 
+                                 WHERE p.ProjectId = ?"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)
@@ -73,7 +92,12 @@ Public Class ProjectRepository
     Public Function GetByManagerId(managerId As Integer) As List(Of Project) Implements IProjectRepository.GetByManagerId
         Try
             Dim list As New List(Of Project)()
-            Dim sql As String = "SELECT * FROM Project WHERE ManagerId = ? ORDER BY CreatedAt DESC"
+            Dim sql As String = "SELECT p.*, 
+                                 (SELECT COUNT(*) FROM Tasks t WHERE t.ProjectId = p.ProjectId AND t.IsDeleted = 0) AS TaskCount,
+                                 (SELECT COUNT(*) FROM Tasks t WHERE t.ProjectId = p.ProjectId AND t.IsDeleted = 0 AND t.Progress = 100 AND t.IsApproved = 1) AS ApprovedTaskCount
+                                 FROM Project p 
+                                 WHERE p.ManagerId = ? 
+                                 ORDER BY p.CreatedAt DESC"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)
@@ -94,7 +118,13 @@ Public Class ProjectRepository
     Public Function GetByTeamId(teamId As Integer) As List(Of Project) Implements IProjectRepository.GetByTeamId
         Try
             Dim list As New List(Of Project)()
-            Dim sql As String = "SELECT p.* FROM Project p INNER JOIN ProjectTeam pt ON p.ProjectId = pt.ProjectId WHERE pt.TeamId = ? ORDER BY p.CreatedAt DESC"
+            Dim sql As String = "SELECT p.*, 
+                                 (SELECT COUNT(*) FROM Tasks t WHERE t.ProjectId = p.ProjectId AND t.IsDeleted = 0) AS TaskCount,
+                                 (SELECT COUNT(*) FROM Tasks t WHERE t.ProjectId = p.ProjectId AND t.IsDeleted = 0 AND t.Progress = 100 AND t.IsApproved = 1) AS ApprovedTaskCount
+                                 FROM Project p 
+                                 INNER JOIN ProjectTeam pt ON p.ProjectId = pt.ProjectId 
+                                 WHERE pt.TeamId = ? 
+                                 ORDER BY p.CreatedAt DESC"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)

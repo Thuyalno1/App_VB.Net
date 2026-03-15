@@ -33,7 +33,7 @@ Public Class frmTaskManagement
         LoadUsersToCombo()
         LoadProjectsToCombo()
         LoadTeamsToCombo()
-        LoadPriorityAndStatus()
+        LoadPriorityCombo()
         LoadFilterCombo()
         LoadTasks()
         ClearForm()
@@ -68,7 +68,7 @@ Public Class frmTaskManagement
         dgvTasks.Columns.Clear()
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TaskId", .HeaderText = "ID", .Width = 45})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Title", .HeaderText = "Tiêu đề", .Width = 180})
-        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Status", .HeaderText = "Trạng thái", .Width = 100})
+        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProgressDisplay", .HeaderText = "Tiến độ", .Width = 100})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Ưu tiên", .Width = 80})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "AssignedToUserName", .HeaderText = "Giao cho", .Width = 110})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectName", .HeaderText = "Dự án", .Width = 120})
@@ -142,12 +142,13 @@ Public Class frmTaskManagement
             result.Add(New TaskViewItem() With {
                 .TaskId = t.TaskId,
                 .Title = t.Title,
-                .Status = t.Status,
+                .Progress = t.Progress,
                 .Priority = t.Priority,
                 .AssignedToUserName = userName,
                 .ProjectName = projectName,
                 .TeamName = teamName,
-                .DueDate = t.DueDate
+                .DueDate = t.DueDate,
+                .IsApproved = t.IsApproved
             })
         Next
         Return result
@@ -198,14 +199,16 @@ Public Class frmTaskManagement
         End Try
     End Sub
 
-    Private Sub LoadPriorityAndStatus()
+    Private Sub LoadPriorityCombo()
         cboPriority.Items.Clear()
         cboPriority.Items.AddRange({"Cao", "Trung bình", "Thấp"})
         cboPriority.SelectedIndex = 1
 
-        cboStatus.Items.Clear()
-        cboStatus.Items.AddRange({"Chờ xử lý", "Đang thực hiện", "Chờ duyệt", "Đã hoàn thành"})
-        cboStatus.SelectedIndex = 0
+        ' Setup NumericUpDown cho Progress
+        nudProgress.Minimum = 0
+        nudProgress.Maximum = 100
+        nudProgress.Increment = 10
+        nudProgress.Value = 0
     End Sub
 
     Private Sub LoadTasks()
@@ -217,14 +220,15 @@ Public Class frmTaskManagement
         End Try
     End Sub
 
-    ''' <summary>Khởi tạo ComboBox lọc theo trạng thái</summary>
+    ''' <summary>Khởi tạo ComboBox lọc theo tiến độ</summary>
     Private Sub LoadFilterCombo()
         cboFilterStatus.Items.Clear()
         cboFilterStatus.Items.Add("Tất cả")
-        cboFilterStatus.Items.Add("Chờ xử lý")
-        cboFilterStatus.Items.Add("Đang thực hiện")
-        cboFilterStatus.Items.Add("Chờ duyệt")
-        cboFilterStatus.Items.Add("Đã hoàn thành")
+        cboFilterStatus.Items.Add("Chưa bắt đầu (0%)")
+        cboFilterStatus.Items.Add("Đang thực hiện (1-89%)")
+        cboFilterStatus.Items.Add("Chờ duyệt (90%)")
+        cboFilterStatus.Items.Add("Đã duyệt (100%)")
+        cboFilterStatus.Items.Add("Chưa duyệt (100%)")
         cboFilterStatus.SelectedIndex = 0
     End Sub
 
@@ -232,12 +236,25 @@ Public Class frmTaskManagement
     Private Sub ApplyFilter()
         If _allTasks Is Nothing Then Return
 
-        ' 1. Filter
+        ' 1. Filter theo progress range
         If cboFilterStatus.SelectedIndex <= 0 OrElse cboFilterStatus.SelectedItem?.ToString() = "Tất cả" Then
             _filteredTasks = _allTasks
         Else
             Dim selected As String = cboFilterStatus.SelectedItem.ToString()
-            _filteredTasks = _allTasks.Where(Function(t) t.Status = selected).ToList()
+            Select Case selected
+                Case "Chưa bắt đầu (0%)"
+                    _filteredTasks = _allTasks.Where(Function(t) t.Progress = 0).ToList()
+                Case "Đang thực hiện (1-89%)"
+                    _filteredTasks = _allTasks.Where(Function(t) t.Progress >= 1 AndAlso t.Progress <= 89).ToList()
+                Case "Chờ duyệt (90%)"
+                    _filteredTasks = _allTasks.Where(Function(t) t.Progress = 90).ToList()
+                Case "Đã duyệt (100%)"
+                    _filteredTasks = _allTasks.Where(Function(t) t.Progress = 100 AndAlso t.IsApproved).ToList()
+                Case "Chưa duyệt (100%)"
+                    _filteredTasks = _allTasks.Where(Function(t) t.Progress = 100 AndAlso Not t.IsApproved).ToList()
+                Case Else
+                    _filteredTasks = _allTasks
+            End Select
         End If
 
         ' 2. Calculate pagination
@@ -294,7 +311,7 @@ Public Class frmTaskManagement
         txtTitle.Text = t.Title
         txtDescription.Text = t.Description
         cboPriority.SelectedItem = t.Priority
-        cboStatus.SelectedItem = t.Status
+        nudProgress.Value = Math.Min(Math.Max(t.Progress, nudProgress.Minimum), nudProgress.Maximum)
         ' Chọn đúng user trong ComboBox theo AssignedToUserId
         If t.AssignedToUserId.HasValue Then
             cboAssignedUser.SelectedValue = t.AssignedToUserId.Value
@@ -315,6 +332,10 @@ Public Class frmTaskManagement
         If t.DueDate.HasValue Then
             dtpDueDate.Value = t.DueDate.Value
         End If
+
+        ' Hiển thị nút Duyệt nếu task 100% và chưa duyệt (cho Admin/Manager)
+        Dim isMgOrAdmin = (SessionManager.CurrentUser.RoleId = "Admin" OrElse SessionManager.CurrentUser.RoleId = "Manager")
+        btnApprove.Visible = isMgOrAdmin AndAlso (t.Progress = 100 AndAlso Not t.IsApproved)
     End Sub
 
     ' ──────────────────────────────────────────────
@@ -325,7 +346,7 @@ Public Class frmTaskManagement
             .Title = txtTitle.Text.Trim(),
             .Description = txtDescription.Text.Trim(),
             .AssignedToUserId = GetSelectedUserId(),
-            .Status = cboStatus.SelectedItem?.ToString(),
+            .Progress = CInt(nudProgress.Value),
             .Priority = cboPriority.SelectedItem?.ToString(),
             .DueDate = dtpDueDate.Value,
             .ProjectId = GetSelectedProjectId(),
@@ -351,7 +372,7 @@ Public Class frmTaskManagement
             .Title = txtTitle.Text.Trim(),
             .Description = txtDescription.Text.Trim(),
             .AssignedToUserId = GetSelectedUserId(),
-            .Status = cboStatus.SelectedItem?.ToString(),
+            .Progress = CInt(nudProgress.Value),
             .Priority = cboPriority.SelectedItem?.ToString(),
             .DueDate = dtpDueDate.Value,
             .ProjectId = GetSelectedProjectId(),
@@ -385,6 +406,27 @@ Public Class frmTaskManagement
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearForm()
+    End Sub
+
+    ''' <summary>Button Duyệt Task</summary>
+    Private Sub btnApprove_Click(sender As Object, e As EventArgs) Handles btnApprove.Click
+        If _selectedTaskId < 0 Then
+            MessageBox.Show("Vui lòng chọn một công việc 100% để duyệt.", "Chưa chọn", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+        Dim t = _allTasks.FirstOrDefault(Function(x) x.TaskId = _selectedTaskId)
+        If t Is Nothing OrElse t.Progress < 100 Then
+            MessageBox.Show("Chỉ có thể duyệt công việc đã đạt 100% tiến độ.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim result = _taskService.ApproveTask(_selectedTaskId)
+        If result.Success Then
+            MessageBox.Show(result.Message, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            LoadTasks() : ClearForm()
+        Else
+            MessageBox.Show(result.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
     End Sub
 
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
@@ -424,8 +466,9 @@ Public Class frmTaskManagement
         If cboProject.Items.Count > 0 Then cboProject.SelectedIndex = 0
         If cboTeam.Items.Count > 0 Then cboTeam.SelectedIndex = 0
         cboPriority.SelectedIndex = 1
-        cboStatus.SelectedIndex = 0
+        nudProgress.Value = 0
         dtpDueDate.Value = DateTime.Now.AddDays(7)
+        btnApprove.Visible = False
         dgvTasks.ClearSelection()
     End Sub
 
@@ -454,21 +497,25 @@ Public Class frmTaskManagement
                     ' BOM UTF-8 để Excel mở đúng tiếng Việt
                     writer.Write(Chr(239) & Chr(187) & Chr(191))
 
-                    ' ── PHẦN 1: THỐNG KÊ THEO TRẠNG THÁI ──
-                    writer.WriteLine("=== THỐNG KÊ CÔNG VIỆC THEO TRẠNG THÁI ===")
+                    ' ── PHẦN 1: THỐNG KÊ THEO TIẾN ĐỘ ──
+                    writer.WriteLine("=== THỐNG KÊ CÔNG VIỆC THEO TIẾN ĐỘ ===")
                     writer.WriteLine($"Thời gian xuất:,{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}")
                     writer.WriteLine($"Tổng số task:,{tasks.Count}")
                     writer.WriteLine()
-                    writer.WriteLine("Trạng thái,Số lượng,Tỷ lệ (%)")
+                    writer.WriteLine("Tiến độ,Số lượng,Tỷ lệ (%)")
 
-                    Dim statusList = {"Chờ xử lý", "Đang thực hiện", "Chờ duyệt", "Đã hoàn thành"}
-                    For Each st In statusList
-                        Dim cnt As Integer = tasks.Where(Function(t) t.Status = st).Count()
+                    Dim progressRanges = {
+                        ("Chưa bắt đầu (0%)", Function(t As Task) t.Progress = 0),
+                        ("Đang thực hiện (1-89%)", Function(t As Task) t.Progress >= 1 AndAlso t.Progress <= 89),
+                        ("Chờ duyệt (90%)", Function(t As Task) t.Progress = 90),
+                        ("Hoàn thành (100%)", Function(t As Task) t.Progress = 100)
+                    }
+
+                    For Each rng In progressRanges
+                        Dim cnt As Integer = tasks.Where(rng.Item2).Count()
                         Dim pct As Double = If(tasks.Count > 0, Math.Round(cnt / tasks.Count * 100, 1), 0)
-                        writer.WriteLine($"{st},{cnt},{pct}%")
+                        writer.WriteLine($"{rng.Item1},{cnt},{pct}%")
                     Next
-                    Dim otherSt As Integer = tasks.Where(Function(t) Not statusList.Contains(t.Status)).Count()
-                    If otherSt > 0 Then writer.WriteLine($"Khác,{otherSt},{Math.Round(otherSt / tasks.Count * 100, 1)}%")
 
                     writer.WriteLine()
 
@@ -485,10 +532,11 @@ Public Class frmTaskManagement
 
                     ' ── PHẦN 3: DANH SÁCH CHI TIẾT ──
                     writer.WriteLine("=== DANH SÁCH CHI TIẾT CÔNG VIỆC ===")
-                    writer.WriteLine("TaskId,Tiêu đề,Mô tả,Giao cho (UserId),Tạo bởi (UserId),Trạng thái,Ưu tiên,Ngày tạo,Deadline")
+                    writer.WriteLine("TaskId,Tiêu đề,Mô tả,Giao cho (UserId),Tạo bởi (UserId),Tiến độ (%),Ưu tiên,Ngày tạo,Deadline")
                     For Each t As Task In tasks
                         Dim due As String = If(t.DueDate.HasValue, t.DueDate.Value.ToString("dd/MM/yyyy"), "")
-                        writer.WriteLine($"{t.TaskId},{EscapeCsv(t.Title)},{EscapeCsv(If(t.Description, ""))},{t.AssignedToUserId},{t.CreatedByUserId},{t.Status},{t.Priority},{t.CreatedAt.ToString("dd/MM/yyyy")},{due}")
+                        Dim statusStr = t.ProgressDisplay
+                        writer.WriteLine($"{t.TaskId},{EscapeCsv(t.Title)},{EscapeCsv(If(t.Description, ""))},{t.AssignedToUserId},{t.CreatedByUserId},{statusStr},{t.Priority},{t.CreatedAt.ToString("dd/MM/yyyy")},{due}")
                     Next
                 End Using
 
@@ -510,7 +558,7 @@ Public Class frmTaskManagement
     ''' <summary>Escape CSV: bọc ngoặc kép nếu có dấu phẩy hoặc xuống dòng</summary>
     Private Function EscapeCsv(value As String) As String
         If String.IsNullOrEmpty(value) Then Return ""
-        If value.Contains(",") OrElse value.Contains("""") OrElse value.Contains(vbNewLine) Then
+        If value.Contains(",") OrElse value.Contains("""") OrElse value.Contains(Environment.NewLine) Then
             Return """" & value.Replace("""", """""") & """"
         End If
         Return value
@@ -525,10 +573,23 @@ End Class
 Public Class TaskViewItem
     Public Property TaskId As Integer
     Public Property Title As String
-    Public Property Status As String
+    Public Property Progress As Integer
     Public Property Priority As String
     Public Property AssignedToUserName As String   ' Tên người được giao (thay vì UserId)
     Public Property ProjectName As String           ' Tên dự án (thay vì ProjectId)
     Public Property TeamName As String             ' Tên team (thay vì TeamId)
     Public Property DueDate As DateTime?            ' Deadline
+    Public Property IsApproved As Boolean
+
+    ''' <summary>Hiển thị tiến độ dạng "50%"</summary>
+    Public ReadOnly Property ProgressDisplay As String
+        Get
+            If Progress = 100 Then
+                ' Chúng ta chưa có IsApproved trong TaskViewItem, tạm thời lấy logic từ model nếu có thể
+                ' Nhưng để an toàn, ta nên map IsApproved vào TaskViewItem
+                Return If(IsApproved, "Đã duyệt", "Chưa duyệt")
+            End If
+            Return $"{Progress}%"
+        End Get
+    End Property
 End Class

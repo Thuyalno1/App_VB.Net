@@ -37,6 +37,8 @@ Public Class frmMain
                     btnGoMyTeams.Visible = False
                     btnGoProjects.Visible = True
                     btnGoTeams.Visible = True
+                    btnGoDashboard.Visible = True
+                    btnGoReport.Visible = True
                 Case "manager"
                     lblRoleDesc.Text = "Bạn có quyền quản lý nhóm và phê duyệt."
                     pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(245, 158, 11)
@@ -48,6 +50,8 @@ Public Class frmMain
                     btnGoMyTeams.Visible = True
                     btnGoProjects.Visible = True
                     btnGoTeams.Visible = False
+                    btnGoDashboard.Visible = True
+                    btnGoReport.Visible = True
                 Case Else ' Employee
                     Dim isLeader As Boolean = _teamService.IsUserTeamLeader(user.UserId)
                     If isLeader Then
@@ -65,6 +69,7 @@ Public Class frmMain
                     btnGoMyTeams.Visible = True
                     btnGoProjects.Visible = False
                     btnGoTeams.Visible = False
+                    btnGoEmployeeDashboard.Visible = True
             End Select
         Catch ex As BusinessException
             MessageBox.Show("Lỗi khởi động ứng dụng: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -116,6 +121,27 @@ Public Class frmMain
     '--- Admin → Teams ---
     Private Sub btnGoTeams_Click(sender As Object, e As EventArgs) Handles btnGoTeams.Click
         Dim f As New frmTeams()
+        f.Show()
+        Me.Hide()
+    End Sub
+
+    '--- Admin / Manager → Dashboard ---
+    Private Sub btnGoDashboard_Click(sender As Object, e As EventArgs) Handles btnGoDashboard.Click
+        Dim f As New frmDashboard()
+        f.Show()
+        Me.Hide()
+    End Sub
+
+    '--- Admin / Manager → Report ---
+    Private Sub btnGoReport_Click(sender As Object, e As EventArgs) Handles btnGoReport.Click
+        Dim f As New frmReport()
+        f.Show()
+        Me.Hide()
+    End Sub
+
+    '--- Employee → Employee Dashboard ---
+    Private Sub btnGoEmployeeDashboard_Click(sender As Object, e As EventArgs) Handles btnGoEmployeeDashboard.Click
+        Dim f As New frmEmployeeDashboard()
         f.Show()
         Me.Hide()
     End Sub

@@ -35,7 +35,8 @@ Partial Class frmTaskManagement
         Me.lblPriority = New System.Windows.Forms.Label()
         Me.cboPriority = New System.Windows.Forms.ComboBox()
         Me.lblStatus = New System.Windows.Forms.Label()
-        Me.cboStatus = New System.Windows.Forms.ComboBox()
+        Me.nudProgress = New System.Windows.Forms.NumericUpDown()
+        Me.lblPercent = New System.Windows.Forms.Label()
         Me.lblProject = New System.Windows.Forms.Label()
         Me.cboProject = New System.Windows.Forms.ComboBox()
         Me.lblTeam = New System.Windows.Forms.Label()
@@ -46,6 +47,7 @@ Partial Class frmTaskManagement
         Me.btnUpdate = New System.Windows.Forms.Button()
         Me.btnDelete = New System.Windows.Forms.Button()
         Me.btnClear = New System.Windows.Forms.Button()
+        Me.btnApprove = New System.Windows.Forms.Button()
         Me.btnExport = New System.Windows.Forms.Button()
         Me.pnlPagination = New System.Windows.Forms.Panel()
         Me.btnPrev = New System.Windows.Forms.Button()
@@ -53,6 +55,7 @@ Partial Class frmTaskManagement
         Me.lblPageInfo = New System.Windows.Forms.Label()
         Me.pnlHeader.SuspendLayout()
         CType(Me.dgvTasks, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.nudProgress, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlForm.SuspendLayout()
         Me.SuspendLayout()
 
@@ -179,7 +182,8 @@ Partial Class frmTaskManagement
         Me.pnlForm.Controls.Add(Me.lblPriority)
         Me.pnlForm.Controls.Add(Me.cboPriority)
         Me.pnlForm.Controls.Add(Me.lblStatus)
-        Me.pnlForm.Controls.Add(Me.cboStatus)
+        Me.pnlForm.Controls.Add(Me.nudProgress)
+        Me.pnlForm.Controls.Add(Me.lblPercent)
         Me.pnlForm.Controls.Add(Me.lblProject)
         Me.pnlForm.Controls.Add(Me.cboProject)
         Me.pnlForm.Controls.Add(Me.lblTeam)
@@ -190,6 +194,7 @@ Partial Class frmTaskManagement
         Me.pnlForm.Controls.Add(Me.btnUpdate)
         Me.pnlForm.Controls.Add(Me.btnDelete)
         Me.pnlForm.Controls.Add(Me.btnClear)
+        Me.pnlForm.Controls.Add(Me.btnApprove)
         Me.pnlForm.Controls.Add(Me.btnExport)
         Me.pnlForm.Location = New System.Drawing.Point(725, 65)
         Me.pnlForm.Name = "pnlForm"
@@ -229,8 +234,9 @@ Partial Class frmTaskManagement
         yOff += 18
         Me.cboPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList : Me.cboPriority.Font = New System.Drawing.Font("Segoe UI", 9.5!) : Me.cboPriority.Location = New System.Drawing.Point(10, yOff) : Me.cboPriority.Size = New System.Drawing.Size(160, 26)
 
-        Me.lblStatus.AutoSize = True : Me.lblStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!) : Me.lblStatus.Location = New System.Drawing.Point(185, yOff - 18) : Me.lblStatus.Text = "Trạng thái"
-        Me.cboStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList : Me.cboStatus.Font = New System.Drawing.Font("Segoe UI", 9.5!) : Me.cboStatus.Location = New System.Drawing.Point(185, yOff) : Me.cboStatus.Size = New System.Drawing.Size(165, 26)
+        Me.lblStatus.AutoSize = True : Me.lblStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!) : Me.lblStatus.Location = New System.Drawing.Point(185, yOff - 18) : Me.lblStatus.Text = "Tiến độ (%)"
+        Me.nudProgress.Font = New System.Drawing.Font("Segoe UI", 9.5!) : Me.nudProgress.Location = New System.Drawing.Point(185, yOff) : Me.nudProgress.Size = New System.Drawing.Size(120, 26) : Me.nudProgress.Minimum = 0 : Me.nudProgress.Maximum = 100 : Me.nudProgress.Increment = 10 : Me.nudProgress.Value = 0
+        Me.lblPercent.AutoSize = True : Me.lblPercent.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.lblPercent.Location = New System.Drawing.Point(310, yOff + 3) : Me.lblPercent.Text = "%"
 
         yOff += 34
         Me.lblDue.AutoSize = True : Me.lblDue.Font = New System.Drawing.Font("Segoe UI", 9.0!) : Me.lblDue.Location = New System.Drawing.Point(10, yOff) : Me.lblDue.Text = "Deadline"
@@ -263,7 +269,10 @@ Partial Class frmTaskManagement
         Me.btnDelete.BackColor = System.Drawing.Color.FromArgb(220, 38, 38) : Me.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnDelete.FlatAppearance.BorderSize = 0 : Me.btnDelete.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnDelete.ForeColor = System.Drawing.Color.White : Me.btnDelete.Location = New System.Drawing.Point(10, yOff) : Me.btnDelete.Name = "btnDelete" : Me.btnDelete.Size = New System.Drawing.Size(160, 34) : Me.btnDelete.Text = "🗑 Xóa (Soft)" : Me.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnClear.BackColor = System.Drawing.Color.FromArgb(107, 114, 128) : Me.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnClear.FlatAppearance.BorderSize = 0 : Me.btnClear.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnClear.ForeColor = System.Drawing.Color.White : Me.btnClear.Location = New System.Drawing.Point(185, yOff) : Me.btnClear.Name = "btnClear" : Me.btnClear.Size = New System.Drawing.Size(165, 34) : Me.btnClear.Text = "✖ Xóa form" : Me.btnClear.Cursor = System.Windows.Forms.Cursors.Hand
 
-        yOff += 44
+        yOff += 42
+        Me.btnApprove.BackColor = System.Drawing.Color.FromArgb(16, 185, 129) : Me.btnApprove.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnApprove.FlatAppearance.BorderSize = 0 : Me.btnApprove.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnApprove.ForeColor = System.Drawing.Color.White : Me.btnApprove.Location = New System.Drawing.Point(10, yOff) : Me.btnApprove.Name = "btnApprove" : Me.btnApprove.Size = New System.Drawing.Size(340, 34) : Me.btnApprove.Text = "✔️ DUYỆT CÔNG VIỆC (Xong)" : Me.btnApprove.Cursor = System.Windows.Forms.Cursors.Hand : Me.btnApprove.Visible = False
+
+        yOff += 42
         Me.btnExport.BackColor = System.Drawing.Color.FromArgb(5, 150, 105) : Me.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnExport.FlatAppearance.BorderSize = 0 : Me.btnExport.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnExport.ForeColor = System.Drawing.Color.White : Me.btnExport.Location = New System.Drawing.Point(10, yOff) : Me.btnExport.Name = "btnExport" : Me.btnExport.Size = New System.Drawing.Size(340, 34) : Me.btnExport.Text = "📄 Xuất Thống Kê CSV" : Me.btnExport.Cursor = System.Windows.Forms.Cursors.Hand
 
         '--- frmTaskManagement ---
@@ -286,6 +295,7 @@ Partial Class frmTaskManagement
         Me.Text = "AppStory – Quản Lý Công Việc"
         Me.pnlHeader.ResumeLayout(False)
         CType(Me.dgvTasks, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.nudProgress, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlForm.ResumeLayout(False)
         Me.pnlForm.PerformLayout()
         Me.ResumeLayout(False)
@@ -309,7 +319,8 @@ Partial Class frmTaskManagement
     Friend WithEvents lblPriority As System.Windows.Forms.Label
     Friend WithEvents cboPriority As System.Windows.Forms.ComboBox
     Friend WithEvents lblStatus As System.Windows.Forms.Label
-    Friend WithEvents cboStatus As System.Windows.Forms.ComboBox
+    Friend WithEvents nudProgress As System.Windows.Forms.NumericUpDown
+    Friend WithEvents lblPercent As System.Windows.Forms.Label
     Friend WithEvents lblProject As System.Windows.Forms.Label
     Friend WithEvents cboProject As System.Windows.Forms.ComboBox
     Friend WithEvents lblTeam As System.Windows.Forms.Label
@@ -320,6 +331,7 @@ Partial Class frmTaskManagement
     Friend WithEvents btnUpdate As System.Windows.Forms.Button
     Friend WithEvents btnDelete As System.Windows.Forms.Button
     Friend WithEvents btnClear As System.Windows.Forms.Button
+    Friend WithEvents btnApprove As System.Windows.Forms.Button
     Friend WithEvents btnExport As System.Windows.Forms.Button
     Friend WithEvents pnlPagination As System.Windows.Forms.Panel
     Friend WithEvents btnPrev As System.Windows.Forms.Button

@@ -39,7 +39,7 @@ Public Class frmCreateTeamTask
             Dim dto As New TaskDto() With {
                 .Title = titleStr,
                 .Description = txtDescription.Text.Trim(),
-                .Status = "Chờ xử lý",
+                .Progress = 0,
                 .Priority = cboPriority.SelectedItem?.ToString(),
                 .DueDate = dtpDueDate.Value,
                 .TeamId = _teamId,

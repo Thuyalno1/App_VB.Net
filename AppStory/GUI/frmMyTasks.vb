@@ -17,8 +17,10 @@ Public Class frmMyTasks
 
     Private Sub frmMyTasks_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetupGrid()
-        cboNewStatus.Items.AddRange({"Chờ xử lý", "Đang thực hiện", "Chờ duyệt"})
-        cboNewStatus.SelectedIndex = 0
+        nudProgress.Minimum = 0
+        nudProgress.Maximum = 100
+        nudProgress.Increment = 10
+        nudProgress.Value = 0
         LoadMyTasks()
         lblUserInfo.Text = $"Công việc của: {SessionManager.CurrentUser.UserName}"
     End Sub
@@ -28,7 +30,7 @@ Public Class frmMyTasks
         dgvMyTasks.Columns.Clear()
         dgvMyTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TaskId", .HeaderText = "ID", .Width = 45})
         dgvMyTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Title", .HeaderText = "Tiêu đề", .Width = 220})
-        dgvMyTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Status", .HeaderText = "Trạng thái", .Width = 110})
+        dgvMyTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Progress", .HeaderText = "Tiến độ (%)", .Width = 110})
         dgvMyTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Ưu tiên", .Width = 80})
         dgvMyTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "DueDate", .HeaderText = "Deadline", .Width = 110, .DefaultCellStyle = New DataGridViewCellStyle() With {.Format = "dd/MM/yyyy"}})
         dgvMyTasks.SelectionMode = DataGridViewSelectionMode.FullRowSelect
@@ -86,8 +88,8 @@ Public Class frmMyTasks
         Dim t = CType(dgvMyTasks.SelectedRows(0).DataBoundItem, Task)
         If t Is Nothing Then Return
         _selectedTaskId = t.TaskId
-        cboNewStatus.SelectedItem = t.Status
-        lblSelectedTask.Text = $"Đang chọn: [{t.TaskId}] {t.Title}"
+        nudProgress.Value = Math.Min(t.Progress, nudProgress.Maximum)
+        lblSelectedTask.Text = $"Đang chọn: [{t.TaskId}] {t.Title} - Tiến độ: {t.Progress}%"
     End Sub
 
     Private Sub btnConfirmStatus_Click(sender As Object, e As EventArgs) Handles btnConfirmStatus.Click
@@ -95,8 +97,8 @@ Public Class frmMyTasks
             MessageBox.Show("Vui lòng chọn một công việc.", "Chưa chọn", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
-        Dim newStatus As String = cboNewStatus.SelectedItem?.ToString()
-        Dim result = _taskService.UpdateStatus(_selectedTaskId, newStatus)
+        Dim newProgress As Integer = CInt(nudProgress.Value)
+        Dim result = _taskService.UpdateProgress(_selectedTaskId, newProgress)
         If result.Success Then
             MessageBox.Show(result.Message, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
             LoadMyTasks()

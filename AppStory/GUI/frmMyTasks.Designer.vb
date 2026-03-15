@@ -25,7 +25,8 @@ Partial Class frmMyTasks
         Me.pnlStatusUpdate = New System.Windows.Forms.Panel()
         Me.lblSelectedTask = New System.Windows.Forms.Label()
         Me.lblNewStatus = New System.Windows.Forms.Label()
-        Me.cboNewStatus = New System.Windows.Forms.ComboBox()
+        Me.nudProgress = New System.Windows.Forms.NumericUpDown()
+        Me.lblPercent = New System.Windows.Forms.Label()
         Me.btnConfirmStatus = New System.Windows.Forms.Button()
         Me.pnlPagination = New System.Windows.Forms.Panel()
         Me.btnPrev = New System.Windows.Forms.Button()
@@ -33,6 +34,7 @@ Partial Class frmMyTasks
         Me.lblPageInfo = New System.Windows.Forms.Label()
         Me.pnlHeader.SuspendLayout()
         CType(Me.dgvMyTasks, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.nudProgress, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlStatusUpdate.SuspendLayout()
         Me.pnlPagination.SuspendLayout()
         Me.SuspendLayout()
@@ -134,12 +136,13 @@ Partial Class frmMyTasks
         Me.btnNext.Text = "Sau →"
         Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
 
-        '-- pnlStatusUpdate (RECREATED) --
+        '-- pnlStatusUpdate --
         Me.pnlStatusUpdate.BackColor = System.Drawing.Color.White
         Me.pnlStatusUpdate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pnlStatusUpdate.Controls.Add(Me.lblSelectedTask)
         Me.pnlStatusUpdate.Controls.Add(Me.lblNewStatus)
-        Me.pnlStatusUpdate.Controls.Add(Me.cboNewStatus)
+        Me.pnlStatusUpdate.Controls.Add(Me.nudProgress)
+        Me.pnlStatusUpdate.Controls.Add(Me.lblPercent)
         Me.pnlStatusUpdate.Controls.Add(Me.btnConfirmStatus)
         Me.pnlStatusUpdate.Location = New System.Drawing.Point(10, 475)
         Me.pnlStatusUpdate.Name = "pnlStatusUpdate"
@@ -157,19 +160,28 @@ Partial Class frmMyTasks
         Me.lblNewStatus.AutoSize = True
         Me.lblNewStatus.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         Me.lblNewStatus.Location = New System.Drawing.Point(15, 38)
-        Me.lblNewStatus.Text = "Cập nhật trạng thái mới:"
+        Me.lblNewStatus.Text = "Cập nhật tiến độ:"
 
-        Me.cboNewStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboNewStatus.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.cboNewStatus.Location = New System.Drawing.Point(185, 34)
-        Me.cboNewStatus.Size = New System.Drawing.Size(180, 26)
+        Me.nudProgress.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.nudProgress.Location = New System.Drawing.Point(155, 34)
+        Me.nudProgress.Name = "nudProgress"
+        Me.nudProgress.Size = New System.Drawing.Size(80, 26)
+        Me.nudProgress.Minimum = 0
+        Me.nudProgress.Maximum = 90
+        Me.nudProgress.Increment = 10
+        Me.nudProgress.Value = 0
 
-        Me.btnConfirmStatus.BackColor = System.Drawing.Color.FromArgb(37, 99, 235) ' Blue for "New" button feel
+        Me.lblPercent.AutoSize = True
+        Me.lblPercent.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblPercent.Location = New System.Drawing.Point(240, 38)
+        Me.lblPercent.Text = "%"
+
+        Me.btnConfirmStatus.BackColor = System.Drawing.Color.FromArgb(37, 99, 235)
         Me.btnConfirmStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnConfirmStatus.FlatAppearance.BorderSize = 0
         Me.btnConfirmStatus.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         Me.btnConfirmStatus.ForeColor = System.Drawing.Color.White
-        Me.btnConfirmStatus.Location = New System.Drawing.Point(380, 31)
+        Me.btnConfirmStatus.Location = New System.Drawing.Point(280, 31)
         Me.btnConfirmStatus.Name = "btnConfirmStatus"
         Me.btnConfirmStatus.Size = New System.Drawing.Size(220, 34)
         Me.btnConfirmStatus.Text = "✔ XÁC NHẬN CẬP NHẬT"
@@ -193,6 +205,7 @@ Partial Class frmMyTasks
         Me.Text = "AppStory – Công Việc Của Tôi"
         Me.pnlHeader.ResumeLayout(False)
         CType(Me.dgvMyTasks, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.nudProgress, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlStatusUpdate.ResumeLayout(False)
         Me.pnlStatusUpdate.PerformLayout()
         Me.pnlPagination.ResumeLayout(False)
@@ -208,7 +221,8 @@ Partial Class frmMyTasks
     Friend WithEvents pnlStatusUpdate As System.Windows.Forms.Panel
     Friend WithEvents lblSelectedTask As System.Windows.Forms.Label
     Friend WithEvents lblNewStatus As System.Windows.Forms.Label
-    Friend WithEvents cboNewStatus As System.Windows.Forms.ComboBox
+    Friend WithEvents nudProgress As System.Windows.Forms.NumericUpDown
+    Friend WithEvents lblPercent As System.Windows.Forms.Label
     Friend WithEvents btnConfirmStatus As System.Windows.Forms.Button
     Friend WithEvents pnlPagination As System.Windows.Forms.Panel
     Friend WithEvents btnPrev As System.Windows.Forms.Button

@@ -7,7 +7,7 @@ Public Class PasswordHelper
     ''' Hash mật khẩu bằng SHA256, trả về chuỗi hex
     ''' </summary>
     Public Shared Function HashPassword(password As String) As String
-        Using sha256 As New SHA256Managed
+        Using sha256 As SHA256 = SHA256.Create()
             Dim bytes As Byte() = sha256.ComputeHash(Encoding.UTF8.GetBytes(password))
             Dim sb As New StringBuilder
             For Each b As Byte In bytes

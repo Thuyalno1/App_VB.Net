@@ -34,6 +34,9 @@ Partial Class frmMain
         Me.btnGoProjects = New System.Windows.Forms.Button()
         Me.btnGoTeams = New System.Windows.Forms.Button()
         Me.btnGoApproval = New System.Windows.Forms.Button()
+        Me.btnGoDashboard = New System.Windows.Forms.Button()
+        Me.btnGoReport = New System.Windows.Forms.Button()
+        Me.btnGoEmployeeDashboard = New System.Windows.Forms.Button()
         Me.flpMenu = New System.Windows.Forms.FlowLayoutPanel()
         Me.pnlHeader.SuspendLayout()
         Me.pnlContent.SuspendLayout()
@@ -76,6 +79,7 @@ Partial Class frmMain
 
         '--- flpMenu ---
         Me.flpMenu.BackColor = System.Drawing.Color.Transparent
+        Me.flpMenu.Controls.Add(Me.btnGoDashboard)
         Me.flpMenu.Controls.Add(Me.btnGoTasks)
         Me.flpMenu.Controls.Add(Me.btnGoApproval)
         Me.flpMenu.Controls.Add(Me.btnGoOpenTasks)
@@ -83,10 +87,12 @@ Partial Class frmMain
         Me.flpMenu.Controls.Add(Me.btnGoMyTeams)
         Me.flpMenu.Controls.Add(Me.btnGoProjects)
         Me.flpMenu.Controls.Add(Me.btnGoTeams)
+        Me.flpMenu.Controls.Add(Me.btnGoReport)
+        Me.flpMenu.Controls.Add(Me.btnGoEmployeeDashboard)
         Me.flpMenu.FlowDirection = System.Windows.Forms.FlowDirection.TopDown
         Me.flpMenu.Location = New System.Drawing.Point(80, 278)
         Me.flpMenu.Name = "flpMenu"
-        Me.flpMenu.Size = New System.Drawing.Size(460, 320)
+        Me.flpMenu.Size = New System.Drawing.Size(460, 420)
         Me.flpMenu.WrapContents = False
         Me.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill
 
@@ -230,11 +236,53 @@ Partial Class frmMain
         Me.btnGoApproval.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnGoApproval.Visible = False
 
+        '--- btnGoDashboard (Admin/Manager) ---
+        Me.btnGoDashboard.BackColor = System.Drawing.Color.FromArgb(99, 102, 241)
+        Me.btnGoDashboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnGoDashboard.FlatAppearance.BorderSize = 0
+        Me.btnGoDashboard.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
+        Me.btnGoDashboard.ForeColor = System.Drawing.Color.White
+        Me.btnGoDashboard.Location = New System.Drawing.Point(0, 0)
+        Me.btnGoDashboard.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
+        Me.btnGoDashboard.Name = "btnGoDashboard"
+        Me.btnGoDashboard.Size = New System.Drawing.Size(440, 42)
+        Me.btnGoDashboard.Text = "📊 Dashboard Tổng Quan"
+        Me.btnGoDashboard.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnGoDashboard.Visible = False
+
+        '--- btnGoReport (Admin/Manager) ---
+        Me.btnGoReport.BackColor = System.Drawing.Color.FromArgb(168, 85, 247)
+        Me.btnGoReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnGoReport.FlatAppearance.BorderSize = 0
+        Me.btnGoReport.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
+        Me.btnGoReport.ForeColor = System.Drawing.Color.White
+        Me.btnGoReport.Location = New System.Drawing.Point(0, 0)
+        Me.btnGoReport.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
+        Me.btnGoReport.Name = "btnGoReport"
+        Me.btnGoReport.Size = New System.Drawing.Size(440, 42)
+        Me.btnGoReport.Text = "📊 Báo Cáo Thống Kê"
+        Me.btnGoReport.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnGoReport.Visible = False
+
+        '--- btnGoEmployeeDashboard (Employee) ---
+        Me.btnGoEmployeeDashboard.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.btnGoEmployeeDashboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnGoEmployeeDashboard.FlatAppearance.BorderSize = 0
+        Me.btnGoEmployeeDashboard.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
+        Me.btnGoEmployeeDashboard.ForeColor = System.Drawing.Color.White
+        Me.btnGoEmployeeDashboard.Location = New System.Drawing.Point(0, 0)
+        Me.btnGoEmployeeDashboard.Margin = New System.Windows.Forms.Padding(0, 0, 0, 10)
+        Me.btnGoEmployeeDashboard.Name = "btnGoEmployeeDashboard"
+        Me.btnGoEmployeeDashboard.Size = New System.Drawing.Size(440, 42)
+        Me.btnGoEmployeeDashboard.Text = "📋 Dashboard Cá Nhân"
+        Me.btnGoEmployeeDashboard.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnGoEmployeeDashboard.Visible = False
+
         '--- frmMain ---
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(249, 250, 251)
-        Me.ClientSize = New System.Drawing.Size(600, 632)
+        Me.ClientSize = New System.Drawing.Size(600, 740)
         Me.Controls.Add(Me.pnlContent)
         Me.Controls.Add(Me.pnlHeader)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
@@ -266,6 +314,9 @@ Partial Class frmMain
     Friend WithEvents btnGoProjects As System.Windows.Forms.Button
     Friend WithEvents btnGoTeams As System.Windows.Forms.Button
     Friend WithEvents btnGoApproval As System.Windows.Forms.Button
+    Friend WithEvents btnGoDashboard As System.Windows.Forms.Button
+    Friend WithEvents btnGoReport As System.Windows.Forms.Button
+    Friend WithEvents btnGoEmployeeDashboard As System.Windows.Forms.Button
     Friend WithEvents flpMenu As System.Windows.Forms.FlowLayoutPanel
 
 End Class
