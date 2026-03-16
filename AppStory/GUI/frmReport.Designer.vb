@@ -101,6 +101,10 @@ Partial Class frmReport
         Me.pnlFilter.Controls.Add(Me.cboTeam)
         Me.pnlFilter.Controls.Add(Me.lblStatus)
         Me.pnlFilter.Controls.Add(Me.cboStatus)
+        Me.pnlFilter.Controls.Add(Me.lblMonth)
+        Me.pnlFilter.Controls.Add(Me.cboMonth)
+        Me.pnlFilter.Controls.Add(Me.lblYear)
+        Me.pnlFilter.Controls.Add(Me.cboYear)
         Me.pnlFilter.Controls.Add(Me.btnFilter)
         Me.pnlFilter.Location = New System.Drawing.Point(12, 62)
         Me.pnlFilter.Name = "pnlFilter"
