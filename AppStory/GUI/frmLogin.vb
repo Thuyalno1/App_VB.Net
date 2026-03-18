@@ -26,6 +26,7 @@ Public Class frmLogin
             mainForm.Show()
             Me.Hide()
         Else
+
             MessageBox.Show(result.Message, "Đăng nhập thất bại", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         End If
     End Sub

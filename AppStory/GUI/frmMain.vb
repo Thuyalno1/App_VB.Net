@@ -1,5 +1,6 @@
 Public Class frmMain
     Inherits System.Windows.Forms.Form
+    Private _isLoggingOut As Boolean = False
 
     Private ReadOnly _teamService As ITeamService
 
@@ -153,6 +154,7 @@ Public Class frmMain
             MessageBoxButtons.YesNo,
             MessageBoxIcon.Question)
         If confirm = DialogResult.Yes Then
+            _isLoggingOut = True
             SessionManager.Logout()
             OpenLoginForm()
         End If
@@ -165,7 +167,9 @@ Public Class frmMain
     End Sub
 
     Private Sub frmMain_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
-        Application.Exit()
+        If Not _isLoggingOut Then
+            Application.Exit()
+        End If
     End Sub
 
 End Class

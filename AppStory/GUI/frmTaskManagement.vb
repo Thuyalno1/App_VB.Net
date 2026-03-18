@@ -1,5 +1,6 @@
 Public Class frmTaskManagement
     Inherits System.Windows.Forms.Form
+    Private _isNavigatingBack As Boolean = False
 
     Private ReadOnly _taskService As ITaskService
     Private ReadOnly _userRepo As IUserRepository
@@ -428,11 +429,17 @@ Public Class frmTaskManagement
             MessageBox.Show(result.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
     End Sub
-
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        _isNavigatingBack = True
         Dim mainForm As New frmMain()
         mainForm.Show()
         Me.Close()
+    End Sub
+
+    Private Sub frmTaskManagement_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        If Not _isNavigatingBack Then
+            Application.Exit()
+        End If
     End Sub
 
     ' ──────────────────────────────────────────────

@@ -6,6 +6,7 @@ Imports QuestPDF.Infrastructure
 
 Public Class frmReport
     Inherits System.Windows.Forms.Form
+    Private _isNavigatingBack As Boolean = False
 
     Private ReadOnly _projectService As IProjectService
     Private ReadOnly _teamService As ITeamService
@@ -490,9 +491,16 @@ Public Class frmReport
     '   NAVIGATION
     ' ──────────────────────────────────────────────
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        _isNavigatingBack = True
         Dim mainForm As New frmMain()
         mainForm.Show()
         Me.Close()
+    End Sub
+
+    Private Sub frmReport_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        If Not _isNavigatingBack Then
+            Application.Exit()
+        End If
     End Sub
 
 End Class
