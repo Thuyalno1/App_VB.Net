@@ -192,7 +192,7 @@ Public Class frmProjects
             Return
         End If
         
-        Dim confirm = MessageBox.Show("Xóa dự án này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        Dim confirm = MessageBox.Show("XÓA VĨNH VIỄN dự án này và các dữ liệu liên quan khỏi hệ thống?", "Xác nhận xóa dự án", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
         If confirm = DialogResult.Yes Then
             Dim result = _projectService.DeleteProject(_selectedProjectId)
             MessageBox.Show(result.Message, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -201,9 +201,6 @@ Public Class frmProjects
         End If
     End Sub
 
-    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        ClearForm()
-    End Sub
     
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         Dim mainForm As New frmMain()

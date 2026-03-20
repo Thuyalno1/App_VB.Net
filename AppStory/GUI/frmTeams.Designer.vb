@@ -28,7 +28,6 @@ Partial Class frmTeams
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.btnClear = New System.Windows.Forms.Button()
         Me.btnDelete = New System.Windows.Forms.Button()
         Me.btnUpdate = New System.Windows.Forms.Button()
         Me.btnAdd = New System.Windows.Forms.Button()
@@ -84,7 +83,6 @@ Partial Class frmTeams
         Me.GroupBox1.Controls.Add(Me.Label3)
         Me.GroupBox1.Controls.Add(Me.Label2)
         Me.GroupBox1.Controls.Add(Me.Label1)
-        Me.GroupBox1.Controls.Add(Me.btnClear)
         Me.GroupBox1.Controls.Add(Me.btnDelete)
         Me.GroupBox1.Controls.Add(Me.btnUpdate)
         Me.GroupBox1.Controls.Add(Me.btnAdd)
@@ -137,15 +135,6 @@ Partial Class frmTeams
         Me.Label1.Size = New System.Drawing.Size(58, 13)
         Me.Label1.TabIndex = 7
         Me.Label1.Text = "Tên nhóm:"
-        '
-        'btnClear
-        '
-        Me.btnClear.Location = New System.Drawing.Point(245, 290)
-        Me.btnClear.Name = "btnClear"
-        Me.btnClear.Size = New System.Drawing.Size(75, 23)
-        Me.btnClear.TabIndex = 6
-        Me.btnClear.Text = "Làm mới"
-        Me.btnClear.UseVisualStyleBackColor = True
         '
         'btnDetail
         '
@@ -255,7 +244,6 @@ Partial Class frmTeams
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents btnClear As System.Windows.Forms.Button
     Friend WithEvents btnDelete As System.Windows.Forms.Button
     Friend WithEvents btnUpdate As System.Windows.Forms.Button
     Friend WithEvents btnAdd As System.Windows.Forms.Button

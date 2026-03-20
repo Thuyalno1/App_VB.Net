@@ -395,8 +395,8 @@ Public Class frmTaskManagement
             Return
         End If
         Dim confirm As DialogResult = MessageBox.Show(
-            "Xác nhận xóa công việc này? (Soft Delete)", "Xác nhận",
-            MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            "Bạn có chắc chắn muốn XÓA VĨNH VIỄN công việc này khỏi hệ thống?", "Xác nhận xóa cứng",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
         If confirm = DialogResult.Yes Then
             Dim result = _taskService.DeleteTask(_selectedTaskId)
             MessageBox.Show(result.Message, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -405,9 +405,6 @@ Public Class frmTaskManagement
         End If
     End Sub
 
-    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        ClearForm()
-    End Sub
 
     ''' <summary>Button Duyệt Task</summary>
     Private Sub btnApprove_Click(sender As Object, e As EventArgs) Handles btnApprove.Click

@@ -33,7 +33,6 @@ Partial Class frmProjects
         Me.Label1 = New System.Windows.Forms.Label()
         Me.txtProjectName = New System.Windows.Forms.TextBox()
         Me.lbl1 = New System.Windows.Forms.Label()
-        Me.btnClear = New System.Windows.Forms.Button()
         Me.btnDelete = New System.Windows.Forms.Button()
         Me.btnUpdate = New System.Windows.Forms.Button()
         Me.btnAdd = New System.Windows.Forms.Button()
@@ -93,7 +92,6 @@ Partial Class frmProjects
         Me.GroupBox1.Controls.Add(Me.Label1)
         Me.GroupBox1.Controls.Add(Me.txtProjectName)
         Me.GroupBox1.Controls.Add(Me.lbl1)
-        Me.GroupBox1.Controls.Add(Me.btnClear)
         Me.GroupBox1.Controls.Add(Me.btnDelete)
         Me.GroupBox1.Controls.Add(Me.btnUpdate)
         Me.GroupBox1.Controls.Add(Me.btnAdd)
@@ -230,23 +228,17 @@ Partial Class frmProjects
         Me.lbl1.TabIndex = 4
         Me.lbl1.Text = "Tên dự án:"
         '
-        'btnClear
-        '
-        Me.btnClear.Location = New System.Drawing.Point(234, 400)
-        Me.btnClear.Name = "btnClear"
-        Me.btnClear.Size = New System.Drawing.Size(75, 23)
-        Me.btnClear.TabIndex = 3
-        Me.btnClear.Text = "Làm mới"
-        Me.btnClear.UseVisualStyleBackColor = True
-        '
         'btnDelete
         '
         Me.btnDelete.Location = New System.Drawing.Point(159, 400)
         Me.btnDelete.Name = "btnDelete"
-        Me.btnDelete.Size = New System.Drawing.Size(69, 23)
+        Me.btnDelete.Size = New System.Drawing.Size(150, 23)
         Me.btnDelete.TabIndex = 2
-        Me.btnDelete.Text = "Xóa"
+        Me.btnDelete.Text = "Xóa Dữ Liệu"
         Me.btnDelete.UseVisualStyleBackColor = True
+        Me.btnDelete.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
+        Me.btnDelete.ForeColor = System.Drawing.Color.White
+        Me.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         '
         'btnUpdate
         '
@@ -300,7 +292,6 @@ Partial Class frmProjects
 
     Friend WithEvents dgvProjects As System.Windows.Forms.DataGridView
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
-    Friend WithEvents btnClear As System.Windows.Forms.Button
     Friend WithEvents btnDelete As System.Windows.Forms.Button
     Friend WithEvents btnUpdate As System.Windows.Forms.Button
     Friend WithEvents btnAdd As System.Windows.Forms.Button

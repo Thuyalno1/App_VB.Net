@@ -214,10 +214,10 @@ Public Class TaskRepository
         End Try
     End Sub
 
-    ''' <summary>Soft Delete: đánh dấu IsDeleted=1, không xóa khỏi DB</summary>
+    ''' <summary>Hard Delete: Xóa vĩnh viễn khỏi Database</summary>
     Public Sub Delete(taskId As Integer) Implements ITaskRepository.Delete
         Try
-            Dim sql As String = "UPDATE Tasks SET IsDeleted=1 WHERE TaskId=?"
+            Dim sql As String = "DELETE FROM Tasks WHERE TaskId=?"
             Using conn As New OdbcConnection(ConnectionString)
                 conn.Open()
                 Using cmd As New OdbcCommand(sql, conn)

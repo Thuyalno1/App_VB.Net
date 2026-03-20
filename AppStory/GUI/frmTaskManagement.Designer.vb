@@ -46,7 +46,6 @@ Partial Class frmTaskManagement
         Me.btnAdd = New System.Windows.Forms.Button()
         Me.btnUpdate = New System.Windows.Forms.Button()
         Me.btnDelete = New System.Windows.Forms.Button()
-        Me.btnClear = New System.Windows.Forms.Button()
         Me.btnApprove = New System.Windows.Forms.Button()
         Me.btnExport = New System.Windows.Forms.Button()
         Me.pnlPagination = New System.Windows.Forms.Panel()
@@ -193,7 +192,6 @@ Partial Class frmTaskManagement
         Me.pnlForm.Controls.Add(Me.btnAdd)
         Me.pnlForm.Controls.Add(Me.btnUpdate)
         Me.pnlForm.Controls.Add(Me.btnDelete)
-        Me.pnlForm.Controls.Add(Me.btnClear)
         Me.pnlForm.Controls.Add(Me.btnApprove)
         Me.pnlForm.Controls.Add(Me.btnExport)
         Me.pnlForm.Location = New System.Drawing.Point(725, 65)
@@ -266,8 +264,7 @@ Partial Class frmTaskManagement
         Me.btnUpdate.BackColor = System.Drawing.Color.FromArgb(245, 158, 11) : Me.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnUpdate.FlatAppearance.BorderSize = 0 : Me.btnUpdate.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnUpdate.ForeColor = System.Drawing.Color.White : Me.btnUpdate.Location = New System.Drawing.Point(185, yOff) : Me.btnUpdate.Name = "btnUpdate" : Me.btnUpdate.Size = New System.Drawing.Size(165, 34) : Me.btnUpdate.Text = "✎ Cập nhật" : Me.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand
 
         yOff += 42
-        Me.btnDelete.BackColor = System.Drawing.Color.FromArgb(220, 38, 38) : Me.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnDelete.FlatAppearance.BorderSize = 0 : Me.btnDelete.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnDelete.ForeColor = System.Drawing.Color.White : Me.btnDelete.Location = New System.Drawing.Point(10, yOff) : Me.btnDelete.Name = "btnDelete" : Me.btnDelete.Size = New System.Drawing.Size(160, 34) : Me.btnDelete.Text = "🗑 Xóa (Soft)" : Me.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnClear.BackColor = System.Drawing.Color.FromArgb(107, 114, 128) : Me.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnClear.FlatAppearance.BorderSize = 0 : Me.btnClear.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnClear.ForeColor = System.Drawing.Color.White : Me.btnClear.Location = New System.Drawing.Point(185, yOff) : Me.btnClear.Name = "btnClear" : Me.btnClear.Size = New System.Drawing.Size(165, 34) : Me.btnClear.Text = "✖ Xóa form" : Me.btnClear.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnDelete.BackColor = System.Drawing.Color.FromArgb(220, 38, 38) : Me.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnDelete.FlatAppearance.BorderSize = 0 : Me.btnDelete.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnDelete.ForeColor = System.Drawing.Color.White : Me.btnDelete.Location = New System.Drawing.Point(10, yOff) : Me.btnDelete.Name = "btnDelete" : Me.btnDelete.Size = New System.Drawing.Size(340, 34) : Me.btnDelete.Text = "🗑 Xóa Dữ Liệu (Hệ Thống)" : Me.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand
 
         yOff += 42
         Me.btnApprove.BackColor = System.Drawing.Color.FromArgb(16, 185, 129) : Me.btnApprove.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnApprove.FlatAppearance.BorderSize = 0 : Me.btnApprove.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnApprove.ForeColor = System.Drawing.Color.White : Me.btnApprove.Location = New System.Drawing.Point(10, yOff) : Me.btnApprove.Name = "btnApprove" : Me.btnApprove.Size = New System.Drawing.Size(340, 34) : Me.btnApprove.Text = "✔️ DUYỆT CÔNG VIỆC (Xong)" : Me.btnApprove.Cursor = System.Windows.Forms.Cursors.Hand : Me.btnApprove.Visible = False
@@ -330,7 +327,6 @@ Partial Class frmTaskManagement
     Friend WithEvents btnAdd As System.Windows.Forms.Button
     Friend WithEvents btnUpdate As System.Windows.Forms.Button
     Friend WithEvents btnDelete As System.Windows.Forms.Button
-    Friend WithEvents btnClear As System.Windows.Forms.Button
     Friend WithEvents btnApprove As System.Windows.Forms.Button
     Friend WithEvents btnExport As System.Windows.Forms.Button
     Friend WithEvents pnlPagination As System.Windows.Forms.Panel

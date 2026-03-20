@@ -187,7 +187,7 @@ Public Class frmTeams
             Return
         End If
         
-        Dim confirm = MessageBox.Show("Xóa nhóm này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        Dim confirm = MessageBox.Show("XÓA VĨNH VIỄN nhóm này khỏi hệ thống?", "Xác nhận xóa nhóm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
         If confirm = DialogResult.Yes Then
             Dim result = _teamService.DeleteTeam(_selectedTeamId)
             MessageBox.Show(result.Message, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -196,9 +196,6 @@ Public Class frmTeams
         End If
     End Sub
 
-    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        ClearForm()
-    End Sub
     
     Private Sub btnDetail_Click(sender As Object, e As EventArgs) Handles btnDetail.Click
         If _selectedTeamId < 0 Then

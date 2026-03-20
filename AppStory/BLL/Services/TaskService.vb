@@ -117,7 +117,7 @@ Public Class TaskService
     Public Function DeleteTask(taskId As Integer) As (Success As Boolean, Message As String) Implements ITaskService.DeleteTask
         Try
             _repo.Delete(taskId)
-            Return (True, "Đã xóa công việc (Soft Delete).")
+            Return (True, "Đã xóa vĩnh viễn công việc thành công!")
         Catch ex As DataAccessException
             Return (False, "Lỗi cơ sở dữ liệu: " & ex.Message)
         End Try
