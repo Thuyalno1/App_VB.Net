@@ -55,6 +55,7 @@ Public Class frmTaskApproval
         btnReject.DefaultCellStyle.BackColor = Color.FromArgb(220, 38, 38) ' Đỏ
         btnReject.DefaultCellStyle.ForeColor = Color.White
         dgvPendingTasks.Columns.Add(btnReject)
+        AddHandler dgvPendingTasks.CellFormatting, AddressOf dgvPendingTasks_CellFormatting
     End Sub
 
     Private Sub LoadPendingTasks()
@@ -142,5 +143,16 @@ Public Class frmTaskApproval
         Dim mainForm As New frmMain()
         mainForm.Show()
         Me.Close()
+    End Sub
+
+    Private Sub dgvPendingTasks_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
+        If e.RowIndex < 0 Then Return
+        Dim grid = DirectCast(sender, DataGridView)
+        Dim t = DirectCast(grid.Rows(e.RowIndex).DataBoundItem, Task)
+        If t Is Nothing Then Return
+
+        ' Chờ duyệt: Màu Cam/Vàng (giống card Đang thực hiện hoặc riêng cho Chờ duyệt)
+        e.CellStyle.BackColor = Drawing.Color.FromArgb(245, 158, 11) ' Cam
+        e.CellStyle.ForeColor = Drawing.Color.White
     End Sub
 End Class

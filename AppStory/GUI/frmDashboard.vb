@@ -1,4 +1,5 @@
 Imports System.Linq
+Imports System.Drawing
 
 Public Class frmDashboard
     Inherits System.Windows.Forms.Form
@@ -9,6 +10,12 @@ Public Class frmDashboard
     Private _allProjects As List(Of Project)
     Private _activeFilter As String = "Total"
     Private _selectedCardPanel As Panel = Nothing
+
+    ' Danh sách lưu trữ theo phân loại để thống kê và filter đồng nhất
+    Private _projectsCompleted As New List(Of Project)
+    Private _projectsOverdue As New List(Of Project)
+    Private _projectsActive As New List(Of Project)
+    Private _projectsPlanning As New List(Of Project)
 
     ' Màu gốc của các card để khôi phục khi bỏ chọn
     Private ReadOnly _cardColors As New Dictionary(Of String, System.Drawing.Color) From {
@@ -34,9 +41,9 @@ Public Class frmDashboard
     Private Sub SetupGrid()
         dgvProjects.AutoGenerateColumns = False
         dgvProjects.Columns.Clear()
-        dgvProjects.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectId", .HeaderText = "ID", .Width = 45})
         dgvProjects.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectName", .HeaderText = "Tên Dự Án", .Width = 200})
-        dgvProjects.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Status", .HeaderText = "Trạng Thái", .Width = 110})
+        dgvProjects.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "StatusDisplay", .HeaderText = "Trạng Thái", .Width = 110})
+        AddHandler dgvProjects.CellFormatting, AddressOf dgvProjects_CellFormatting
         dgvProjects.Columns.Add(New DataGridViewTextBoxColumn() With {
             .DataPropertyName = "StartDate",
             .HeaderText = "Ngày Bắt Đầu",
@@ -54,6 +61,7 @@ Public Class frmDashboard
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "AssignedUserName", .HeaderText = "Người Thực Hiện", .Width = 150})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProgressDisplay", .HeaderText = "Tiến độ", .Width = 100, .DefaultCellStyle = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter}})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Ưu Tiên", .Width = 80})
+        AddHandler dgvTasks.CellFormatting, AddressOf dgvTasks_CellFormatting
     End Sub
 
     ''' <summary>Đăng ký click handler cho tất cả card panels</summary>
@@ -75,19 +83,43 @@ Public Class frmDashboard
             _allProjects = _projectService.GetAllProjects()
             If _allProjects Is Nothing Then _allProjects = New List(Of Project)()
 
-            ' Tính toán thống kê
-            Dim total As Integer = _allProjects.Count
-            Dim active = _allProjects.Where(Function(p) (p.Status = "Active" OrElse p.Status = "Đang thực hiện") AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-            Dim completed = _allProjects.Where(Function(p) p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-            Dim overdue = _allProjects.Where(Function(p) p.EndDate.HasValue AndAlso p.EndDate.Value < DateTime.Now AndAlso p.Status <> "Completed" AndAlso p.Status <> "Hoàn thành" AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-            Dim planning As Integer = _allProjects.Where(Function(p) p.Status = "Planning" OrElse p.Status = "Lập kế hoạch").Count
+            ' Tính toán thống kê - Phân loại tuyệt đối (1 dự án chỉ vào 1 giỏ duy nhất)
+            _projectsCompleted.Clear()
+            _projectsOverdue.Clear()
+            _projectsActive.Clear()
+            _projectsPlanning.Clear()
 
-            ' Cập nhật số liệu trên card
-            lblCardTotalCount.Text = total.ToString()
-            lblCardActiveCount.Text = active.ToString()
-            lblCardCompletedCount.Text = completed.ToString()
-            lblCardOverdueCount.Text = overdue.ToString()
-            lblCardPlanningCount.Text = planning.ToString()
+            For Each p In _allProjects
+                ' 1. Hoàn thành: Có status hoàn thành hoặc tất cả task đã được duyệt
+                Dim isCompleted As Boolean = (p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount))
+                
+                If isCompleted Then
+                    _projectsCompleted.Add(p)
+                Else
+                    ' Nếu chưa hoàn thành, kiểm tra ngày hết hạn
+                    Dim isOverdue As Boolean = (p.EndDate.HasValue AndAlso p.EndDate.Value.Date < DateTime.Now.Date)
+                    
+                    If isOverdue Then
+                        _projectsOverdue.Add(p)
+                    Else
+                        ' Nếu chưa hoàn thành, chưa quá hạn, kiểm tra xem có đang Active không
+                        Dim isActive As Boolean = (p.Status = "Active" OrElse p.Status = "Đang thực hiện")
+                        If isActive Then
+                            _projectsActive.Add(p)
+                        Else
+                            ' Còn lại là Chưa bắt đầu hoặc Lập kế hoạch
+                            _projectsPlanning.Add(p)
+                        End If
+                    End If
+                End If
+            Next
+
+            ' Cập nhật số liệu trên card - Tổng card con CHẮC CHẮN bằng Tổng dự án
+            lblCardTotalCount.Text = _allProjects.Count.ToString()
+            lblCardActiveCount.Text = _projectsActive.Count.ToString()
+            lblCardCompletedCount.Text = _projectsCompleted.Count.ToString()
+            lblCardOverdueCount.Text = _projectsOverdue.Count.ToString()
+            lblCardPlanningCount.Text = _projectsPlanning.Count.ToString()
 
             ' Hiển thị tất cả dự án mặc định
             ApplyFilter("Total")
@@ -108,17 +140,17 @@ Public Class frmDashboard
             Case "Total"
                 filtered = _allProjects
                 lblFilterInfo.Text = $"📋 Hiển thị: Tất cả dự án ({_allProjects.Count})"
-            Case "Active", "Đang thực hiện"
-                filtered = _allProjects.Where(Function(p) (p.Status = "Active" OrElse p.Status = "Đang thực hiện") AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).ToList()
-                lblFilterInfo.Text = $"🔄 Hiển thị: Dự án đang thực hiện ({filtered.Count})"
             Case "Completed", "Hoàn thành"
-                filtered = _allProjects.Where(Function(p) p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).ToList()
+                filtered = _projectsCompleted
                 lblFilterInfo.Text = $"✅ Hiển thị: Dự án hoàn thành ({filtered.Count})"
             Case "Overdue", "Quá hạn"
-                filtered = _allProjects.Where(Function(p) p.EndDate.HasValue AndAlso p.EndDate.Value < DateTime.Now AndAlso p.Status <> "Completed" AndAlso p.Status <> "Hoàn thành" AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).ToList()
+                filtered = _projectsOverdue
                 lblFilterInfo.Text = $"⚠️ Hiển thị: Dự án quá deadline ({filtered.Count})"
+            Case "Active", "Đang thực hiện"
+                filtered = _projectsActive
+                lblFilterInfo.Text = $"🔄 Hiển thị: Dự án đang thực hiện ({filtered.Count})"
             Case "Planning", "Lập kế hoạch"
-                filtered = _allProjects.Where(Function(p) p.Status = "Planning" OrElse p.Status = "Lập kế hoạch").ToList()
+                filtered = _projectsPlanning
                 lblFilterInfo.Text = $"📝 Hiển thị: Dự án chưa bắt đầu ({filtered.Count})"
             Case Else
                 filtered = _allProjects
@@ -213,6 +245,59 @@ Public Class frmDashboard
     Private Sub frmDashboard_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
         If Not _isNavigatingBack Then
             Application.Exit()
+        End If
+    End Sub
+
+    Private Sub dgvTasks_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
+        If e.RowIndex < 0 Then Return
+        Dim grid = DirectCast(sender, DataGridView)
+        Dim t = TryCast(grid.Rows(e.RowIndex).DataBoundItem, Task)
+        If t Is Nothing Then Return
+        Dim progress As Integer = t.Progress
+        Dim dueDate As DateTime? = t.DueDate
+        If progress = 100 Then
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(16, 185, 129)   ' Xanh la - Hoan thanh
+            e.CellStyle.ForeColor = Drawing.Color.White
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(5, 150, 105)
+        ElseIf dueDate.HasValue AndAlso dueDate.Value.Date < DateTime.Now.Date Then
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(231, 76, 60)
+            e.CellStyle.ForeColor = Drawing.Color.White
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(192, 57, 43)
+        ElseIf progress > 0 AndAlso progress < 100 Then
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(245, 158, 11)   ' Cam - Dang thuc hien
+            e.CellStyle.ForeColor = Drawing.Color.White
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(217, 119, 6)
+        ElseIf progress = 0 Then
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(107, 114, 128) ' Xam - Chua bat dau
+            e.CellStyle.ForeColor = Drawing.Color.White
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(75, 85, 99)
+        End If
+    End Sub
+
+    Private Sub dgvProjects_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
+        If dgvProjects.Columns(e.ColumnIndex).DataPropertyName = "StatusDisplay" AndAlso e.Value IsNot Nothing Then
+            Dim p = DirectCast(dgvProjects.Rows(e.RowIndex).DataBoundItem, Project)
+            If p IsNot Nothing Then
+                Dim isCompleted As Boolean = (p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount))
+                Dim isOverdue As Boolean = (p.EndDate.HasValue AndAlso p.EndDate.Value.Date < DateTime.Now.Date AndAlso Not isCompleted)
+
+                If isCompleted Then
+                    e.CellStyle.BackColor = Drawing.Color.FromArgb(16, 185, 129) ' Green
+                    e.CellStyle.ForeColor = Drawing.Color.White
+                ElseIf isOverdue Then
+                    e.CellStyle.BackColor = Drawing.Color.FromArgb(220, 38, 38) ' Red
+                    e.CellStyle.ForeColor = Drawing.Color.White
+                Else
+                    Select Case p.Status
+                        Case "Active", "Đang thực hiện"
+                            e.CellStyle.BackColor = Drawing.Color.FromArgb(245, 158, 11) ' Orange
+                            e.CellStyle.ForeColor = Drawing.Color.White
+                        Case "Planning", "Lập kế hoạch"
+                            e.CellStyle.BackColor = Drawing.Color.FromArgb(107, 114, 128) ' Gray
+                            e.CellStyle.ForeColor = Drawing.Color.White
+                    End Select
+                End If
+            End If
         End If
     End Sub
 

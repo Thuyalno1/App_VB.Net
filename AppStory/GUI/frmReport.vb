@@ -1,5 +1,6 @@
 Imports ClosedXML.Excel
 Imports System.Linq
+Imports System.Drawing
 Imports QuestPDF.Fluent
 Imports QuestPDF.Helpers
 Imports QuestPDF.Infrastructure
@@ -36,29 +37,44 @@ Public Class frmReport
     Private Sub SetupGrid()
         dgvReport.AutoGenerateColumns = False
         dgvReport.Columns.Clear()
-        dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectId", .HeaderText = "ID", .Width = 45})
-        dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectName", .HeaderText = "Tên Dự Án", .Width = 220})
-        dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Status", .HeaderText = "Trạng Thái", .Width = 110})
+        dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProjectName", .HeaderText = "Tên Dự Án", .Width = 240})
+        dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "StatusDisplay", .HeaderText = "Trạng Thái", .Width = 120})
         dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "StartDate", .HeaderText = "Ngày BĐ", .Width = 100, .DefaultCellStyle = New DataGridViewCellStyle() With {.Format = "dd/MM/yyyy"}})
         dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "EndDate", .HeaderText = "Ngày KT", .Width = 100, .DefaultCellStyle = New DataGridViewCellStyle() With {.Format = "dd/MM/yyyy"}})
-        dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Description", .HeaderText = "Mô Tả", .Width = 250})
-        
+        dgvReport.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Description", .HeaderText = "Mô Tả"})
+
         AddHandler dgvReport.CellFormatting, AddressOf dgvReport_CellFormatting
+        ' Double-click dòng → xuất 1 dự án
+        AddHandler dgvReport.CellDoubleClick, AddressOf dgvReport_CellDoubleClick
+        ' Tooltip gợi ý
+        dgvReport.ShowCellToolTips = True
+        For Each col As DataGridViewColumn In dgvReport.Columns
+            col.ToolTipText = "Double-click dòng để xuất riêng dự án này"
+        Next
     End Sub
 
     Private Sub dgvReport_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
-        If dgvReport.Columns(e.ColumnIndex).DataPropertyName = "Status" AndAlso e.Value IsNot Nothing Then
+        If dgvReport.Columns(e.ColumnIndex).DataPropertyName = "StatusDisplay" AndAlso e.Value IsNot Nothing Then
             Dim p = DirectCast(dgvReport.Rows(e.RowIndex).DataBoundItem, Project)
             If p IsNot Nothing Then
-                If p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount Then
-                    e.Value = "Hoàn thành"
+                ' Logic xác định màu sắc (StatusDisplay đã lo việc chuyển ngữ tiếng Việt)
+                Dim isCompleted As Boolean = (p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount))
+                Dim isOverdue As Boolean = (p.EndDate.HasValue AndAlso p.EndDate.Value.Date < DateTime.Now.Date AndAlso Not isCompleted)
+
+                If isCompleted Then
+                    e.CellStyle.BackColor = Drawing.Color.FromArgb(16, 185, 129) ' Green
+                    e.CellStyle.ForeColor = Drawing.Color.White
+                ElseIf isOverdue Then
+                    e.CellStyle.BackColor = Drawing.Color.FromArgb(220, 38, 38) ' Red
+                    e.CellStyle.ForeColor = Drawing.Color.White
                 Else
-                    Dim statusValue = e.Value.ToString()
-                    Select Case statusValue
-                        Case "Planning" : e.Value = "Lập kế hoạch"
-                        Case "Active" : e.Value = "Đang thực hiện"
-                        Case "On Hold" : e.Value = "Tạm dừng"
-                        Case "Completed" : e.Value = "Hoàn thành"
+                    Select Case p.Status
+                        Case "Active", "Đang thực hiện"
+                            e.CellStyle.BackColor = Drawing.Color.FromArgb(245, 158, 11) ' Orange
+                            e.CellStyle.ForeColor = Drawing.Color.White
+                        Case "Planning", "Lập kế hoạch"
+                            e.CellStyle.BackColor = Drawing.Color.FromArgb(107, 114, 128) ' Gray
+                            e.CellStyle.ForeColor = Drawing.Color.White
                     End Select
                 End If
                 e.FormattingApplied = True
@@ -133,9 +149,6 @@ Public Class frmReport
         ' but for now let's just use what's there.
     End Sub
 
-    Private Sub rdoWeek_CheckedChanged(sender As Object, e As EventArgs) Handles rdoWeek.CheckedChanged
-        UpdateFilterVisibility()
-    End Sub
     Private Sub rdoMonth_CheckedChanged(sender As Object, e As EventArgs) Handles rdoMonth.CheckedChanged
         UpdateFilterVisibility()
     End Sub
@@ -171,10 +184,7 @@ Public Class frmReport
                 _allProjects = _projectService.GetAllProjects()
                 If _allProjects Is Nothing Then _allProjects = New List(Of Project)()
 
-                If rdoWeek.Checked Then
-                    Dim weekAgo = DateTime.Now.AddDays(-7)
-                    _filteredProjects = _allProjects.Where(Function(p) p.CreatedAt >= weekAgo).ToList()
-                ElseIf rdoMonth.Checked Then
+                If rdoMonth.Checked Then
                     ' Lọc cụ thể theo tháng/năm đã chọn
                     Dim selectedMonth = Convert.ToInt32(cboMonth.SelectedItem)
                     Dim selectedYear = Convert.ToInt32(cboYear.SelectedItem)
@@ -222,22 +232,115 @@ Public Class frmReport
     Private Sub UpdateSummary()
         If _filteredProjects Is Nothing Then Return
         Dim total = _filteredProjects.Count
-        ' Sử dụng logic động giống Dashboard
-        Dim completed = _filteredProjects.Where(Function(p) p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-        Dim active = _filteredProjects.Where(Function(p) (p.Status = "Active" OrElse p.Status = "Đang thực hiện") AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-        Dim overdue = _filteredProjects.Where(Function(p) p.EndDate.HasValue AndAlso p.EndDate.Value < DateTime.Now AndAlso p.Status <> "Completed" AndAlso p.Status <> "Hoàn thành" AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
+        
+        ' 1. Hoàn thành (Ưu tiên cao nhất)
+        Dim completedItems = _filteredProjects.Where(Function(p) p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).ToList()
+        Dim completedIds = completedItems.Select(Function(p) p.ProjectId).ToList()
+
+        ' 2. Quá hạn (Chưa xong và deadline đã qua)
+        Dim overdueItems = _filteredProjects.Where(Function(p) Not completedIds.Contains(p.ProjectId) AndAlso p.EndDate.HasValue AndAlso p.EndDate.Value.Date < DateTime.Now.Date).ToList()
+        Dim overdueIds = overdueItems.Select(Function(p) p.ProjectId).ToList()
+
+        ' 3. Đang thực hiện (Chưa xong, chưa quá hạn và đang Active)
+        Dim activeItems = _filteredProjects.Where(Function(p) Not completedIds.Contains(p.ProjectId) AndAlso Not overdueIds.Contains(p.ProjectId) AndAlso (p.Status = "Active" OrElse p.Status = "Đang thực hiện")).ToList()
 
         lblSummaryTotal.Text = $"📁 Tổng: {total}"
-        lblSummaryActive.Text = $"🔄 Đang TH: {active}"
-        lblSummaryCompleted.Text = $"✅ Hoàn thành: {completed}"
-        lblSummaryOverdue.Text = $"⚠️ Quá hạn: {overdue}"
+        lblSummaryActive.Text = $"🔄 Đang TH: {activeItems.Count}"
+        lblSummaryCompleted.Text = $"✅ Hoàn thành: {completedItems.Count}"
+        lblSummaryOverdue.Text = $"⚠️ Quá hạn: {overdueItems.Count}"
     End Sub
 
     ' ──────────────────────────────────────────────
     '   EXPORT EXCEL (ClosedXML)
     ' ──────────────────────────────────────────────
+    ' ──────────────────────────────────────────────
+    '   DOUBLE-CLICK DÒNG → XUẤT 1 DỰ ÁN
+    ' ──────────────────────────────────────────────
+    Private Sub dgvReport_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs)
+        If e.RowIndex < 0 Then Return
+        Dim p = TryCast(dgvReport.Rows(e.RowIndex).DataBoundItem, Project)
+        If p Is Nothing Then Return
+
+        Dim choice = MessageBox.Show(
+            $"Xuất dự án '{p.ProjectName}' ra file nào?{Environment.NewLine}[Yes] = Excel   [No] = PDF",
+            "Chọn định dạng xuất",
+            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
+
+        If choice = DialogResult.Yes Then
+            ExportSingleProjectExcel(p)
+        ElseIf choice = DialogResult.No Then
+            ExportSingleProjectPDF(p)
+        End If
+    End Sub
+
+    Private Sub ExportSingleProjectExcel(p As Project)
+        Using sfd As New SaveFileDialog()
+            sfd.Title = "Xuất dự án ra Excel"
+            sfd.Filter = "Excel Files (*.xlsx)|*.xlsx"
+            sfd.FileName = $"DuAn_{p.ProjectName.Replace(" ", "_")}_{DateTime.Now:yyyyMMdd_HHmm}.xlsx"
+            If sfd.ShowDialog() <> DialogResult.OK Then Return
+            Try
+                Using wb As New XLWorkbook()
+                    Dim ws = wb.Worksheets.Add("Dự Án")
+                    BuildProjectSheet(ws, p)
+                    ws.Columns().AdjustToContents()
+                    wb.SaveAs(sfd.FileName)
+                End Using
+                MessageBox.Show($"✅ Xuất thành công: {sfd.FileName}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                If MessageBox.Show("Mở file?", "", MessageBoxButtons.YesNo) = DialogResult.Yes Then
+                    System.Diagnostics.Process.Start(New System.Diagnostics.ProcessStartInfo(sfd.FileName) With {.UseShellExecute = True})
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Lỗi: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
+    End Sub
+
+    Private Sub ExportSingleProjectPDF(p As Project)
+        Using sfd As New SaveFileDialog()
+            sfd.Title = "Xuất dự án ra PDF"
+            sfd.Filter = "PDF Files (*.pdf)|*.pdf"
+            sfd.FileName = $"DuAn_{p.ProjectName.Replace(" ", "_")}_{DateTime.Now:yyyyMMdd_HHmm}.pdf"
+            If sfd.ShowDialog() <> DialogResult.OK Then Return
+            Try
+                BuildSingleProjectPDF({p}.ToList(), sfd.FileName, p.ProjectName)
+                MessageBox.Show($"✅ Xuất PDF thành công: {sfd.FileName}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                If MessageBox.Show("Mở file?", "", MessageBoxButtons.YesNo) = DialogResult.Yes Then
+                    System.Diagnostics.Process.Start(New System.Diagnostics.ProcessStartInfo(sfd.FileName) With {.UseShellExecute = True})
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Lỗi: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
+    End Sub
+
+    ' ──────────────────────────────────────────────
+    '   EXPORT EXCEL (CáCĨ / TẤT CẢ)
+    ' ──────────────────────────────────────────────
     Private Sub btnExportExcel_Click(sender As Object, e As EventArgs) Handles btnExportExcel.Click
-        If _filteredProjects Is Nothing OrElse _filteredProjects.Count = 0 Then
+        Dim selectedProjects As New List(Of Project)
+        For Each row As DataGridViewRow In dgvReport.SelectedRows
+            Dim p = TryCast(row.DataBoundItem, Project)
+            If p IsNot Nothing Then
+                selectedProjects.Add(p)
+            End If
+        Next
+        
+        If selectedProjects.Count = 0 Then
+            MessageBox.Show("Vui lòng click chọn ít nhất 1 dự án để xuất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        ExportProjectListToExcel(selectedProjects, "BaoCao_DuAnDuocChon")
+    End Sub
+
+    Private Sub btnExportAllExcel_Click(sender As Object, e As EventArgs) Handles btnExportAllExcel.Click
+        ExportProjectListToExcel(_filteredProjects, "BaoCao_TatCa")
+    End Sub
+
+    ''' <summary>Xuất danh sách các dự án ra 1 file Excel (mỗi dự án = 1 sheet)</summary>
+    Private Sub ExportProjectListToExcel(projects As List(Of Project), baseFileName As String)
+        If projects Is Nothing OrElse projects.Count = 0 Then
             MessageBox.Show("Không có dữ liệu để xuất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
@@ -245,123 +348,181 @@ Public Class frmReport
         Using sfd As New SaveFileDialog()
             sfd.Title = "Lưu file Excel"
             sfd.Filter = "Excel Files (*.xlsx)|*.xlsx"
-            sfd.FileName = $"BaoCao_DuAn_{DateTime.Now:yyyyMMdd_HHmm}.xlsx"
+            sfd.FileName = $"{baseFileName}_{DateTime.Now:yyyyMMdd_HHmm}.xlsx"
             If sfd.ShowDialog() <> DialogResult.OK Then Return
 
             Try
                 Using wb As New XLWorkbook()
-                    Dim ws = wb.Worksheets.Add("Báo Cáo Dự Án")
+                    ' Sheet tóm tắt
+                    Dim wsSummary = wb.Worksheets.Add("Tổng Hợp")
+                    wsSummary.Cell(1, 1).Value = "BÁO CÁO THỐNG KÊ DỰ ÁN"
+                    wsSummary.Cell(1, 1).Style.Font.Bold = True : wsSummary.Cell(1, 1).Style.Font.FontSize = 14
+                    wsSummary.Range("A1:F1").Merge()
+                    wsSummary.Cell(2, 1).Value = $"Thời gian xuất: {DateTime.Now:dd/MM/yyyy HH:mm:ss}"
+                    wsSummary.Range("A2:F2").Merge()
 
-                    ' Tiêu đề
-                    ws.Cell(1, 1).Value = "BÁO CÁO THỐNG KÊ DỰ ÁN"
-                    ws.Cell(1, 1).Style.Font.Bold = True
-                    ws.Cell(1, 1).Style.Font.FontSize = 14
-                    ws.Range("A1:F1").Merge()
+                    Dim total = projects.Count
+                    Dim completed = projects.Where(Function(p) p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count()
+                    Dim active = projects.Where(Function(p) (p.Status = "Active" OrElse p.Status = "Đang thực hiện") AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count()
+                    Dim overdue = projects.Where(Function(p) p.EndDate.HasValue AndAlso p.EndDate.Value < DateTime.Now AndAlso p.Status <> "Completed" AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count()
 
-                    ws.Cell(2, 1).Value = $"Thời gian xuất: {DateTime.Now:dd/MM/yyyy HH:mm:ss}"
-                    ws.Range("A2:F2").Merge()
+                    wsSummary.Cell(4, 1).Value = "Tổng dự án" : wsSummary.Cell(4, 2).Value = total
+                    wsSummary.Cell(5, 1).Value = "Đang thực hiện" : wsSummary.Cell(5, 2).Value = active
+                    wsSummary.Cell(6, 1).Value = "Hoàn thành" : wsSummary.Cell(6, 2).Value = completed
+                    wsSummary.Cell(7, 1).Value = "Quá hạn" : wsSummary.Cell(7, 2).Value = overdue
+                    wsSummary.Range("A4:A7").Style.Font.Bold = True
 
-                    ' Thống kê tóm tắt (Logic động)
-                    Dim total = _filteredProjects.Count
-                    Dim completed = _filteredProjects.Where(Function(p) p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-                    Dim active = _filteredProjects.Where(Function(p) (p.Status = "Active" OrElse p.Status = "Đang thực hiện") AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-                    Dim overdue = _filteredProjects.Where(Function(p) p.EndDate.HasValue AndAlso p.EndDate.Value < DateTime.Now AndAlso p.Status <> "Completed" AndAlso p.Status <> "Hoàn thành" AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-
-                    ws.Cell(4, 1).Value = "Tổng dự án" : ws.Cell(4, 2).Value = total
-                    ws.Cell(5, 1).Value = "Đang thực hiện" : ws.Cell(5, 2).Value = active
-                    ws.Cell(6, 1).Value = "Hoàn thành" : ws.Cell(6, 2).Value = completed
-                    ws.Cell(7, 1).Value = "Quá hạn" : ws.Cell(7, 2).Value = overdue
-                    ws.Range("A4:A7").Style.Font.Bold = True
-
-                    ' Header các cột
-                    Dim headers = {"ID", "Tên Dự Án", "Trạng Thái", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Mô Tả"}
+                    ' Header các cột tổng hợp
+                    Dim hRow = 9
+                    Dim headers = {"Tên Dự Án", "Trạng Thái", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Mô Tả"}
                     For i = 0 To headers.Length - 1
-                        ws.Cell(9, i + 1).Value = headers(i)
+                        wsSummary.Cell(hRow, i + 1).Value = headers(i)
                     Next
-                    Dim headerRange = ws.Range("A9:F9")
-                    headerRange.Style.Font.Bold = True
-                    headerRange.Style.Fill.BackgroundColor = XLColor.FromArgb(99, 102, 241)
-                    headerRange.Style.Font.FontColor = XLColor.White
+                    Dim hRange = wsSummary.Range(hRow, 1, hRow, headers.Length)
+                    hRange.Style.Font.Bold = True
+                    hRange.Style.Fill.BackgroundColor = XLColor.FromArgb(99, 102, 241)
+                    hRange.Style.Font.FontColor = XLColor.White
 
-                    ' Dữ liệu
-                    Dim currentRow As Integer = 10
-                    For Each p In _filteredProjects
-                        ' Dòng Dự án
-                        ws.Cell(currentRow, 1).Value = p.ProjectId
-                        ws.Cell(currentRow, 2).Value = p.ProjectName
-                        ws.Cell(currentRow, 2).Style.Font.Bold = True
-                        
-                        Dim pStatus = p.Status
-                        If p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount Then
-                            pStatus = "Hoàn thành"
-                        Else
-                            Select Case pStatus
-                                Case "Planning" : pStatus = "Lập kế hoạch"
-                                Case "Active" : pStatus = "Đang thực hiện"
-                                Case "On Hold" : pStatus = "Tạm dừng"
-                                Case "Completed" : pStatus = "Hoàn thành"
-                            End Select
-                        End If
-                        ws.Cell(currentRow, 3).Value = pStatus
-                        If p.StartDate.HasValue Then ws.Cell(currentRow, 4).Value = p.StartDate.Value.ToString("dd/MM/yyyy")
-                        If p.EndDate.HasValue Then ws.Cell(currentRow, 5).Value = p.EndDate.Value.ToString("dd/MM/yyyy")
-                        ws.Cell(currentRow, 6).Value = If(p.Description, "")
-                        
-                        ' Tô màu dòng dự án
-                        ws.Range(currentRow, 1, currentRow, 6).Style.Fill.BackgroundColor = XLColor.FromArgb(238, 242, 255)
-                        
+                    Dim currentRow = hRow + 1
+                    For Each p In projects
+                        wsSummary.Cell(currentRow, 1).Value = $"■ {p.ProjectName}"
+                        wsSummary.Cell(currentRow, 1).Style.Font.Bold = True
+                        Dim pStatus = GetStatusDisplay(p)
+                        wsSummary.Cell(currentRow, 2).Value = pStatus
+                        If p.StartDate.HasValue Then wsSummary.Cell(currentRow, 3).Value = p.StartDate.Value.ToString("dd/MM/yyyy")
+                        If p.EndDate.HasValue Then wsSummary.Cell(currentRow, 4).Value = p.EndDate.Value.ToString("dd/MM/yyyy")
+                        wsSummary.Cell(currentRow, 5).Value = If(p.Description, "")
+                        wsSummary.Range(currentRow, 1, currentRow, headers.Length).Style.Fill.BackgroundColor = XLColor.FromArgb(238, 242, 255)
                         currentRow += 1
 
-                        ' Lấy danh sách task của dự án
+                        ' Nạp danh sách Task của dự án
                         Dim tasks = _taskService.GetTasksByProjectId(p.ProjectId)
                         If tasks.Count > 0 Then
-                            ' Header nhỏ cho task
-                            ws.Cell(currentRow, 2).Value = "   └─ Công việc:"
-                            ws.Cell(currentRow, 2).Style.Font.Italic = True
-                            ws.Cell(currentRow, 3).Value = "Người thực hiện"
-                            ws.Cell(currentRow, 4).Value = "Tiến độ"
-                            ws.Cell(currentRow, 5).Value = "Trạng thái"
-                            ws.Range(currentRow, 2, currentRow, 5).Style.Font.Bold = True
-                            ws.Range(currentRow, 2, currentRow, 5).Style.Font.FontSize = 9
-                            
+                            ' Tạo dòng tiêu đề cho Task thụt lề
+                            wsSummary.Cell(currentRow, 2).Value = "↳ Tên công việc"
+                            wsSummary.Cell(currentRow, 3).Value = "Tiến độ"
+                            wsSummary.Cell(currentRow, 4).Value = "Người thực hiện"
+                            wsSummary.Cell(currentRow, 5).Value = "Trạng thái duyệt"
+                            Dim taskHead = wsSummary.Range(currentRow, 2, currentRow, 5)
+                            taskHead.Style.Font.Italic = True
+                            taskHead.Style.Font.Bold = True
+                            taskHead.Style.Font.FontColor = XLColor.DimGray
                             currentRow += 1
 
                             For Each t In tasks
-                                ws.Cell(currentRow, 2).Value = "      • " & t.Title
-                                ws.Cell(currentRow, 3).Value = If(String.IsNullOrEmpty(t.AssignedUserName), "Chưa giao", t.AssignedUserName)
-                                ws.Cell(currentRow, 4).Value = t.Progress & "%"
-                                ws.Cell(currentRow, 5).Value = If(t.IsApproved = 1, "Đã duyệt", "Chưa duyệt")
-                                ws.Range(currentRow, 2, currentRow, 5).Style.Font.FontSize = 9
+                                wsSummary.Cell(currentRow, 2).Value = t.Title
+                                wsSummary.Cell(currentRow, 3).Value = t.Progress & "%"
+                                wsSummary.Cell(currentRow, 4).Value = If(String.IsNullOrEmpty(t.AssignedUserName), "Chưa phân công", t.AssignedUserName)
+                                wsSummary.Cell(currentRow, 5).Value = If(t.IsApproved = 1, "Đã duyệt", "Chưa duyệt")
                                 currentRow += 1
                             Next
+                        Else
+                            wsSummary.Cell(currentRow, 2).Value = "(Chưa có công việc nào)"
+                            wsSummary.Cell(currentRow, 2).Style.Font.Italic = True
+                            wsSummary.Cell(currentRow, 2).Style.Font.FontColor = XLColor.Gray
+                            currentRow += 1
                         End If
-                        
-                        currentRow += 1 ' Khoảng cách giữa các dự án
+                        currentRow += 1 ' dòng trống phân cách dự án
                     Next
+                    wsSummary.Columns().AdjustToContents()
 
-                    ' Auto-fit
-                    ws.Columns().AdjustToContents()
+                    ' Mỗi dự án = 1 sheet riêng
+                    For Each p In projects
+                        Dim cleanName = If(p.ProjectName, "DuAn")
+                        Dim invalidChars = {":", "\", "/", "?", "*", "[", "]"}
+                        For Each c In invalidChars
+                            cleanName = cleanName.Replace(c, "_")
+                        Next
+                        Dim safeName = $"ID{p.ProjectId}_" & New String(cleanName.Take(20).ToArray()).Trim()
+                        Dim ws = wb.Worksheets.Add(safeName)
+                        BuildProjectSheet(ws, p)
+                        ws.Columns().AdjustToContents()
+                    Next
 
                     wb.SaveAs(sfd.FileName)
                 End Using
 
-                MessageBox.Show($"Xuất Excel thành công!{Environment.NewLine}File: {sfd.FileName}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
+                MessageBox.Show($"✅ Xuất Excel thành công!{Environment.NewLine}File: {sfd.FileName}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 If MessageBox.Show("Mở file vừa xuất?", "Mở file", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
                     System.Diagnostics.Process.Start(New System.Diagnostics.ProcessStartInfo(sfd.FileName) With {.UseShellExecute = True})
                 End If
-
             Catch ex As Exception
                 MessageBox.Show("Lỗi xuất Excel: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         End Using
     End Sub
 
+    ''' <summary>Xây dựng 1 worksheet cho 1 dự án (dùng lại cho xuất đơn lẻ và xuất tất cả)</summary>
+    Private Sub BuildProjectSheet(ws As IXLWorksheet, p As Project)
+        ws.Cell(1, 1).Value = $"DỰ ÁN: {p.ProjectName}"
+        ws.Cell(1, 1).Style.Font.Bold = True : ws.Cell(1, 1).Style.Font.FontSize = 13
+        ws.Range("A1:E1").Merge()
+
+        ws.Cell(2, 1).Value = $"Trạng thái: {GetStatusDisplay(p)}"
+        ws.Cell(3, 1).Value = $"Ngày BD: {If(p.StartDate.HasValue, p.StartDate.Value.ToString("dd/MM/yyyy"), "N/A")}"
+        ws.Cell(4, 1).Value = $"Ngày KT: {If(p.EndDate.HasValue, p.EndDate.Value.ToString("dd/MM/yyyy"), "N/A")}"
+        ws.Cell(5, 1).Value = $"Mô tả: {If(p.Description, "")}"
+        ws.Range("A2:E5").Style.Font.Italic = True
+
+        ' Header task
+        ws.Cell(7, 1).Value = "Tên công việc" : ws.Cell(7, 2).Value = "Người thực hiện"
+        ws.Cell(7, 3).Value = "Tiến độ" : ws.Cell(7, 4).Value = "Trạng thái duyệt"
+        ws.Range("A7:D7").Style.Font.Bold = True
+        ws.Range("A7:D7").Style.Fill.BackgroundColor = XLColor.FromArgb(224, 231, 255)
+
+        Dim tasks = _taskService.GetTasksByProjectId(p.ProjectId)
+        Dim r = 8
+        For Each t In tasks
+            ws.Cell(r, 1).Value = t.Title
+            ws.Cell(r, 2).Value = If(String.IsNullOrEmpty(t.AssignedUserName), "Chưa giao", t.AssignedUserName)
+            ws.Cell(r, 3).Value = t.Progress & "%"
+            ws.Cell(r, 4).Value = If(t.IsApproved = 1, "Đã duyệt", "Chưa duyệt")
+            r += 1
+        Next
+        If tasks.Count = 0 Then
+            ws.Cell(8, 1).Value = "(Không có công việc nào)"
+        End If
+    End Sub
+
+    ''' <summary>Trả về nhãn trạng thái hiển thị của Project</summary>
+    Private Function GetStatusDisplay(p As Project) As String
+        If p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount Then Return "Hoàn thành"
+        Select Case p.Status
+            Case "Planning" : Return "Lập kế hoạch"
+            Case "Active" : Return "Đang thực hiện"
+            Case "On Hold" : Return "Tạm dừng"
+            Case "Completed" : Return "Hoàn thành"
+            Case Else : Return If(p.Status, "")
+        End Select
+    End Function
+
     ' ──────────────────────────────────────────────
     '   EXPORT PDF (QuestPDF)
     ' ──────────────────────────────────────────────
     Private Sub btnExportPDF_Click(sender As Object, e As EventArgs) Handles btnExportPDF.Click
-        If _filteredProjects Is Nothing OrElse _filteredProjects.Count = 0 Then
+        Dim selectedProjects As New List(Of Project)
+        For Each row As DataGridViewRow In dgvReport.SelectedRows
+            Dim p = TryCast(row.DataBoundItem, Project)
+            If p IsNot Nothing Then
+                selectedProjects.Add(p)
+            End If
+        Next
+        
+        If selectedProjects.Count = 0 Then
+            MessageBox.Show("Vui lòng click chọn ít nhất 1 dự án để xuất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        BuildSingleProjectPDFFromList(selectedProjects, "Báo cáo tuỳ chọn")
+    End Sub
+
+    Private Sub btnExportAllPDF_Click(sender As Object, e As EventArgs) Handles btnExportAllPDF.Click
+        BuildSingleProjectPDFFromList(_filteredProjects, "Báo cáo toàn bộ")
+    End Sub
+
+    ''' <summary>Helper gọi hộp thoại và tạo PDF cho một danh sách dự án</summary>
+    Private Sub BuildSingleProjectPDFFromList(projects As List(Of Project), reportTitle As String)
+        If projects Is Nothing OrElse projects.Count = 0 Then
             MessageBox.Show("Không có dữ liệu để xuất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
@@ -371,17 +532,27 @@ Public Class frmReport
             sfd.Filter = "PDF Files (*.pdf)|*.pdf"
             sfd.FileName = $"BaoCao_DuAn_{DateTime.Now:yyyyMMdd_HHmm}.pdf"
             If sfd.ShowDialog() <> DialogResult.OK Then Return
-
             Try
-                Dim total = _filteredProjects.Count
-                Dim completed = _filteredProjects.Where(Function(p) p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-                Dim active = _filteredProjects.Where(Function(p) (p.Status = "Active" OrElse p.Status = "Đang thực hiện") AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
-                Dim overdue = _filteredProjects.Where(Function(p) p.EndDate.HasValue AndAlso p.EndDate.Value < DateTime.Now AndAlso p.Status <> "Completed" AndAlso p.Status <> "Hoàn thành" AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count
+                BuildSingleProjectPDF(projects, sfd.FileName, reportTitle)
+                MessageBox.Show($"✅ Xuất PDF thành công!{Environment.NewLine}File: {sfd.FileName}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                If MessageBox.Show("Mở file vừa xuất?", "Mở file", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+                    System.Diagnostics.Process.Start(New System.Diagnostics.ProcessStartInfo(sfd.FileName) With {.UseShellExecute = True})
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Lỗi xuất PDF: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
+    End Sub
 
-                Dim projects = _filteredProjects ' capture for lambda
+    ''' <summary>Tạo nội dung PDF và ghi ra file</summary>
+    Private Sub BuildSingleProjectPDF(projects As List(Of Project), filePath As String, reportTitle As String)
+        Dim total = projects.Count
+        Dim completed = projects.Where(Function(p) p.Status = "Completed" OrElse p.Status = "Hoàn thành" OrElse (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count()
+        Dim active = projects.Where(Function(p) (p.Status = "Active" OrElse p.Status = "Đang thực hiện") AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count()
+        Dim overdue = projects.Where(Function(p) p.EndDate.HasValue AndAlso p.EndDate.Value < DateTime.Now AndAlso p.Status <> "Completed" AndAlso Not (p.TaskCount > 0 AndAlso p.TaskCount = p.ApprovedTaskCount)).Count()
 
-                Document.Create(
-                    Sub(container)
+        Document.Create(
+            Sub(container)
                         container.Page(
                             Sub(page)
                                 page.Size(PageSizes.A4.Landscape())
@@ -473,18 +644,7 @@ Public Class frmReport
                                         t.TotalPages()
                                     End Sub)
                             End Sub)
-                    End Sub).GeneratePdf(sfd.FileName)
-
-                MessageBox.Show($"Xuất PDF thành công!{Environment.NewLine}File: {sfd.FileName}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-                If MessageBox.Show("Mở file vừa xuất?", "Mở file", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
-                    System.Diagnostics.Process.Start(New System.Diagnostics.ProcessStartInfo(sfd.FileName) With {.UseShellExecute = True})
-                End If
-
-            Catch ex As Exception
-                MessageBox.Show("Lỗi xuất PDF: " & ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End Try
-        End Using
+                    End Sub).GeneratePdf(filePath)
     End Sub
 
     ' ──────────────────────────────────────────────

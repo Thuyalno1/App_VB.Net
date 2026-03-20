@@ -28,6 +28,7 @@ Public Class UserRepository
                 Using cmdId As New OdbcCommand("SELECT LAST_INSERT_ID()", conn)
                     user.UserId = Convert.ToInt32(cmdId.ExecuteScalar())
                 End Using
+
             End Using
         Catch ex As Exception
             Throw New DataAccessException("Không thể đăng ký tài khoản mới vào cơ sở dữ liệu.", ex)

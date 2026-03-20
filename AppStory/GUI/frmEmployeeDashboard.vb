@@ -20,7 +20,6 @@ Public Class frmEmployeeDashboard
     Private Sub SetupGrid()
         dgvTasks.AutoGenerateColumns = False
         dgvTasks.Columns.Clear()
-        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TaskId", .HeaderText = "ID", .Width = 45})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Title", .HeaderText = "Tiêu Đề", .Width = 230})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Progress", .HeaderText = "Tiến Độ (%)", .Width = 100})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Ưu Tiên", .Width = 90})

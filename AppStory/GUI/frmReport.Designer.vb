@@ -22,7 +22,6 @@ Partial Class frmReport
         Me.btnBack = New System.Windows.Forms.Button()
         Me.pnlFilter = New System.Windows.Forms.Panel()
         Me.lblFilterTitle = New System.Windows.Forms.Label()
-        Me.rdoWeek = New System.Windows.Forms.RadioButton()
         Me.rdoMonth = New System.Windows.Forms.RadioButton()
         Me.rdoDateRange = New System.Windows.Forms.RadioButton()
         Me.rdoTeam = New System.Windows.Forms.RadioButton()
@@ -49,6 +48,9 @@ Partial Class frmReport
         Me.pnlExport = New System.Windows.Forms.Panel()
         Me.btnExportExcel = New System.Windows.Forms.Button()
         Me.btnExportPDF = New System.Windows.Forms.Button()
+        Me.lblExportHint = New System.Windows.Forms.Label()
+        Me.btnExportAllExcel = New System.Windows.Forms.Button()
+        Me.btnExportAllPDF = New System.Windows.Forms.Button()
         Me.pnlHeader.SuspendLayout()
         Me.pnlFilter.SuspendLayout()
         Me.pnlSummary.SuspendLayout()
@@ -88,7 +90,6 @@ Partial Class frmReport
         Me.pnlFilter.BackColor = System.Drawing.Color.White
         Me.pnlFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pnlFilter.Controls.Add(Me.lblFilterTitle)
-        Me.pnlFilter.Controls.Add(Me.rdoWeek)
         Me.pnlFilter.Controls.Add(Me.rdoMonth)
         Me.pnlFilter.Controls.Add(Me.rdoDateRange)
         Me.pnlFilter.Controls.Add(Me.rdoTeam)
@@ -119,11 +120,10 @@ Partial Class frmReport
 
         ' Radio buttons - row 1
         Dim rdoFont As New System.Drawing.Font("Segoe UI", 9.5!)
-        Me.rdoWeek.AutoSize = True : Me.rdoWeek.Font = rdoFont : Me.rdoWeek.Location = New System.Drawing.Point(12, 35) : Me.rdoWeek.Text = "Theo tuần" : Me.rdoWeek.Checked = True
-        Me.rdoMonth.AutoSize = True : Me.rdoMonth.Font = rdoFont : Me.rdoMonth.Location = New System.Drawing.Point(130, 35) : Me.rdoMonth.Text = "Theo tháng"
-        Me.rdoDateRange.AutoSize = True : Me.rdoDateRange.Font = rdoFont : Me.rdoDateRange.Location = New System.Drawing.Point(260, 35) : Me.rdoDateRange.Text = "Khoảng ngày"
-        Me.rdoTeam.AutoSize = True : Me.rdoTeam.Font = rdoFont : Me.rdoTeam.Location = New System.Drawing.Point(400, 35) : Me.rdoTeam.Text = "Theo team"
-        Me.rdoStatus.AutoSize = True : Me.rdoStatus.Font = rdoFont : Me.rdoStatus.Location = New System.Drawing.Point(530, 35) : Me.rdoStatus.Text = "Theo trạng thái"
+        Me.rdoMonth.AutoSize = True : Me.rdoMonth.Font = rdoFont : Me.rdoMonth.Location = New System.Drawing.Point(12, 35) : Me.rdoMonth.Text = "Theo tháng" : Me.rdoMonth.Checked = True
+        Me.rdoDateRange.AutoSize = True : Me.rdoDateRange.Font = rdoFont : Me.rdoDateRange.Location = New System.Drawing.Point(140, 35) : Me.rdoDateRange.Text = "Khoảng ngày"
+        Me.rdoTeam.AutoSize = True : Me.rdoTeam.Font = rdoFont : Me.rdoTeam.Location = New System.Drawing.Point(290, 35) : Me.rdoTeam.Text = "Theo team"
+        Me.rdoStatus.AutoSize = True : Me.rdoStatus.Font = rdoFont : Me.rdoStatus.Location = New System.Drawing.Point(420, 35) : Me.rdoStatus.Text = "Theo trạng thái"
 
         ' Date range controls - row 2
         Me.lblFrom.AutoSize = True : Me.lblFrom.Font = rdoFont : Me.lblFrom.Location = New System.Drawing.Point(12, 72) : Me.lblFrom.Text = "Từ ngày:"
@@ -210,7 +210,7 @@ Partial Class frmReport
         Me.pnlExport.Controls.Add(Me.btnExportPDF)
         Me.pnlExport.Location = New System.Drawing.Point(12, 532)
         Me.pnlExport.Name = "pnlExport"
-        Me.pnlExport.Size = New System.Drawing.Size(936, 42)
+        Me.pnlExport.Size = New System.Drawing.Size(936, 68)
 
         Me.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
         Me.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat
@@ -220,19 +220,55 @@ Partial Class frmReport
         Me.btnExportExcel.Location = New System.Drawing.Point(0, 2)
         Me.btnExportExcel.Name = "btnExportExcel"
         Me.btnExportExcel.Size = New System.Drawing.Size(180, 38)
-        Me.btnExportExcel.Text = "📗 Xuất Excel"
+        Me.btnExportExcel.Text = "📗 Xuất Excel (Đang chọn)"
         Me.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand
 
         Me.btnExportPDF.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
         Me.btnExportPDF.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnExportPDF.FlatAppearance.BorderSize = 0
-        Me.btnExportPDF.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.btnExportPDF.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         Me.btnExportPDF.ForeColor = System.Drawing.Color.White
-        Me.btnExportPDF.Location = New System.Drawing.Point(195, 2)
+        Me.btnExportPDF.Location = New System.Drawing.Point(200, 2)
         Me.btnExportPDF.Name = "btnExportPDF"
-        Me.btnExportPDF.Size = New System.Drawing.Size(180, 38)
-        Me.btnExportPDF.Text = "📕 Xuất PDF"
+        Me.btnExportPDF.Size = New System.Drawing.Size(185, 38)
+        Me.btnExportPDF.Text = "📕 Xuất PDF (Đang chọn)"
         Me.btnExportPDF.Cursor = System.Windows.Forms.Cursors.Hand
+
+        ' ─ Hint label
+        Me.lblExportHint = New System.Windows.Forms.Label()
+        Me.lblExportHint.AutoSize = False
+        Me.lblExportHint.Font = New System.Drawing.Font("Segoe UI", 8.5!, System.Drawing.FontStyle.Italic)
+        Me.lblExportHint.ForeColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.lblExportHint.Location = New System.Drawing.Point(0, 47)
+        Me.lblExportHint.Size = New System.Drawing.Size(936, 18)
+        Me.lblExportHint.Text = "  💡 Mẹo: Nhấn giữ phím Ctrl (hoặc Shift) và click vào dòng để bôi đen nhiều dự án rồi bấm Xuất Đang Chọn."
+        Me.pnlExport.Controls.Add(Me.lblExportHint)
+
+        ' ─ Xuất tất cả (Excel)
+        Me.btnExportAllExcel.BackColor = System.Drawing.Color.FromArgb(5, 150, 105)
+        Me.btnExportAllExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnExportAllExcel.FlatAppearance.BorderSize = 0
+        Me.btnExportAllExcel.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.btnExportAllExcel.ForeColor = System.Drawing.Color.White
+        Me.btnExportAllExcel.Location = New System.Drawing.Point(400, 2)
+        Me.btnExportAllExcel.Name = "btnExportAllExcel"
+        Me.btnExportAllExcel.Size = New System.Drawing.Size(230, 38)
+        Me.btnExportAllExcel.Text = "📦 Xuất tất cả Excel"
+        Me.btnExportAllExcel.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.pnlExport.Controls.Add(Me.btnExportAllExcel)
+
+        ' ─ Xuất tất cả (PDF)
+        Me.btnExportAllPDF.BackColor = System.Drawing.Color.FromArgb(185, 28, 28)
+        Me.btnExportAllPDF.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnExportAllPDF.FlatAppearance.BorderSize = 0
+        Me.btnExportAllPDF.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.btnExportAllPDF.ForeColor = System.Drawing.Color.White
+        Me.btnExportAllPDF.Location = New System.Drawing.Point(645, 2)
+        Me.btnExportAllPDF.Name = "btnExportAllPDF"
+        Me.btnExportAllPDF.Size = New System.Drawing.Size(220, 38)
+        Me.btnExportAllPDF.Text = "📦 Xuất tất cả PDF"
+        Me.btnExportAllPDF.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.pnlExport.Controls.Add(Me.btnExportAllPDF)
 
         '─── FORM ───
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -265,7 +301,6 @@ Partial Class frmReport
     Friend WithEvents btnBack As System.Windows.Forms.Button
     Friend WithEvents pnlFilter As System.Windows.Forms.Panel
     Friend WithEvents lblFilterTitle As System.Windows.Forms.Label
-    Friend WithEvents rdoWeek As System.Windows.Forms.RadioButton
     Friend WithEvents rdoMonth As System.Windows.Forms.RadioButton
     Friend WithEvents rdoDateRange As System.Windows.Forms.RadioButton
     Friend WithEvents rdoTeam As System.Windows.Forms.RadioButton
@@ -290,7 +325,10 @@ Partial Class frmReport
     Friend WithEvents lblSummaryOverdue As System.Windows.Forms.Label
     Friend WithEvents dgvReport As System.Windows.Forms.DataGridView
     Friend WithEvents pnlExport As System.Windows.Forms.Panel
+    Friend WithEvents lblExportHint As System.Windows.Forms.Label
     Friend WithEvents btnExportExcel As System.Windows.Forms.Button
     Friend WithEvents btnExportPDF As System.Windows.Forms.Button
+    Friend WithEvents btnExportAllExcel As System.Windows.Forms.Button
+    Friend WithEvents btnExportAllPDF As System.Windows.Forms.Button
 
 End Class

@@ -15,6 +15,7 @@ Public Class frmRegister
         cboRole.Items.Add("Manager")
         cboRole.Items.Add("Admin")
         cboRole.SelectedIndex = 0  ' Mặc định là Employee
+        Me.AcceptButton = Me.btnRegister ' Cho phép ấn Enter để đăng ký
     End Sub
 
     Private Sub btnRegister_Click(sender As Object, e As EventArgs) Handles btnRegister.Click

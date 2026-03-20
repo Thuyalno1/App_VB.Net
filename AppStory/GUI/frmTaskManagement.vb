@@ -1,3 +1,4 @@
+Imports System.Drawing
 Public Class frmTaskManagement
     Inherits System.Windows.Forms.Form
     Private _isNavigatingBack As Boolean = False
@@ -67,7 +68,6 @@ Public Class frmTaskManagement
     Private Sub SetupGrid()
         dgvTasks.AutoGenerateColumns = False
         dgvTasks.Columns.Clear()
-        dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TaskId", .HeaderText = "ID", .Width = 45})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Title", .HeaderText = "Tiêu đề", .Width = 180})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "ProgressDisplay", .HeaderText = "Tiến độ", .Width = 100})
         dgvTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Ưu tiên", .Width = 80})
@@ -570,6 +570,38 @@ Public Class frmTaskManagement
         End If
         Return value
     End Function
+
+    Private Sub dgvTasks_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles dgvTasks.CellFormatting
+        If e.RowIndex < 0 Then Return
+        
+        Dim grid = DirectCast(sender, DataGridView)
+        Dim row = grid.Rows(e.RowIndex)
+        Dim dataBoundItem = row.DataBoundItem
+
+        If TypeOf dataBoundItem Is TaskViewItem Then
+            Dim t = DirectCast(dataBoundItem, TaskViewItem)
+            Dim progress As Integer = t.Progress
+            Dim dueDate As DateTime? = t.DueDate
+
+            If progress = 100 Then
+                e.CellStyle.BackColor = Drawing.Color.FromArgb(16, 185, 129)   ' Xanh la - Hoan thanh
+                e.CellStyle.ForeColor = Drawing.Color.White
+                e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(5, 150, 105)
+            ElseIf dueDate.HasValue AndAlso dueDate.Value.Date < DateTime.Now.Date Then
+                e.CellStyle.BackColor = Drawing.Color.FromArgb(231, 76, 60)
+                e.CellStyle.ForeColor = Drawing.Color.White
+                e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(192, 57, 43)
+            ElseIf progress > 0 AndAlso progress < 100 Then
+                e.CellStyle.BackColor = Drawing.Color.FromArgb(245, 158, 11)   ' Cam - Dang thuc hien
+                e.CellStyle.ForeColor = Drawing.Color.White
+                e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(217, 119, 6)
+            ElseIf progress = 0 Then
+                e.CellStyle.BackColor = Drawing.Color.FromArgb(107, 114, 128) ' Xam - Chua bat dau
+                e.CellStyle.ForeColor = Drawing.Color.White
+                e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(75, 85, 99)
+            End If
+        End If
+    End Sub
 
 End Class
 

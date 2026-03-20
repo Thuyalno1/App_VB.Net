@@ -1,3 +1,4 @@
+Imports System.Drawing
 Public Class frmOpenTasks
     Inherits Form
 
@@ -21,7 +22,6 @@ Public Class frmOpenTasks
         dgvOpenTasks.AutoGenerateColumns = False
         dgvOpenTasks.Columns.Clear()
 
-        dgvOpenTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TaskId", .HeaderText = "ID", .Width = 50})
         dgvOpenTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Title", .HeaderText = "Tiêu đề", .Width = 250})
         dgvOpenTasks.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Priority", .HeaderText = "Mức ưu tiên", .Width = 100})
         dgvOpenTasks.Columns.Add(New DataGridViewTextBoxColumn() With {
@@ -43,6 +43,7 @@ Public Class frmOpenTasks
         btnCol.DefaultCellStyle.BackColor = Color.FromArgb(5, 150, 105)
         btnCol.DefaultCellStyle.ForeColor = Color.White
         dgvOpenTasks.Columns.Add(btnCol)
+        AddHandler dgvOpenTasks.CellFormatting, AddressOf dgvOpenTasks_CellFormatting
     End Sub
 
     Private Sub LoadOpenTasks()
@@ -112,5 +113,23 @@ Public Class frmOpenTasks
         Dim mainForm As New frmMain()
         mainForm.Show()
         Me.Close()
+    End Sub
+
+    Private Sub dgvOpenTasks_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
+        If e.RowIndex < 0 Then Return
+        Dim grid = DirectCast(sender, DataGridView)
+        Dim t = DirectCast(grid.Rows(e.RowIndex).DataBoundItem, Task)
+        If t Is Nothing Then Return
+
+        Dim dueDate As DateTime? = t.DueDate
+        ' Open tasks are usually 0%, but check for overdue
+        If dueDate.HasValue AndAlso dueDate.Value.Date < DateTime.Now.Date Then
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(220, 38, 38) ' Red
+            e.CellStyle.ForeColor = Drawing.Color.White
+        Else
+            ' Mặc định cho việc chưa có ai nhận (thường là gray/white)
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(107, 114, 128) ' Gray
+            e.CellStyle.ForeColor = Drawing.Color.White
+        End If
     End Sub
 End Class

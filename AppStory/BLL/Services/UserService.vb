@@ -53,6 +53,8 @@ Public Class UserService
     End Function
 
     ''' <summary>Đăng nhập: kiểm tra username, so sánh hash, trả về User nếu hợp lệ</summary>
+    ''' 
+
     Public Function Login(dto As LoginDto) As (Success As Boolean, UserData As User, Message As String) Implements IUserService.Login
         If String.IsNullOrWhiteSpace(dto.UserName) OrElse String.IsNullOrWhiteSpace(dto.Password) Then
             Return (False, Nothing, "Vui lòng nhập đầy đủ thông tin.")

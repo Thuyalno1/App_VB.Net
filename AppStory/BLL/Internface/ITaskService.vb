@@ -2,7 +2,9 @@ Public Interface ITaskService
 
     Function GetAllTasks() As List(Of Task)
     Function GetMyTasks(userId As Integer) As List(Of Task)
+    'userID ??u vào - ??u ra là Task
     Function GetTasksByProjectId(projectId As Integer) As List(Of Task)
+    'project 
     Function GetOpenTasksForUser(userId As Integer) As List(Of Task)
     Function ClaimTask(taskId As Integer, userId As Integer) As (Success As Boolean, Message As String)
     Function CreateTask(dto As TaskDto, createdByUserId As Integer) As (Success As Boolean, Message As String)

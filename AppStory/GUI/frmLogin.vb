@@ -42,6 +42,7 @@ Public Class frmLogin
         SessionManager.Logout()
         txtUsername.Text = ""
         txtPassword.Text = ""
+        Me.AcceptButton = Me.btnLogin ' Cho phép ấn Enter để đăng nhập
     End Sub
 
     Private Sub txtUsername_TextChanged(sender As Object, e As EventArgs) Handles txtUsername.TextChanged

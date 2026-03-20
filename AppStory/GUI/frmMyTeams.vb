@@ -16,7 +16,6 @@ Public Class frmMyTeams
     Private Sub SetupGrid()
         dgvMyTeams.AutoGenerateColumns = False
         dgvMyTeams.Columns.Clear()
-        dgvMyTeams.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TeamId", .HeaderText = "ID", .Width = 50})
         dgvMyTeams.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "TeamName", .HeaderText = "Tên Nhóm", .Width = 150})
         dgvMyTeams.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "Description", .HeaderText = "Mô tả", .Width = 200})
         dgvMyTeams.Columns.Add(New DataGridViewTextBoxColumn() With {.DataPropertyName = "LeaderNames", .HeaderText = "Trưởng nhóm (Tên)", .Width = 150})
