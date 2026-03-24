@@ -123,18 +123,31 @@ Public Class frmMyTasks
         Dim progress As Integer = t.Progress
         Dim dueDate As DateTime? = t.DueDate
 
-        If progress = 100 Then
-            e.CellStyle.BackColor = Drawing.Color.FromArgb(16, 185, 129) ' Green
+        If progress = 100 AndAlso t.IsApproved Then
+            ' Xanh lá đậm - Đã duyệt 100%
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(16, 185, 129)
             e.CellStyle.ForeColor = Drawing.Color.White
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(5, 150, 105)
+        ElseIf progress = 90 OrElse (progress = 100 AndAlso Not t.IsApproved) Then
+            ' Vàng / Cam nhạt - Chờ duyệt
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(245, 158, 11)
+            e.CellStyle.ForeColor = Drawing.Color.White
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(217, 119, 6)
         ElseIf dueDate.HasValue AndAlso dueDate.Value.Date < DateTime.Now.Date Then
-            e.CellStyle.BackColor = Drawing.Color.FromArgb(220, 38, 38) ' Red
+            ' Đỏ - Quá hạn
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(220, 38, 38)
             e.CellStyle.ForeColor = Drawing.Color.White
-        ElseIf progress > 0 AndAlso progress < 100 Then
-            e.CellStyle.BackColor = Drawing.Color.FromArgb(245, 158, 11) ' Orange
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(185, 28, 28)
+        ElseIf progress > 0 AndAlso progress < 90 Then
+            ' Xanh dương - Đang thực hiện
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(59, 130, 246)
             e.CellStyle.ForeColor = Drawing.Color.White
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(37, 99, 235)
         ElseIf progress = 0 Then
-            e.CellStyle.BackColor = Drawing.Color.FromArgb(107, 114, 128) ' Gray
+            ' Xám - Chưa bắt đầu
+            e.CellStyle.BackColor = Drawing.Color.FromArgb(107, 114, 128)
             e.CellStyle.ForeColor = Drawing.Color.White
+            e.CellStyle.SelectionBackColor = Drawing.Color.FromArgb(75, 85, 99)
         End If
     End Sub
 

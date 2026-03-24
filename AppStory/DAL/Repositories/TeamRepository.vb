@@ -1,4 +1,5 @@
 Imports System.Data.Odbc
+Imports System.Data
 Imports System.Configuration
 
 Public Class TeamRepository
@@ -116,18 +117,53 @@ Public Class TeamRepository
         End Try
     End Sub
 
+    ''' <summary>Xóa sạch Nhóm: Gỡ thành viên, gỡ dự án, gỡ khỏi Task và Xóa hẳn</summary>
     Public Sub Delete(teamId As Integer) Implements ITeamRepository.Delete
+        Dim conn As OdbcConnection = Nothing
+        Dim trans As OdbcTransaction = Nothing
         Try
-            Dim sql As String = "DELETE FROM Team WHERE TeamId=?"
-            Using conn As New OdbcConnection(ConnectionString)
-                conn.Open()
-                Using cmd As New OdbcCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("?", teamId)
-                    cmd.ExecuteNonQuery()
-                End Using
+            conn = New OdbcConnection(ConnectionString)
+            conn.Open()
+            trans = conn.BeginTransaction()
+
+            ' 1. Gỡ thành viên (Xóa trong UserTeam)
+            Dim sqlUserTeam As String = "DELETE FROM UserTeam WHERE TeamId=?"
+            Using cmdUT As New OdbcCommand(sqlUserTeam, conn, trans)
+                cmdUT.Parameters.AddWithValue("?", teamId)
+                cmdUT.ExecuteNonQuery()
             End Using
+
+            ' 2. Gỡ khỏi dự án (Xóa trong ProjectTeam)
+            Dim sqlProjTeam As String = "DELETE FROM ProjectTeam WHERE TeamId=?"
+            Using cmdPT As New OdbcCommand(sqlProjTeam, conn, trans)
+                cmdPT.Parameters.AddWithValue("?", teamId)
+                cmdPT.ExecuteNonQuery()
+            End Using
+
+            ' 3. Gỡ khỏi công việc (Đặt TeamId = NULL trong Tasks)
+            Dim sqlTasks As String = "UPDATE Tasks SET TeamId=NULL WHERE TeamId=?"
+            Using cmdT As New OdbcCommand(sqlTasks, conn, trans)
+                cmdT.Parameters.AddWithValue("?", teamId)
+                cmdT.ExecuteNonQuery()
+            End Using
+
+            ' 4. Xóa chính Nhóm đó
+            Dim sqlTeam As String = "DELETE FROM Team WHERE TeamId=?"
+            Using cmdTeam As New OdbcCommand(sqlTeam, conn, trans)
+                cmdTeam.Parameters.AddWithValue("?", teamId)
+                cmdTeam.ExecuteNonQuery()
+            End Using
+
+            trans.Commit()
         Catch ex As Exception
-            Throw New DataAccessException($"Không thể xóa Nhóm ID={teamId}.", ex)
+            If trans IsNot Nothing Then trans.Rollback()
+            Throw New DataAccessException($"Lỗi khi xóa Nhóm ID={teamId}. Chi tiết: {ex.Message}", ex)
+        Finally
+            If trans IsNot Nothing Then trans.Dispose()
+            If conn IsNot Nothing Then
+                If conn.State = ConnectionState.Open Then conn.Close()
+                conn.Dispose()
+            End If
         End Try
     End Sub
 
