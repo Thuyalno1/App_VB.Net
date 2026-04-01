@@ -55,7 +55,7 @@ Partial Class frmLogin
         'lblTitle
         '
         Me.lblTitle.Font = New System.Drawing.Font("Segoe UI", 16.0!, System.Drawing.FontStyle.Bold)
-        Me.lblTitle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(37, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(235, Byte), Integer))
+        Me.lblTitle.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblTitle.Location = New System.Drawing.Point(0, 37)
         Me.lblTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblTitle.Name = "lblTitle"
@@ -111,7 +111,7 @@ Partial Class frmLogin
         '
         'btnLogin
         '
-        Me.btnLogin.BackColor = System.Drawing.Color.FromArgb(CType(CType(37, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(235, Byte), Integer))
+        Me.btnLogin.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.btnLogin.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnLogin.FlatAppearance.BorderSize = 0
         Me.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat
@@ -144,7 +144,7 @@ Partial Class frmLogin
         Me.btnGoRegister.FlatAppearance.BorderSize = 0
         Me.btnGoRegister.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnGoRegister.Font = New System.Drawing.Font("Segoe UI", 9.0!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Underline), System.Drawing.FontStyle))
-        Me.btnGoRegister.ForeColor = System.Drawing.Color.FromArgb(CType(CType(37, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(235, Byte), Integer))
+        Me.btnGoRegister.ForeColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.btnGoRegister.Location = New System.Drawing.Point(237, 380)
         Me.btnGoRegister.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.btnGoRegister.Name = "btnGoRegister"
@@ -157,7 +157,7 @@ Partial Class frmLogin
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(239, Byte), Integer), CType(CType(246, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.BackColor = System.Drawing.Color.FromArgb(224, 235, 245)
         Me.ClientSize = New System.Drawing.Size(640, 615)
         Me.Controls.Add(Me.pnlMain)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle

@@ -203,9 +203,21 @@ Public Class frmProjects
 
     
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
-        Dim mainForm As New frmMain()
-        mainForm.Show()
+        ShowMainIfHidden()
         Me.Close()
+    End Sub
+
+    Private Sub frmProjects_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        ShowMainIfHidden()
+    End Sub
+
+    Private Sub ShowMainIfHidden()
+        For Each f As System.Windows.Forms.Form In System.Windows.Forms.Application.OpenForms
+            If TypeOf f Is frmMain Then
+                f.Show()
+                Exit For
+            End If
+        Next
     End Sub
 
     Private Sub ClearForm()

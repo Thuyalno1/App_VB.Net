@@ -46,7 +46,7 @@ Public Class frmMain
             Select Case role
                 Case "admin"
                     lblRoleDesc.Text = "Bạn có toàn quyền quản trị hệ thống."
-                    pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
+                    pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(229, 62, 62)
                     btnGoTasks.Visible = True
                     btnGoTasks.Text = "📋 Quản Lý Công Việc (Admin)"
                     btnGoApproval.Visible = True
@@ -55,7 +55,7 @@ Public Class frmMain
                     btnGoReport.Visible = True
                 Case "manager"
                     lblRoleDesc.Text = "Bạn có quyền quản lý nhóm và phê duyệt."
-                    pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(245, 158, 11)
+                    pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(55, 80, 110)
                     btnGoTasks.Visible = True
                     btnGoTasks.Text = "📋 Quản Lý Công Việc (Manager)"
                     btnGoApproval.Visible = True
@@ -68,12 +68,12 @@ Public Class frmMain
                     Dim isLeader As Boolean = _teamService.IsUserTeamLeader(user.UserId)
                     If isLeader Then
                         lblRoleDesc.Text = "Bạn là Trưởng nhóm. Bạn có quyền quản lý công việc của nhóm mình."
-                        pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(59, 130, 246)
+                        pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(40, 90, 140)
                         btnGoTasks.Visible = True
                         btnGoTasks.Text = "📋 Quản Lý Công Việc (Leader)"
                     Else
                         lblRoleDesc.Text = "Bạn có thể xem và thực hiện các nhiệm vụ của mình."
-                        pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+                        pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(14, 165, 160)
                     End If
                     btnGoOpenTasks.Visible = True
                     btnGoMyTasks.Visible = True

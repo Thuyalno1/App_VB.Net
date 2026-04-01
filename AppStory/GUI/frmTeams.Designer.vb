@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
 Partial Class frmTeams
     Inherits System.Windows.Forms.Form
 
@@ -138,7 +138,7 @@ Partial Class frmTeams
         '
         'btnDetail
         '
-        Me.btnDetail.BackColor = System.Drawing.Color.FromArgb(59, 130, 246)
+        Me.btnDetail.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.btnDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnDetail.FlatAppearance.BorderSize = 0
         Me.btnDetail.Font = New System.Drawing.Font("Segoe UI", 8.5!, System.Drawing.FontStyle.Bold)
@@ -257,3 +257,4 @@ Partial Class frmTeams
     Friend WithEvents txtSearch As System.Windows.Forms.TextBox
     Friend WithEvents btnDetail As System.Windows.Forms.Button
 End Class
+

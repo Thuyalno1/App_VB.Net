@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmMyTasks
     Inherits System.Windows.Forms.Form
 
@@ -40,7 +40,7 @@ Partial Class frmMyTasks
         Me.SuspendLayout()
 
         '--- pnlHeader ---
-        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.pnlHeader.Controls.Add(Me.lblHeader)
         Me.pnlHeader.Controls.Add(Me.btnBack)
         Me.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top
@@ -69,7 +69,7 @@ Partial Class frmMyTasks
         '--- lblUserInfo ---
         Me.lblUserInfo.AutoSize = False
         Me.lblUserInfo.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.lblUserInfo.ForeColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.lblUserInfo.ForeColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.lblUserInfo.Location = New System.Drawing.Point(10, 62)
         Me.lblUserInfo.Size = New System.Drawing.Size(780, 28)
         Me.lblUserInfo.Text = "Công việc của: ..."
@@ -79,7 +79,7 @@ Partial Class frmMyTasks
         Me.dgvMyTasks.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvMyTasks.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvMyTasks.ColumnHeadersDefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
-            .BackColor = System.Drawing.Color.FromArgb(16, 185, 129),
+            .BackColor = System.Drawing.Color.FromArgb(14, 165, 160),
             .ForeColor = System.Drawing.Color.White,
             .Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         }
@@ -107,7 +107,7 @@ Partial Class frmMyTasks
         Me.pnlPagination.Name = "pnlPagination"
         Me.pnlPagination.Size = New System.Drawing.Size(300, 35)
 
-        Me.btnPrev.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.btnPrev.BackColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnPrev.FlatAppearance.BorderSize = 0
         Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
@@ -125,7 +125,7 @@ Partial Class frmMyTasks
         Me.lblPageInfo.Text = "Trang 1 / 1"
         Me.lblPageInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
-        Me.btnNext.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.btnNext.BackColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnNext.FlatAppearance.BorderSize = 0
         Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
@@ -152,7 +152,7 @@ Partial Class frmMyTasks
 
         Me.lblSelectedTask.AutoSize = False
         Me.lblSelectedTask.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic)
-        Me.lblSelectedTask.ForeColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.lblSelectedTask.ForeColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.lblSelectedTask.Location = New System.Drawing.Point(15, 8)
         Me.lblSelectedTask.Size = New System.Drawing.Size(750, 20)
         Me.lblSelectedTask.Text = "Đang chọn: Chưa chọn công việc"
@@ -176,7 +176,7 @@ Partial Class frmMyTasks
         Me.lblPercent.Location = New System.Drawing.Point(240, 38)
         Me.lblPercent.Text = "%"
 
-        Me.btnConfirmStatus.BackColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.btnConfirmStatus.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.btnConfirmStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnConfirmStatus.FlatAppearance.BorderSize = 0
         Me.btnConfirmStatus.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
@@ -190,7 +190,7 @@ Partial Class frmMyTasks
         '-- frmMyTasks --
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(243, 244, 246)
+        Me.BackColor = System.Drawing.Color.FromArgb(240, 244, 248)
         Me.ClientSize = New System.Drawing.Size(800, 560)
         Me.MinimumSize = New System.Drawing.Size(816, 599)
         Me.Controls.Add(Me.pnlHeader)
@@ -229,3 +229,4 @@ Partial Class frmMyTasks
     Friend WithEvents btnNext As System.Windows.Forms.Button
     Friend WithEvents lblPageInfo As System.Windows.Forms.Label
 End Class
+

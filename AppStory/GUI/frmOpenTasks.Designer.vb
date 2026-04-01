@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmOpenTasks
     Inherits System.Windows.Forms.Form
 
@@ -96,7 +96,7 @@ Partial Class frmOpenTasks
         Me.pnlPagination.Name = "pnlPagination"
         Me.pnlPagination.Size = New System.Drawing.Size(300, 40)
 
-        Me.btnPrev.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.btnPrev.BackColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnPrev.FlatAppearance.BorderSize = 0
         Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
@@ -114,7 +114,7 @@ Partial Class frmOpenTasks
         Me.lblPageInfo.Text = "Trang 1 / 1"
         Me.lblPageInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
-        Me.btnNext.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.btnNext.BackColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnNext.FlatAppearance.BorderSize = 0
         Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
@@ -171,3 +171,4 @@ Partial Class frmOpenTasks
     Friend WithEvents btnNext As System.Windows.Forms.Button
     Friend WithEvents lblPageInfo As System.Windows.Forms.Label
 End Class
+

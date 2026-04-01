@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmRegister
     Inherits System.Windows.Forms.Form
 
@@ -60,7 +60,7 @@ Partial Class frmRegister
         '--- lblTitle ---
         Me.lblTitle.AutoSize = False
         Me.lblTitle.Font = New System.Drawing.Font("Segoe UI", 16.0!, System.Drawing.FontStyle.Bold)
-        Me.lblTitle.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.lblTitle.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblTitle.Location = New System.Drawing.Point(0, 25)
         Me.lblTitle.Name = "lblTitle"
         Me.lblTitle.Size = New System.Drawing.Size(380, 40)
@@ -150,7 +150,7 @@ Partial Class frmRegister
         Me.cboRole.TabIndex = 4
 
         '--- btnRegister ---
-        Me.btnRegister.BackColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.btnRegister.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.btnRegister.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnRegister.FlatAppearance.BorderSize = 0
         Me.btnRegister.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
@@ -165,7 +165,7 @@ Partial Class frmRegister
         '--- lblLoginLink ---
         Me.lblLoginLink.AutoSize = True
         Me.lblLoginLink.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.lblLoginLink.ForeColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.lblLoginLink.ForeColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.lblLoginLink.Location = New System.Drawing.Point(60, 485)
         Me.lblLoginLink.Name = "lblLoginLink"
         Me.lblLoginLink.Text = "Đã có tài khoản?"
@@ -175,7 +175,7 @@ Partial Class frmRegister
         Me.btnBackLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnBackLogin.FlatAppearance.BorderSize = 0
         Me.btnBackLogin.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Underline)
-        Me.btnBackLogin.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.btnBackLogin.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.btnBackLogin.Location = New System.Drawing.Point(190, 479)
         Me.btnBackLogin.Name = "btnBackLogin"
         Me.btnBackLogin.Size = New System.Drawing.Size(120, 26)
@@ -216,3 +216,4 @@ Partial Class frmRegister
     Friend WithEvents lblLoginLink As System.Windows.Forms.Label
 
 End Class
+

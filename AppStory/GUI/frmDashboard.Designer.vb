@@ -55,7 +55,7 @@ Partial Class frmDashboard
         Me.SuspendLayout()
 
         '--- pnlHeader ---
-        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.pnlHeader.Controls.Add(Me.lblTitle)
         Me.pnlHeader.Controls.Add(Me.btnBack)
         Me.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top
@@ -96,7 +96,7 @@ Partial Class frmDashboard
         Me.flpCards.WrapContents = False
 
         ' ===== CARD: Tổng dự án =====
-        Me.pnlCardTotal.BackColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.pnlCardTotal.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.pnlCardTotal.Controls.Add(Me.lblCardTotalCount)
         Me.pnlCardTotal.Controls.Add(Me.lblCardTotalLabel)
         Me.pnlCardTotal.Cursor = System.Windows.Forms.Cursors.Hand
@@ -115,14 +115,14 @@ Partial Class frmDashboard
 
         Me.lblCardTotalLabel.AutoSize = False
         Me.lblCardTotalLabel.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.lblCardTotalLabel.ForeColor = System.Drawing.Color.FromArgb(200, 220, 255)
+        Me.lblCardTotalLabel.ForeColor = System.Drawing.Color.FromArgb(195, 215, 235)
         Me.lblCardTotalLabel.Location = New System.Drawing.Point(10, 65)
         Me.lblCardTotalLabel.Size = New System.Drawing.Size(152, 35)
         Me.lblCardTotalLabel.Text = "📁 Tổng Dự Án"
         Me.lblCardTotalLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
         ' ===== CARD: Đang thực hiện (Active) =====
-        Me.pnlCardActive.BackColor = System.Drawing.Color.FromArgb(245, 158, 11)
+        Me.pnlCardActive.BackColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.pnlCardActive.Controls.Add(Me.lblCardActiveCount)
         Me.pnlCardActive.Controls.Add(Me.lblCardActiveLabel)
         Me.pnlCardActive.Cursor = System.Windows.Forms.Cursors.Hand
@@ -141,14 +141,14 @@ Partial Class frmDashboard
 
         Me.lblCardActiveLabel.AutoSize = False
         Me.lblCardActiveLabel.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.lblCardActiveLabel.ForeColor = System.Drawing.Color.FromArgb(255, 240, 200)
+        Me.lblCardActiveLabel.ForeColor = System.Drawing.Color.FromArgb(200, 240, 238)
         Me.lblCardActiveLabel.Location = New System.Drawing.Point(10, 65)
         Me.lblCardActiveLabel.Size = New System.Drawing.Size(152, 35)
         Me.lblCardActiveLabel.Text = "🔄 Đang Thực Hiện"
         Me.lblCardActiveLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
         ' ===== CARD: Hoàn thành (Completed) =====
-        Me.pnlCardCompleted.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.pnlCardCompleted.BackColor = System.Drawing.Color.FromArgb(22, 130, 100)
         Me.pnlCardCompleted.Controls.Add(Me.lblCardCompletedCount)
         Me.pnlCardCompleted.Controls.Add(Me.lblCardCompletedLabel)
         Me.pnlCardCompleted.Cursor = System.Windows.Forms.Cursors.Hand
@@ -167,14 +167,14 @@ Partial Class frmDashboard
 
         Me.lblCardCompletedLabel.AutoSize = False
         Me.lblCardCompletedLabel.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.lblCardCompletedLabel.ForeColor = System.Drawing.Color.FromArgb(200, 255, 220)
+        Me.lblCardCompletedLabel.ForeColor = System.Drawing.Color.FromArgb(200, 235, 220)
         Me.lblCardCompletedLabel.Location = New System.Drawing.Point(10, 65)
         Me.lblCardCompletedLabel.Size = New System.Drawing.Size(152, 35)
         Me.lblCardCompletedLabel.Text = "✅ Hoàn Thành"
         Me.lblCardCompletedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
         ' ===== CARD: Quá deadline (Overdue) =====
-        Me.pnlCardOverdue.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
+        Me.pnlCardOverdue.BackColor = System.Drawing.Color.FromArgb(229, 62, 62)
         Me.pnlCardOverdue.Controls.Add(Me.lblCardOverdueCount)
         Me.pnlCardOverdue.Controls.Add(Me.lblCardOverdueLabel)
         Me.pnlCardOverdue.Cursor = System.Windows.Forms.Cursors.Hand
@@ -193,14 +193,14 @@ Partial Class frmDashboard
 
         Me.lblCardOverdueLabel.AutoSize = False
         Me.lblCardOverdueLabel.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.lblCardOverdueLabel.ForeColor = System.Drawing.Color.FromArgb(255, 200, 200)
+        Me.lblCardOverdueLabel.ForeColor = System.Drawing.Color.FromArgb(252, 210, 210)
         Me.lblCardOverdueLabel.Location = New System.Drawing.Point(10, 65)
         Me.lblCardOverdueLabel.Size = New System.Drawing.Size(152, 35)
         Me.lblCardOverdueLabel.Text = "⚠️ Quá Deadline"
         Me.lblCardOverdueLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
         ' ===== CARD: Chưa bắt đầu (Planning) =====
-        Me.pnlCardPlanning.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.pnlCardPlanning.BackColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.pnlCardPlanning.Controls.Add(Me.lblCardPlanningCount)
         Me.pnlCardPlanning.Controls.Add(Me.lblCardPlanningLabel)
         Me.pnlCardPlanning.Cursor = System.Windows.Forms.Cursors.Hand
@@ -219,7 +219,7 @@ Partial Class frmDashboard
 
         Me.lblCardPlanningLabel.AutoSize = False
         Me.lblCardPlanningLabel.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.lblCardPlanningLabel.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220)
+        Me.lblCardPlanningLabel.ForeColor = System.Drawing.Color.FromArgb(210, 222, 235)
         Me.lblCardPlanningLabel.Location = New System.Drawing.Point(10, 65)
         Me.lblCardPlanningLabel.Size = New System.Drawing.Size(152, 35)
         Me.lblCardPlanningLabel.Text = "📝 Chưa Bắt Đầu"
@@ -228,7 +228,7 @@ Partial Class frmDashboard
         '--- lblFilterInfo ---
         Me.lblFilterInfo.AutoSize = False
         Me.lblFilterInfo.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblFilterInfo.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.lblFilterInfo.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblFilterInfo.Location = New System.Drawing.Point(15, 195)
         Me.lblFilterInfo.Name = "lblFilterInfo"
         Me.lblFilterInfo.Size = New System.Drawing.Size(920, 25)
@@ -240,14 +240,14 @@ Partial Class frmDashboard
         Me.dgvProjects.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvProjects.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvProjects.ColumnHeadersDefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
-            .BackColor = System.Drawing.Color.FromArgb(37, 99, 235),
+            .BackColor = System.Drawing.Color.FromArgb(30, 58, 95),
             .ForeColor = System.Drawing.Color.White,
             .Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         }
         Me.dgvProjects.ColumnHeadersHeight = 35
         Me.dgvProjects.DefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
             .Font = New System.Drawing.Font("Segoe UI", 9.5!),
-            .SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254),
+            .SelectionBackColor = System.Drawing.Color.FromArgb(206, 230, 245),
             .SelectionForeColor = System.Drawing.Color.Black
         }
         Me.dgvProjects.Location = New System.Drawing.Point(15, 225)
@@ -274,7 +274,7 @@ Partial Class frmDashboard
 
         Me.lblTaskDetailTitle.AutoSize = True
         Me.lblTaskDetailTitle.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblTaskDetailTitle.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.lblTaskDetailTitle.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblTaskDetailTitle.Location = New System.Drawing.Point(5, 5)
         Me.lblTaskDetailTitle.Text = "📌 CHI TIẾT CÔNG VIỆC CỦA DỰ ÁN"
 
@@ -299,7 +299,7 @@ Partial Class frmDashboard
         '--- frmDashboard ---
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(243, 244, 246)
+        Me.BackColor = System.Drawing.Color.FromArgb(240, 244, 248)
         Me.ClientSize = New System.Drawing.Size(950, 580)
         Me.MinimumSize = New System.Drawing.Size(966, 619)
         Me.Controls.Add(Me.pnlTaskDetails)

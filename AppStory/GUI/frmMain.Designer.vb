@@ -119,7 +119,7 @@ Partial Class frmMain
         ' ═══════════════════════════════════════════════════
         '   HEADER  (Top-docked, 58px)
         ' ═══════════════════════════════════════════════════
-        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.pnlHeader.Controls.Add(Me.lblAppTitle)
         Me.pnlHeader.Controls.Add(Me.lblDateTime)
         Me.pnlHeader.Controls.Add(Me.btnLogout)
@@ -136,13 +136,13 @@ Partial Class frmMain
 
         Me.lblDateTime.AutoSize = False
         Me.lblDateTime.Font = New System.Drawing.Font("Segoe UI", 9.5!)
-        Me.lblDateTime.ForeColor = System.Drawing.Color.FromArgb(200, 222, 255)
+        Me.lblDateTime.ForeColor = System.Drawing.Color.FromArgb(180, 210, 230)
         Me.lblDateTime.Location = New System.Drawing.Point(250, 0)
         Me.lblDateTime.Size = New System.Drawing.Size(580, 58)
         Me.lblDateTime.Text = ""
         Me.lblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
 
-        Me.btnLogout.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
+        Me.btnLogout.BackColor = System.Drawing.Color.FromArgb(229, 62, 62)
         Me.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnLogout.FlatAppearance.BorderSize = 0
         Me.btnLogout.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
@@ -156,7 +156,7 @@ Partial Class frmMain
         '   SCROLL PANEL (Fill)  →  contains flpBody
         ' ═══════════════════════════════════════════════════
         Me.pnlScroll.AutoScroll = True
-        Me.pnlScroll.BackColor = System.Drawing.Color.FromArgb(243, 244, 246)
+        Me.pnlScroll.BackColor = System.Drawing.Color.FromArgb(240, 244, 248)
         Me.pnlScroll.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pnlScroll.Controls.Add(Me.flpBody)
 
@@ -189,7 +189,7 @@ Partial Class frmMain
         ' ═══════════════════════════════════════════════════
         '   1. WELCOME BADGE  h=76
         ' ═══════════════════════════════════════════════════
-        Me.pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.pnlRoleBadge.BackColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.pnlRoleBadge.Controls.Add(Me.lblWelcome)
         Me.pnlRoleBadge.Controls.Add(Me.lblRole)
         Me.pnlRoleBadge.Controls.Add(Me.lblEmail)
@@ -212,7 +212,7 @@ Partial Class frmMain
 
         Me.lblEmail.AutoSize = False
         Me.lblEmail.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.lblEmail.ForeColor = System.Drawing.Color.FromArgb(210, 255, 245)
+        Me.lblEmail.ForeColor = System.Drawing.Color.FromArgb(204, 245, 240)
         Me.lblEmail.Location = New System.Drawing.Point(16, 56)
         Me.lblEmail.Size = New System.Drawing.Size(500, 18)
         Me.lblEmail.Text = "Email: ..."
@@ -220,7 +220,7 @@ Partial Class frmMain
         ' ═══════════════════════════════════════════════════
         '   2. ROLE DESC ROW  h=26
         ' ═══════════════════════════════════════════════════
-        Me.pnlRoleDescRow.BackColor = System.Drawing.Color.FromArgb(243, 244, 246)
+        Me.pnlRoleDescRow.BackColor = System.Drawing.Color.FromArgb(240, 244, 248)
         Me.pnlRoleDescRow.Controls.Add(Me.lblRoleDesc)
         Me.pnlRoleDescRow.Margin = New System.Windows.Forms.Padding(0, 2, 0, 4)
         Me.pnlRoleDescRow.Size = New System.Drawing.Size(1040, 24)
@@ -245,7 +245,7 @@ Partial Class frmMain
 
         Me.lblAdminStatsTitle.AutoSize = True
         Me.lblAdminStatsTitle.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.lblAdminStatsTitle.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.lblAdminStatsTitle.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblAdminStatsTitle.Location = New System.Drawing.Point(0, 0)
         Me.lblAdminStatsTitle.Text = "📊 Tổng Quan Dự Án — click thẻ để xem chi tiết"
 
@@ -262,20 +262,20 @@ Partial Class frmMain
         Me.flpAdminStatCards.WrapContents = False
 
         Call MakeStatCard(Me.pnlStatTotal, Me.lblStatTotalCount, Me.lblStatTotalLabel,
-                          System.Drawing.Color.FromArgb(37, 99, 235), "0", "📁 Tổng Dự Án",
-                          System.Drawing.Color.FromArgb(200, 220, 255))
+                          System.Drawing.Color.FromArgb(30, 58, 95), "0", "📁 Tổng Dự Án",
+                          System.Drawing.Color.FromArgb(195, 215, 235))
         Call MakeStatCard(Me.pnlStatActive, Me.lblStatActiveCount, Me.lblStatActiveLabel,
-                          System.Drawing.Color.FromArgb(245, 158, 11), "0", "🔄 Đang Thực Hiện",
-                          System.Drawing.Color.FromArgb(255, 240, 200))
+                          System.Drawing.Color.FromArgb(14, 165, 160), "0", "🔄 Đang Thực Hiện",
+                          System.Drawing.Color.FromArgb(200, 240, 238))
         Call MakeStatCard(Me.pnlStatCompleted, Me.lblStatCompletedCount, Me.lblStatCompletedLabel,
-                          System.Drawing.Color.FromArgb(16, 185, 129), "0", "✅ Hoàn Thành",
-                          System.Drawing.Color.FromArgb(200, 255, 220))
+                          System.Drawing.Color.FromArgb(22, 130, 100), "0", "✅ Hoàn Thành",
+                          System.Drawing.Color.FromArgb(200, 235, 220))
         Call MakeStatCard(Me.pnlStatOverdue, Me.lblStatOverdueCount, Me.lblStatOverdueLabel,
-                          System.Drawing.Color.FromArgb(220, 38, 38), "0", "⚠️ Quá Deadline",
-                          System.Drawing.Color.FromArgb(255, 200, 200))
+                          System.Drawing.Color.FromArgb(229, 62, 62), "0", "⚠️ Quá Deadline",
+                          System.Drawing.Color.FromArgb(252, 210, 210))
         Call MakeStatCard(Me.pnlStatPlanning, Me.lblStatPlanningCount, Me.lblStatPlanningLabel,
-                          System.Drawing.Color.FromArgb(107, 114, 128), "0", "📝 Chưa Bắt Đầu",
-                          System.Drawing.Color.FromArgb(220, 220, 220))
+                          System.Drawing.Color.FromArgb(71, 100, 130), "0", "📝 Chưa Bắt Đầu",
+                          System.Drawing.Color.FromArgb(210, 222, 235))
 
         ' ═══════════════════════════════════════════════════
         '   4. EMPLOYEE STATS  h=160
@@ -290,7 +290,7 @@ Partial Class frmMain
 
         Me.lblEmployeeStatsTitle.AutoSize = True
         Me.lblEmployeeStatsTitle.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.lblEmployeeStatsTitle.ForeColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.lblEmployeeStatsTitle.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblEmployeeStatsTitle.Location = New System.Drawing.Point(0, 0)
         Me.lblEmployeeStatsTitle.Text = "📋 Công Việc Của Tôi — click thẻ để xem chi tiết"
 
@@ -306,17 +306,17 @@ Partial Class frmMain
         Me.flpEmployeeStatCards.WrapContents = False
 
         Call MakeStatCard(Me.pnlEmpTotal, Me.lblEmpTotalCount, Me.lblEmpTotalLabel,
-                          System.Drawing.Color.FromArgb(37, 99, 235), "0", "📋 Tổng Việc",
-                          System.Drawing.Color.FromArgb(200, 220, 255))
+                          System.Drawing.Color.FromArgb(30, 58, 95), "0", "📋 Tổng Việc",
+                          System.Drawing.Color.FromArgb(195, 215, 235))
         Call MakeStatCard(Me.pnlEmpInProgress, Me.lblEmpInProgressCount, Me.lblEmpInProgressLabel,
-                          System.Drawing.Color.FromArgb(245, 158, 11), "0", "🔄 Đang Làm",
-                          System.Drawing.Color.FromArgb(255, 240, 200))
+                          System.Drawing.Color.FromArgb(14, 165, 160), "0", "🔄 Đang Làm",
+                          System.Drawing.Color.FromArgb(200, 240, 238))
         Call MakeStatCard(Me.pnlEmpDone, Me.lblEmpDoneCount, Me.lblEmpDoneLabel,
-                          System.Drawing.Color.FromArgb(16, 185, 129), "0", "✅ Đã Xong",
-                          System.Drawing.Color.FromArgb(200, 255, 220))
+                          System.Drawing.Color.FromArgb(22, 130, 100), "0", "✅ Đã Xong",
+                          System.Drawing.Color.FromArgb(200, 235, 220))
         Call MakeStatCard(Me.pnlEmpDeadline, Me.lblEmpDeadlineCount, Me.lblEmpDeadlineLabel,
-                          System.Drawing.Color.FromArgb(220, 38, 38), "0", "⚠️ Gần Deadline",
-                          System.Drawing.Color.FromArgb(255, 200, 200))
+                          System.Drawing.Color.FromArgb(229, 62, 62), "0", "⚠️ Gần Deadline",
+                          System.Drawing.Color.FromArgb(252, 210, 210))
 
         ' ═══════════════════════════════════════════════════
         '   5. CARD DETAIL PANEL  h=182 (ẩn ban đầu)
@@ -332,7 +332,7 @@ Partial Class frmMain
         Me.pnlCardDetail.Visible = False
 
         ' Header của detail (tiêu đề + nút [✕])
-        Me.pnlCardDetailHeader.BackColor = System.Drawing.Color.FromArgb(239, 246, 255)
+        Me.pnlCardDetailHeader.BackColor = System.Drawing.Color.FromArgb(232, 242, 250)
         Me.pnlCardDetailHeader.Controls.Add(Me.lblCardDetailTitle)
         Me.pnlCardDetailHeader.Controls.Add(Me.btnCloseDetail)
         Me.pnlCardDetailHeader.Dock = System.Windows.Forms.DockStyle.Top
@@ -340,13 +340,13 @@ Partial Class frmMain
 
         Me.lblCardDetailTitle.AutoSize = False
         Me.lblCardDetailTitle.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblCardDetailTitle.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.lblCardDetailTitle.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblCardDetailTitle.Location = New System.Drawing.Point(8, 0)
         Me.lblCardDetailTitle.Size = New System.Drawing.Size(960, 34)
         Me.lblCardDetailTitle.Text = "Chi tiết..."
         Me.lblCardDetailTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
 
-        Me.btnCloseDetail.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
+        Me.btnCloseDetail.BackColor = System.Drawing.Color.FromArgb(229, 62, 62)
         Me.btnCloseDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnCloseDetail.FlatAppearance.BorderSize = 0
         Me.btnCloseDetail.Font = New System.Drawing.Font("Segoe UI", 11.0!, System.Drawing.FontStyle.Bold)
@@ -361,14 +361,14 @@ Partial Class frmMain
         Me.dgvCardDetail.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvCardDetail.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvCardDetail.ColumnHeadersDefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
-            .BackColor = System.Drawing.Color.FromArgb(37, 99, 235),
+            .BackColor = System.Drawing.Color.FromArgb(30, 58, 95),
             .ForeColor = System.Drawing.Color.White,
             .Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
         }
         Me.dgvCardDetail.ColumnHeadersHeight = 30
         Me.dgvCardDetail.DefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
             .Font = New System.Drawing.Font("Segoe UI", 9.0!),
-            .SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254),
+            .SelectionBackColor = System.Drawing.Color.FromArgb(206, 230, 245),
             .SelectionForeColor = System.Drawing.Color.Black
         }
         Me.dgvCardDetail.Location = New System.Drawing.Point(4, 36)
@@ -405,21 +405,21 @@ Partial Class frmMain
         Me.flpMenu.WrapContents = False
 
         Dim bw As Integer = 1030
-        MakeMenuBtn(Me.btnGoTasks, "📋 Quản Lý Công Việc", System.Drawing.Color.FromArgb(37, 99, 235), bw)
-        MakeMenuBtn(Me.btnGoApproval, "✔️ Duyệt Công Việc", System.Drawing.Color.FromArgb(16, 185, 129), bw)
-        MakeMenuBtn(Me.btnGoOpenTasks, "📥 Việc Cần Nhận", System.Drawing.Color.FromArgb(5, 150, 105), bw)
-        MakeMenuBtn(Me.btnGoMyTasks, "✅ Công Việc Của Tôi", System.Drawing.Color.FromArgb(16, 185, 129), bw)
-        MakeMenuBtn(Me.btnGoMyTeams, "👥 Nhóm Của Tôi", System.Drawing.Color.FromArgb(16, 185, 129), bw)
-        MakeMenuBtn(Me.btnGoProjects, "🚀 Quản Lý Dự Án", System.Drawing.Color.FromArgb(245, 158, 11), bw)
-        MakeMenuBtn(Me.btnGoTeams, "👥 Quản Lý Nhóm", System.Drawing.Color.FromArgb(99, 102, 241), bw)
-        MakeMenuBtn(Me.btnGoReport, "📈 Báo Cáo Thống Kê", System.Drawing.Color.FromArgb(168, 85, 247), bw)
+        MakeMenuBtn(Me.btnGoTasks, "📋 Quản Lý Công Việc", System.Drawing.Color.FromArgb(30, 58, 95), bw)
+        MakeMenuBtn(Me.btnGoApproval, "✔️ Duyệt Công Việc", System.Drawing.Color.FromArgb(14, 165, 160), bw)
+        MakeMenuBtn(Me.btnGoOpenTasks, "📥 Việc Cần Nhận", System.Drawing.Color.FromArgb(14, 140, 135), bw)
+        MakeMenuBtn(Me.btnGoMyTasks, "✅ Công Việc Của Tôi", System.Drawing.Color.FromArgb(22, 130, 100), bw)
+        MakeMenuBtn(Me.btnGoMyTeams, "👥 Nhóm Của Tôi", System.Drawing.Color.FromArgb(40, 90, 140), bw)
+        MakeMenuBtn(Me.btnGoProjects, "🚀 Quản Lý Dự Án", System.Drawing.Color.FromArgb(55, 80, 110), bw)
+        MakeMenuBtn(Me.btnGoTeams, "👥 Quản Lý Nhóm", System.Drawing.Color.FromArgb(45, 100, 155), bw)
+        MakeMenuBtn(Me.btnGoReport, "📈 Báo Cáo Thống Kê", System.Drawing.Color.FromArgb(71, 100, 130), bw)
 
         ' ═══════════════════════════════════════════════════
         '   FORM
         ' ═══════════════════════════════════════════════════
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(243, 244, 246)
+        Me.BackColor = System.Drawing.Color.FromArgb(240, 244, 248)
         Me.ClientSize = New System.Drawing.Size(1080, 860)
         Me.Controls.Add(Me.pnlScroll)
         Me.Controls.Add(Me.pnlHeader)

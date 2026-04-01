@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmTaskManagement
     Inherits System.Windows.Forms.Form
 
@@ -59,7 +59,7 @@ Partial Class frmTaskManagement
         Me.SuspendLayout()
 
         '--- pnlHeader ---
-        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.pnlHeader.Controls.Add(Me.lblTitle)
         Me.pnlHeader.Controls.Add(Me.btnBack)
         Me.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top
@@ -89,7 +89,7 @@ Partial Class frmTaskManagement
         '--- Filter bar ---
         Me.lblFilter.AutoSize = True
         Me.lblFilter.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.lblFilter.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.lblFilter.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblFilter.Location = New System.Drawing.Point(10, 66)
         Me.lblFilter.Text = "🔍 Lọc theo trạng thái:"
 
@@ -101,7 +101,7 @@ Partial Class frmTaskManagement
 
         Me.lblTaskCount.AutoSize = False
         Me.lblTaskCount.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic)
-        Me.lblTaskCount.ForeColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.lblTaskCount.ForeColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.lblTaskCount.Location = New System.Drawing.Point(335, 66)
         Me.lblTaskCount.Size = New System.Drawing.Size(240, 20)
         Me.lblTaskCount.Text = ""
@@ -111,14 +111,14 @@ Partial Class frmTaskManagement
         Me.dgvTasks.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvTasks.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvTasks.ColumnHeadersDefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
-            .BackColor = System.Drawing.Color.FromArgb(37, 99, 235),
+            .BackColor = System.Drawing.Color.FromArgb(30, 58, 95),
             .ForeColor = System.Drawing.Color.White,
             .Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         }
         Me.dgvTasks.ColumnHeadersHeight = 35
         Me.dgvTasks.DefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
             .Font = New System.Drawing.Font("Segoe UI", 9.5!),
-            .SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254),
+            .SelectionBackColor = System.Drawing.Color.FromArgb(206, 230, 245),
             .SelectionForeColor = System.Drawing.Color.Black
         }
         Me.dgvTasks.Location = New System.Drawing.Point(10, 92)
@@ -139,7 +139,7 @@ Partial Class frmTaskManagement
         Me.pnlPagination.Name = "pnlPagination"
         Me.pnlPagination.Size = New System.Drawing.Size(300, 40)
 
-        Me.btnPrev.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.btnPrev.BackColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnPrev.FlatAppearance.BorderSize = 0
         Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
@@ -157,7 +157,7 @@ Partial Class frmTaskManagement
         Me.lblPageInfo.Text = "Trang 1 / 1"
         Me.lblPageInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
-        Me.btnNext.BackColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.btnNext.BackColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnNext.FlatAppearance.BorderSize = 0
         Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
@@ -203,7 +203,7 @@ Partial Class frmTaskManagement
         Dim yOff As Integer = 15
         Me.lblFormTitle.AutoSize = False
         Me.lblFormTitle.Font = New System.Drawing.Font("Segoe UI", 11.0!, System.Drawing.FontStyle.Bold)
-        Me.lblFormTitle.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.lblFormTitle.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblFormTitle.Location = New System.Drawing.Point(10, yOff)
         Me.lblFormTitle.Size = New System.Drawing.Size(340, 28)
         Me.lblFormTitle.Text = "Thông tin công việc"
@@ -260,22 +260,22 @@ Partial Class frmTaskManagement
         Me.cboTeam.Size = New System.Drawing.Size(340, 26)
 
         yOff += 40
-        Me.btnAdd.BackColor = System.Drawing.Color.FromArgb(37, 99, 235) : Me.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnAdd.FlatAppearance.BorderSize = 0 : Me.btnAdd.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnAdd.ForeColor = System.Drawing.Color.White : Me.btnAdd.Location = New System.Drawing.Point(10, yOff) : Me.btnAdd.Name = "btnAdd" : Me.btnAdd.Size = New System.Drawing.Size(160, 34) : Me.btnAdd.Text = "+ Thêm mới" : Me.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnUpdate.BackColor = System.Drawing.Color.FromArgb(245, 158, 11) : Me.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnUpdate.FlatAppearance.BorderSize = 0 : Me.btnUpdate.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnUpdate.ForeColor = System.Drawing.Color.White : Me.btnUpdate.Location = New System.Drawing.Point(185, yOff) : Me.btnUpdate.Name = "btnUpdate" : Me.btnUpdate.Size = New System.Drawing.Size(165, 34) : Me.btnUpdate.Text = "✎ Cập nhật" : Me.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnAdd.BackColor = System.Drawing.Color.FromArgb(30, 58, 95) : Me.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnAdd.FlatAppearance.BorderSize = 0 : Me.btnAdd.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnAdd.ForeColor = System.Drawing.Color.White : Me.btnAdd.Location = New System.Drawing.Point(10, yOff) : Me.btnAdd.Name = "btnAdd" : Me.btnAdd.Size = New System.Drawing.Size(160, 34) : Me.btnAdd.Text = "+ Thêm mới" : Me.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnUpdate.BackColor = System.Drawing.Color.FromArgb(14, 165, 160) : Me.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnUpdate.FlatAppearance.BorderSize = 0 : Me.btnUpdate.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnUpdate.ForeColor = System.Drawing.Color.White : Me.btnUpdate.Location = New System.Drawing.Point(185, yOff) : Me.btnUpdate.Name = "btnUpdate" : Me.btnUpdate.Size = New System.Drawing.Size(165, 34) : Me.btnUpdate.Text = "✎ Cập nhật" : Me.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand
 
         yOff += 42
-        Me.btnDelete.BackColor = System.Drawing.Color.FromArgb(220, 38, 38) : Me.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnDelete.FlatAppearance.BorderSize = 0 : Me.btnDelete.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnDelete.ForeColor = System.Drawing.Color.White : Me.btnDelete.Location = New System.Drawing.Point(10, yOff) : Me.btnDelete.Name = "btnDelete" : Me.btnDelete.Size = New System.Drawing.Size(340, 34) : Me.btnDelete.Text = "🗑 Xóa Dữ Liệu (Hệ Thống)" : Me.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnDelete.BackColor = System.Drawing.Color.FromArgb(229, 62, 62) : Me.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnDelete.FlatAppearance.BorderSize = 0 : Me.btnDelete.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnDelete.ForeColor = System.Drawing.Color.White : Me.btnDelete.Location = New System.Drawing.Point(10, yOff) : Me.btnDelete.Name = "btnDelete" : Me.btnDelete.Size = New System.Drawing.Size(340, 34) : Me.btnDelete.Text = "🗑 Xóa Dữ Liệu (Hệ Thống)" : Me.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand
 
         yOff += 42
-        Me.btnApprove.BackColor = System.Drawing.Color.FromArgb(16, 185, 129) : Me.btnApprove.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnApprove.FlatAppearance.BorderSize = 0 : Me.btnApprove.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnApprove.ForeColor = System.Drawing.Color.White : Me.btnApprove.Location = New System.Drawing.Point(10, yOff) : Me.btnApprove.Name = "btnApprove" : Me.btnApprove.Size = New System.Drawing.Size(340, 34) : Me.btnApprove.Text = "✔️ DUYỆT CÔNG VIỆC (Xong)" : Me.btnApprove.Cursor = System.Windows.Forms.Cursors.Hand : Me.btnApprove.Visible = False
+        Me.btnApprove.BackColor = System.Drawing.Color.FromArgb(22, 130, 100) : Me.btnApprove.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnApprove.FlatAppearance.BorderSize = 0 : Me.btnApprove.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnApprove.ForeColor = System.Drawing.Color.White : Me.btnApprove.Location = New System.Drawing.Point(10, yOff) : Me.btnApprove.Name = "btnApprove" : Me.btnApprove.Size = New System.Drawing.Size(340, 34) : Me.btnApprove.Text = "✔️ DUYỆT CÔNG VIỆC (Xong)" : Me.btnApprove.Cursor = System.Windows.Forms.Cursors.Hand : Me.btnApprove.Visible = False
 
         yOff += 42
-        Me.btnExport.BackColor = System.Drawing.Color.FromArgb(5, 150, 105) : Me.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnExport.FlatAppearance.BorderSize = 0 : Me.btnExport.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnExport.ForeColor = System.Drawing.Color.White : Me.btnExport.Location = New System.Drawing.Point(10, yOff) : Me.btnExport.Name = "btnExport" : Me.btnExport.Size = New System.Drawing.Size(340, 34) : Me.btnExport.Text = "📄 Xuất Thống Kê CSV" : Me.btnExport.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnExport.BackColor = System.Drawing.Color.FromArgb(40, 90, 140) : Me.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat : Me.btnExport.FlatAppearance.BorderSize = 0 : Me.btnExport.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold) : Me.btnExport.ForeColor = System.Drawing.Color.White : Me.btnExport.Location = New System.Drawing.Point(10, yOff) : Me.btnExport.Name = "btnExport" : Me.btnExport.Size = New System.Drawing.Size(340, 34) : Me.btnExport.Text = "📄 Xuất Thống Kê CSV" : Me.btnExport.Cursor = System.Windows.Forms.Cursors.Hand
 
         '--- frmTaskManagement ---
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(243, 244, 246)
+        Me.BackColor = System.Drawing.Color.FromArgb(240, 244, 248)
         Me.ClientSize = New System.Drawing.Size(1100, 670)
         Me.Controls.Add(Me.pnlHeader)
         Me.Controls.Add(Me.lblFilter)
@@ -335,3 +335,4 @@ Partial Class frmTaskManagement
     Friend WithEvents lblPageInfo As System.Windows.Forms.Label
 
 End Class
+

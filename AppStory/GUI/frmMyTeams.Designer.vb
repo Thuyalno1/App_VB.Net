@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
 Partial Class frmMyTeams
     Inherits System.Windows.Forms.Form
 
@@ -97,3 +97,5 @@ Partial Class frmMyTeams
     Friend WithEvents lblUserInfo As System.Windows.Forms.Label
     Friend WithEvents btnCreateTeamTask As System.Windows.Forms.Button
 End Class
+
+

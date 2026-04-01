@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmEmployeeDashboard
     Inherits System.Windows.Forms.Form
 
@@ -46,7 +46,7 @@ Partial Class frmEmployeeDashboard
         Me.SuspendLayout()
 
         '─── HEADER ───
-        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.pnlHeader.Controls.Add(Me.lblTitle)
         Me.pnlHeader.Controls.Add(Me.btnBack)
         Me.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top
@@ -76,7 +76,7 @@ Partial Class frmEmployeeDashboard
         '─── lblUserInfo ───
         Me.lblUserInfo.AutoSize = False
         Me.lblUserInfo.Font = New System.Drawing.Font("Segoe UI", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.lblUserInfo.ForeColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.lblUserInfo.ForeColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.lblUserInfo.Location = New System.Drawing.Point(15, 62)
         Me.lblUserInfo.Size = New System.Drawing.Size(870, 25)
         Me.lblUserInfo.Text = "Xin chào, ..."
@@ -94,7 +94,7 @@ Partial Class frmEmployeeDashboard
         Me.flpCards.WrapContents = False
 
         ' Card: Task được giao (Tổng)
-        Me.pnlCardAssigned.BackColor = System.Drawing.Color.FromArgb(37, 99, 235)
+        Me.pnlCardAssigned.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.pnlCardAssigned.Controls.Add(Me.lblCardAssignedCount)
         Me.pnlCardAssigned.Controls.Add(Me.lblCardAssignedLabel)
         Me.pnlCardAssigned.Cursor = System.Windows.Forms.Cursors.Hand
@@ -120,7 +120,7 @@ Partial Class frmEmployeeDashboard
         Me.lblCardAssignedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
         ' Card: Đang làm (1-89%)
-        Me.pnlCardInProgress.BackColor = System.Drawing.Color.FromArgb(245, 158, 11)
+        Me.pnlCardInProgress.BackColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.pnlCardInProgress.Controls.Add(Me.lblCardInProgressCount)
         Me.pnlCardInProgress.Controls.Add(Me.lblCardInProgressLabel)
         Me.pnlCardInProgress.Cursor = System.Windows.Forms.Cursors.Hand
@@ -146,7 +146,7 @@ Partial Class frmEmployeeDashboard
         Me.lblCardInProgressLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
         ' Card: Hoàn thành (100%)
-        Me.pnlCardDone.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.pnlCardDone.BackColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.pnlCardDone.Controls.Add(Me.lblCardDoneCount)
         Me.pnlCardDone.Controls.Add(Me.lblCardDoneLabel)
         Me.pnlCardDone.Cursor = System.Windows.Forms.Cursors.Hand
@@ -172,7 +172,7 @@ Partial Class frmEmployeeDashboard
         Me.lblCardDoneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 
         ' Card: Gần deadline (trong 3 ngày)
-        Me.pnlCardDeadline.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
+        Me.pnlCardDeadline.BackColor = System.Drawing.Color.FromArgb(229, 62, 62)
         Me.pnlCardDeadline.Controls.Add(Me.lblCardDeadlineCount)
         Me.pnlCardDeadline.Controls.Add(Me.lblCardDeadlineLabel)
         Me.pnlCardDeadline.Cursor = System.Windows.Forms.Cursors.Hand
@@ -200,7 +200,7 @@ Partial Class frmEmployeeDashboard
         '─── lblFilterInfo ───
         Me.lblFilterInfo.AutoSize = False
         Me.lblFilterInfo.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblFilterInfo.ForeColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.lblFilterInfo.ForeColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.lblFilterInfo.Location = New System.Drawing.Point(15, 218)
         Me.lblFilterInfo.Name = "lblFilterInfo"
         Me.lblFilterInfo.Size = New System.Drawing.Size(870, 25)
@@ -212,7 +212,7 @@ Partial Class frmEmployeeDashboard
         Me.dgvTasks.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvTasks.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvTasks.ColumnHeadersDefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
-            .BackColor = System.Drawing.Color.FromArgb(16, 185, 129),
+            .BackColor = System.Drawing.Color.FromArgb(14, 165, 160),
             .ForeColor = System.Drawing.Color.White,
             .Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         }
@@ -237,7 +237,7 @@ Partial Class frmEmployeeDashboard
         '─── frmEmployeeDashboard ───
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(243, 244, 246)
+        Me.BackColor = System.Drawing.Color.FromArgb(240, 244, 248)
         Me.ClientSize = New System.Drawing.Size(900, 580)
         Me.MinimumSize = New System.Drawing.Size(916, 619)
         Me.Controls.Add(Me.pnlHeader)
@@ -281,3 +281,4 @@ Partial Class frmEmployeeDashboard
     Friend WithEvents dgvTasks As System.Windows.Forms.DataGridView
 
 End Class
+

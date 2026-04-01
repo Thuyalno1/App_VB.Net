@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmTeamDetail
     Inherits System.Windows.Forms.Form
 
@@ -37,7 +37,7 @@ Partial Class frmTeamDetail
         Me.SuspendLayout()
 
         '--- pnlHeader ---
-        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(59, 130, 246)
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.pnlHeader.Controls.Add(Me.lblTeamName)
         Me.pnlHeader.Controls.Add(Me.lblDescription)
         Me.pnlHeader.Controls.Add(Me.btnBack)
@@ -56,13 +56,13 @@ Partial Class frmTeamDetail
         '--- lblDescription ---
         Me.lblDescription.AutoSize = True
         Me.lblDescription.Font = New System.Drawing.Font("Segoe UI", 9.5!)
-        Me.lblDescription.ForeColor = System.Drawing.Color.FromArgb(219, 234, 254)
+        Me.lblDescription.ForeColor = System.Drawing.Color.FromArgb(206, 230, 245)
         Me.lblDescription.Location = New System.Drawing.Point(22, 42)
         Me.lblDescription.Name = "lblDescription"
         Me.lblDescription.Text = ""
 
         '--- btnBack ---
-        Me.btnBack.BackColor = System.Drawing.Color.FromArgb(99, 102, 241)
+        Me.btnBack.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnBack.FlatAppearance.BorderSize = 0
         Me.btnBack.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
@@ -182,3 +182,4 @@ Partial Class frmTeamDetail
     Friend WithEvents lblMemberCount As System.Windows.Forms.Label
     Friend WithEvents lblTaskCount As System.Windows.Forms.Label
 End Class
+

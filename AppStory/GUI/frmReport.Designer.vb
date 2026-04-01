@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmReport
     Inherits System.Windows.Forms.Form
 
@@ -59,7 +59,7 @@ Partial Class frmReport
         Me.SuspendLayout()
 
         '─── HEADER ───
-        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(99, 102, 241)
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.pnlHeader.Controls.Add(Me.lblTitle)
         Me.pnlHeader.Controls.Add(Me.btnBack)
         Me.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top
@@ -114,7 +114,7 @@ Partial Class frmReport
 
         Me.lblFilterTitle.AutoSize = True
         Me.lblFilterTitle.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblFilterTitle.ForeColor = System.Drawing.Color.FromArgb(99, 102, 241)
+        Me.lblFilterTitle.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95)
         Me.lblFilterTitle.Location = New System.Drawing.Point(10, 8)
         Me.lblFilterTitle.Text = "🔍 Bộ lọc báo cáo"
 
@@ -148,7 +148,7 @@ Partial Class frmReport
         Me.cboYear.Font = rdoFont : Me.cboYear.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList : Me.cboYear.Location = New System.Drawing.Point(225, 68) : Me.cboYear.Size = New System.Drawing.Size(100, 26) : Me.cboYear.Visible = False
 
         ' Filter button
-        Me.btnFilter.BackColor = System.Drawing.Color.FromArgb(99, 102, 241)
+        Me.btnFilter.BackColor = System.Drawing.Color.FromArgb(14, 165, 160)
         Me.btnFilter.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnFilter.FlatAppearance.BorderSize = 0
         Me.btnFilter.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
@@ -172,24 +172,24 @@ Partial Class frmReport
         Me.pnlSummary.Size = New System.Drawing.Size(936, 35)
 
         Dim sumFont As New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.lblSummaryTotal.AutoSize = True : Me.lblSummaryTotal.Font = sumFont : Me.lblSummaryTotal.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235) : Me.lblSummaryTotal.Location = New System.Drawing.Point(10, 8) : Me.lblSummaryTotal.Text = "Tổng: 0"
-        Me.lblSummaryActive.AutoSize = True : Me.lblSummaryActive.Font = sumFont : Me.lblSummaryActive.ForeColor = System.Drawing.Color.FromArgb(245, 158, 11) : Me.lblSummaryActive.Location = New System.Drawing.Point(170, 8) : Me.lblSummaryActive.Text = "Đang TH: 0"
-        Me.lblSummaryCompleted.AutoSize = True : Me.lblSummaryCompleted.Font = sumFont : Me.lblSummaryCompleted.ForeColor = System.Drawing.Color.FromArgb(16, 185, 129) : Me.lblSummaryCompleted.Location = New System.Drawing.Point(350, 8) : Me.lblSummaryCompleted.Text = "Hoàn thành: 0"
-        Me.lblSummaryOverdue.AutoSize = True : Me.lblSummaryOverdue.Font = sumFont : Me.lblSummaryOverdue.ForeColor = System.Drawing.Color.FromArgb(220, 38, 38) : Me.lblSummaryOverdue.Location = New System.Drawing.Point(550, 8) : Me.lblSummaryOverdue.Text = "Quá hạn: 0"
+        Me.lblSummaryTotal.AutoSize = True : Me.lblSummaryTotal.Font = sumFont : Me.lblSummaryTotal.ForeColor = System.Drawing.Color.FromArgb(30, 58, 95) : Me.lblSummaryTotal.Location = New System.Drawing.Point(10, 8) : Me.lblSummaryTotal.Text = "Tổng: 0"
+        Me.lblSummaryActive.AutoSize = True : Me.lblSummaryActive.Font = sumFont : Me.lblSummaryActive.ForeColor = System.Drawing.Color.FromArgb(14, 165, 160) : Me.lblSummaryActive.Location = New System.Drawing.Point(170, 8) : Me.lblSummaryActive.Text = "Đang TH: 0"
+        Me.lblSummaryCompleted.AutoSize = True : Me.lblSummaryCompleted.Font = sumFont : Me.lblSummaryCompleted.ForeColor = System.Drawing.Color.FromArgb(22, 130, 100) : Me.lblSummaryCompleted.Location = New System.Drawing.Point(350, 8) : Me.lblSummaryCompleted.Text = "Hoàn thành: 0"
+        Me.lblSummaryOverdue.AutoSize = True : Me.lblSummaryOverdue.Font = sumFont : Me.lblSummaryOverdue.ForeColor = System.Drawing.Color.FromArgb(229, 62, 62) : Me.lblSummaryOverdue.Location = New System.Drawing.Point(550, 8) : Me.lblSummaryOverdue.Text = "Quá hạn: 0"
 
         '─── DATA GRID ───
         Me.dgvReport.BackgroundColor = System.Drawing.Color.White
         Me.dgvReport.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvReport.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.dgvReport.ColumnHeadersDefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
-            .BackColor = System.Drawing.Color.FromArgb(99, 102, 241),
+            .BackColor = System.Drawing.Color.FromArgb(30, 58, 95),
             .ForeColor = System.Drawing.Color.White,
             .Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
         }
         Me.dgvReport.ColumnHeadersHeight = 35
         Me.dgvReport.DefaultCellStyle = New System.Windows.Forms.DataGridViewCellStyle() With {
             .Font = New System.Drawing.Font("Segoe UI", 9.5!),
-            .SelectionBackColor = System.Drawing.Color.FromArgb(224, 231, 255),
+            .SelectionBackColor = System.Drawing.Color.FromArgb(206, 230, 245),
             .SelectionForeColor = System.Drawing.Color.Black
         }
         Me.dgvReport.Location = New System.Drawing.Point(12, 226)
@@ -212,7 +212,7 @@ Partial Class frmReport
         Me.pnlExport.Name = "pnlExport"
         Me.pnlExport.Size = New System.Drawing.Size(936, 68)
 
-        Me.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(16, 185, 129)
+        Me.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(22, 130, 100)
         Me.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnExportExcel.FlatAppearance.BorderSize = 0
         Me.btnExportExcel.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
@@ -223,7 +223,7 @@ Partial Class frmReport
         Me.btnExportExcel.Text = "📗 Xuất Excel (Đang chọn)"
         Me.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand
 
-        Me.btnExportPDF.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
+        Me.btnExportPDF.BackColor = System.Drawing.Color.FromArgb(229, 62, 62)
         Me.btnExportPDF.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnExportPDF.FlatAppearance.BorderSize = 0
         Me.btnExportPDF.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Bold)
@@ -238,14 +238,14 @@ Partial Class frmReport
         Me.lblExportHint = New System.Windows.Forms.Label()
         Me.lblExportHint.AutoSize = False
         Me.lblExportHint.Font = New System.Drawing.Font("Segoe UI", 8.5!, System.Drawing.FontStyle.Italic)
-        Me.lblExportHint.ForeColor = System.Drawing.Color.FromArgb(107, 114, 128)
+        Me.lblExportHint.ForeColor = System.Drawing.Color.FromArgb(71, 100, 130)
         Me.lblExportHint.Location = New System.Drawing.Point(0, 47)
         Me.lblExportHint.Size = New System.Drawing.Size(936, 18)
         Me.lblExportHint.Text = "  💡 Mẹo: Nhấn giữ phím Ctrl (hoặc Shift) và click vào dòng để bôi đen nhiều dự án rồi bấm Xuất Đang Chọn."
         Me.pnlExport.Controls.Add(Me.lblExportHint)
 
         ' ─ Xuất tất cả (Excel)
-        Me.btnExportAllExcel.BackColor = System.Drawing.Color.FromArgb(5, 150, 105)
+        Me.btnExportAllExcel.BackColor = System.Drawing.Color.FromArgb(40, 90, 140)
         Me.btnExportAllExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnExportAllExcel.FlatAppearance.BorderSize = 0
         Me.btnExportAllExcel.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
@@ -273,7 +273,7 @@ Partial Class frmReport
         '─── FORM ───
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(243, 244, 246)
+        Me.BackColor = System.Drawing.Color.FromArgb(240, 244, 248)
         Me.ClientSize = New System.Drawing.Size(960, 585)
         Me.MinimumSize = New System.Drawing.Size(976, 624)
         Me.Controls.Add(Me.pnlHeader)
@@ -332,3 +332,4 @@ Partial Class frmReport
     Friend WithEvents btnExportAllPDF As System.Windows.Forms.Button
 
 End Class
+
