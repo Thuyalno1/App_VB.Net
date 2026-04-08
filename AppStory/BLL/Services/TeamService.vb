@@ -1,12 +1,9 @@
 Public Class TeamService
     Implements ITeamService
-
     Private ReadOnly _repo As ITeamRepository
-
     Public Sub New()
         _repo = New TeamRepository()
     End Sub
-
     Public Function GetAllTeams() As List(Of TeamDto) Implements ITeamService.GetAllTeams
         Try
             Dim teams = CType(_repo.GetAll(), List(Of Team))

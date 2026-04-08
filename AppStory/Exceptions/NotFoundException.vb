@@ -1,15 +1,3 @@
-''' <summary>
-''' Exception dành cho trường hợp không tìm thấy đối tượng trong hệ thống.
-''' Ném ra khi truy vấn theo ID hoặc điều kiện mà không có kết quả.
-''' Tương đương HTTP 404 Not Found trong ứng dụng Web.
-''' </summary>
-''' <example>
-''' ' Trong Repository:
-''' Dim task = GetById(taskId)
-''' If task Is Nothing Then
-'''     Throw New NotFoundException($"Không tìm thấy Task với ID = {taskId}.")
-''' End If
-''' </example>
 Public Class NotFoundException
     Inherits AppException
 
